@@ -1,6 +1,6 @@
 # EDGE_workflows
 
-This is repo to reconstruct the [EDGE bioinformatics](https://github.com/LANL-Bioinformatics/EDGE/tree/devel) into modulaized workflows using [WDL](https://github.com/openwdl/wdl/tree/main).  Here is the list for modules and could be expanded. 
+This is repo with reconstructed [EDGE bioinformatics](https://github.com/LANL-Bioinformatics/EDGE/tree/devel) modulaized workflows by using [WDL](https://github.com/openwdl/wdl/tree/main).  Here is the list for modules and could be expanded. 
 
 1. sra2fastq
 2. runFaQCs
