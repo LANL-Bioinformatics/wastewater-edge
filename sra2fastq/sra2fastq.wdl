@@ -42,7 +42,7 @@ task sra2fastq {
     }
 
     runtime {
-        docker: "kaijli/sra2fastq:1.5"
+        docker: "kaijli/sra2fastq:1.6"
         continueOnReturnCode: true
     }
 }
