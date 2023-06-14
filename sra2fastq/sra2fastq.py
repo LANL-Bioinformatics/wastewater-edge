@@ -45,8 +45,7 @@ def main():
     args.http_proxy = f"--proxy '{args.user_proxy}' " if args.user_proxy else args.http_proxy
     args.ftp_proxy = f"--proxy '{args.user_proxy}' " if args.user_proxy else args.ftp_proxy
 
-    args.outdir = args.outdir.replace("/", "")
-    args.outdir = args.outdir.replace("\\", "")
+    args.outdir = Path(args.outdir).parts
     outdir = args.outdir        
 
     for accession in args.accessions:
@@ -82,7 +81,7 @@ def main():
         else:
             sys.stderr.write(f"Error. {accession} not a valid accession number. \n")
 
-
+    sys.stderr.write(f"Completed sra2fastq for {args.accessions} \n")
 
 if __name__ == '__main__':
     main()
