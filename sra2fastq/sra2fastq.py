@@ -45,20 +45,26 @@ def main():
     args.http_proxy = f"--proxy '{args.user_proxy}' " if args.user_proxy else args.http_proxy
     args.ftp_proxy = f"--proxy '{args.user_proxy}' " if args.user_proxy else args.ftp_proxy
 
-    args.outdir = Path(args.outdir).parts
-    outdir = args.outdir        
+    # Convert user path string into python path
+    outdir_list = os.path.normpath(args.outdir).split(os.path.sep)
+    outdir_path = Path()
+    for dir in outdir_list:
+        outdir_path = Path.joinpath(outdir_path, dir)
+
+    args.outdir = outdir_path
+    outdir = args.outdir   
 
     for accession in args.accessions:
         # run tool if accession number is valid
         if s.isValidAcc(accession):
             args.outdir = Path(outdir, accession)
+            temp_dir = Path(args.outdir, "sra2fastq_temp")
             merged_dir = Path(args.outdir, "sra2fastq_temp", "merged")
             meta_file = Path(args.outdir, f"{accession}_metadata.txt")
 
             # init out directories
             args.outdir.mkdir(parents=True, exist_ok=True)
-            # Path(args.outdir, "metadata").mkdir(exist_ok=True)
-            Path(args.outdir, "sra2fastq_temp").mkdir(exist_ok=True)
+            temp_dir.mkdir(exist_ok=True)
             merged_dir.mkdir(exist_ok=True)
 
             # get metadata
