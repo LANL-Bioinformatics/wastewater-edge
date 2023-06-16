@@ -1,8 +1,3 @@
-task makeDir {
-  command {
-    mkdir -p ${outputDir}
-  }
-}
 
 task executeCommand {
   command {
@@ -41,7 +36,9 @@ task runQC {
     String unpairedFile_output = (configuration["porechop"] && ont_flag) ? "${outputDir}/QC.unpaired.porechop.fastq" : "${outputDir}/QC.unpaired.trimmed.fastq"
     min_length = (min_length >= 1) ? min_length : int(min_length * avg_read_length)
 
+
     # Create output directory if it doesn't exist
+    mkdir -p ${outputDir}
     call makeDir {
       input:
         outputDir = outputDir
@@ -118,12 +115,6 @@ task runQC {
             command = nanoPlotCmd
         }
       }
-    }
-
-    # Run printRunTime task
-    call printRunTime {
-      input:
-        time = time
     }
 
     # Run touchFile task
