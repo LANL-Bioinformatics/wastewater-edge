@@ -1,4 +1,5 @@
 {
     "sra.accessions": ["SRR11241255"],
-    "sra.OUTDIR": "test_out"
+    "sra.outdir": "test_out",
+    "sra.ext_dir": "ext_out"
   }

@@ -47,13 +47,15 @@ def main():
 
     # Convert user path string into python path
     # expand any ~ to full path
-    
-    expanded_outdir = os.path.expanduser(args.outdir)
+
+    # expanded_outdir = os.path.expanduser(args.outdir)
     # check if it's an absolute path, convert if not
-    if not os.path.isabs(expanded_outdir):
-        expanded_outdir = os.path.abspath(expanded_outdir)
+    # if not os.path.isabs(expanded_outdir):
+    #     expanded_outdir = os.path.abspath(expanded_outdir)
     # change path into list to use Path package
-    outdir_list = os.path.normpath(expanded_outdir).split(os.path.sep)
+    # outdir_list = os.path.normpath(expanded_outdir).split(os.path.sep)
+    
+    outdir_list = os.path.normpath(args.outdir).split(os.path.sep)
     # create Path type object
     outdir_path = Path()
     for dir in outdir_list:

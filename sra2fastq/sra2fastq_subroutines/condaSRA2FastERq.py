@@ -1,14 +1,13 @@
 import argparse
 from pathlib import Path
+import shutil
 import subprocess
 import sys
-from .pigZip import pigZip
 
 def condaSRA2FastERq(info: dict, run_acc: str, args: argparse.Namespace):
     OUTDIR = args.outdir
     SIZE_RESTRICT = args.filesize_restrict
     platform = info["platform"].lower()
-    meta_file = Path(OUTDIR, "metadata", f"{run_acc}_metadata.txt")
     fastq_dir = Path(OUTDIR, 'sra2fastq_temp')
 
     # prefetch SRA file 
@@ -35,10 +34,9 @@ def condaSRA2FastERq(info: dict, run_acc: str, args: argparse.Namespace):
         sys.stderr.write(f"Failed to run fasterq-dump from {run_acc}.\n")
         return "failed"
     
-    # # get metadata
-    # subprocess.run(f"pysradb metadata --detailed {run_acc} > {meta_file}", shell=True)
-    
-    
+    # remove pre-fetch file
+    shutil.rmtree(Path(fastq_dir, run_acc))
+
 
     sys.stderr.write("Done with fasterq-dump.\n")
 

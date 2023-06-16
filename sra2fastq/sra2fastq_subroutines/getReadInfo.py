@@ -19,7 +19,6 @@ def getReadInfo(acc: str, read_info: dict, sra_type: str):
     sra_num_runs = len(lines)
     sys.stderr.write(f"{sra_num_runs} run(s) found from NCBI-SRA.")
 
-    # sys.stderr.write("line 22",lines)
     for line in lines:
         fields = line.split(',')
         sub_acc, exp_acc, run_acc, size_MB, platform, library, url = fields[42], fields[10], fields[0], fields[7], fields[18], fields[15], fields[9]
@@ -72,17 +71,12 @@ def getReadInfo(acc: str, read_info: dict, sra_type: str):
             if pattern.match(line):
                 continue
             fields = line.strip().split('\t')
-            # sys.stderr.write(f"{fields=}")
 
             if len(fields) >= 8:
                 # extract the relevant fields
                 sub_acc, exp_acc, run_acc, platform, library = [fields[i] for i in [1, 3, 0, 4, 5]] 
 
                 url, md5, size = [fields[i].split() for i in [6,7,8]]
-
-                # sys.stderr.write("line 81", url, md5, size)
-
-                # sys.stderr.write(f"{sra_type=}")
 
                 if sra_type == "ByRun" and acc.lower() != str(run_acc).lower():
                     continue
@@ -104,7 +98,6 @@ def getReadInfo(acc: str, read_info: dict, sra_type: str):
                         "md5": md5[i],
                         "size": size[i]
                     }
-    # sys.stderr.write(f"{read_info=}")
     return read_info
 
 

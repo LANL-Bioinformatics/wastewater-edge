@@ -43,4 +43,4 @@ def getEnaFastq(info:dict, run_acc: str, args: argparse.Namespace):
         
         sys.stderr.write("Done with EBI-ENA.\n")
     
-    # return "success"
+    return "success"
