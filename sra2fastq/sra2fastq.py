@@ -47,6 +47,7 @@ def main():
 
     # Convert user path string into python path
     # expand any ~ to full path
+    
     expanded_outdir = os.path.expanduser(args.outdir)
     # check if it's an absolute path, convert if not
     if not os.path.isabs(expanded_outdir):
