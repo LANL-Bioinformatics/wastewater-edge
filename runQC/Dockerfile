@@ -16,10 +16,10 @@ RUN conda config --add channels conda-forge \
 RUN conda install -c bioconda faqcs=2.10
 
 # add files
-ADD runQC_subroutines/* /opt/conda/bin/runQC_subroutines/
+# ADD runQC_subroutines/* /opt/conda/bin/runQC_subroutines/
 ADD *.wdl /opt/conda/bin/
 
-ENV PATH="${PATH}:/opt/conda/bin/runQC_subroutines"
+# ENV PATH="${PATH}:/opt/conda/bin/runQC_subroutines"
 
 CMD ["/bin/bash"]
 
