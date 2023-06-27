@@ -1,10 +1,133 @@
-task RunQC {
-  input {
-    File pairedFile
-    File unpairedFile
-    Float avg_read_length
-    Int numCPU
-    Map[String, String] configuration
+# RunQC workflow
+# Declare WDL version 1.0 if working in Terra
+version 1.0
+
+
+workflow runQC{
+  input{
+    String outDir
+    Array[File] inputFastq
+    Boolean? pairedFile
+
+    String? trimMode
+    Int? trimQual
+    Int? trim5end
+    Int? trim3end
+    Boolean? trimAdapter
+    Float? trimRate
+    Boolean? trimPolyA
+    File? artifactFile
+
+    Int? minLen
+    Int? avgQual
+    Int? numN
+    Float? filtLC
+    Boolean? filtPhiX
+
+    Int? ascii
+    Int? outAscii
+
+    String? outPrefix
+    File? outStats
+
+    Int? numCPU
+    Int? splitSize
+    Boolean? qcOnly
+    Boolean? kmerCalc
+    Int? kmerNum
+    Int? splitSubset
+    Boolean? discard
+    Boolean? substitute
+    Boolean? trimOnly
+    Int? replaceGN
+    Boolean? trim5off
+    Boolean? debug
+  }
+
+  call faqcs{
+    input:
+    outDir = outDir,
+    inputFastq = inputFastq,
+    pairedFile = pairedFile,
+
+    trimMode = trimMode,
+    trimQual = trimQual,
+    trim5end = trim5end,
+    trim3end = trim3end,
+    trimAdapter = trimAdapter,
+    trimRate = trimRate,
+    trimPolyA = trimPolyA,
+    trimPolyA = artifactFile,
+
+    minLen = minLen,
+    avgQual = avgQual,
+    numN = numN,
+    filtLC = filtLC,
+    filtPhiX = filtPhiX,
+
+    ascii = ascii,
+    ascii = outAscii,
+
+    outPrefix = outPrefix,
+    outStats = outStats,
+
+    numCPU = numCPU,
+    splitSize = splitSize,
+    qcOnly = qcOnly,
+    kmerCalc = kmerCalc,
+    kmerNum = kmerNum,
+    splitSubset = splitSubset,
+    discard = discard,
+    substitute = substitute,
+    trimOnly = trimOnly,
+    replaceGN = replaceGN,
+    trim5off = trim5off,
+    debug = debug
+  }
+}
+
+
+
+
+task faqcs {
+  input{
+    String outDir
+    Array[File] inputFastq
+    Boolean? pairedFile
+
+    String? trimMode
+    Int? trimQual
+    Int? trim5end
+    Int? trim3end
+    Boolean? trimAdapter
+    Float? trimRate
+    Boolean? trimPolyA
+    File? artifactFile
+
+    Int? minLen
+    Int? avgQual
+    Int? numN
+    Float? filtLC
+    Boolean? filtPhiX
+
+    Int? ascii
+    Int? outAscii
+
+    String? outPrefix
+    File? outStats
+
+    Int? numCPU
+    Int? splitSize
+    Boolean? qcOnly
+    Boolean? kmerCalc
+    Int? kmerNum
+    Int? splitSubset
+    Boolean? discard
+    Boolean? substitute
+    Boolean? trimOnly
+    Int? replaceGN
+    Boolean? trim5off
+    Boolean? debug
   }
 
   String outputDir = "${outDir}/QcReads"
