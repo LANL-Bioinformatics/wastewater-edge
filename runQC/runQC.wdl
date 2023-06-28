@@ -131,6 +131,9 @@ task faqcs {
   }
     # FaQCs [options] [-u unpaired.fastq] -p reads1.fastq reads2.fastq -d out_directory
   command <<<
+
+    # ln /localization/path/file.txt /analysis/path/file.txt
+
     FaQCs ~{"--mode" + trimMode} \ 
     ~{"-q" + trimQual} \
     ~{"--5end" + trim5end} \
