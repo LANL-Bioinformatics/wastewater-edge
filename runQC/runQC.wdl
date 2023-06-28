@@ -7,7 +7,7 @@ workflow runQC{
   input{
     String outDir
     Array[File] inputFastq
-    Boolean? pairedFile
+    Boolean pairedFile
 
     String? trimMode
     Int? trimQual
@@ -58,7 +58,7 @@ workflow runQC{
     trimRate = trimRate,
     trimPolyA = trimPolyA,
     artifactFile = artifactFile,
-    
+
     minLen = minLen,
     avgQual = avgQual,
     numN = numN,
@@ -135,33 +135,34 @@ task faqcs {
     ~{"-q" + trimQual} \
     ~{"--5end" + trim5end} \
     ~{"--3end" + trim3end} \
-    ~{"--adapter" + trimAdapter} \
+    ~{true="--adapter True" false="" trimAdapter} \
     ~{"--rate" + trimRate} \
-    ~{"--polyA" + trimPolyA} \
+    ~{true="--polyA True" false="" trimPolyA} \
     ~{"--artifactFile" + artifactFile} \
     ~{"--min_L" + minLen} \
     ~{"--avg_q" + avgQual} \
     ~{"-n" + numN} \
     ~{"--lc" + filtLC} \
-    ~{"--phiX" + filtPhiX} \
+    ~{true="--phiX True" false="" filtPhiX} \
     ~{"--ascii" + ascii} \
     ~{"--out_ascii" + outAscii} \
     ~{"--prefix" + outPrefix} \
     ~{"--stats" + outStats} \
     ~{"-t" + numCPU} \
     ~{"--split_size" + splitSize} \
-    ~{"--qc_only" + qcOnly} \
-    ~{"--kmer_rarefaction" + kmerCalc} \
+    ~{true="--qc_only True" false="" qcOnly} \
+    ~{true="--kmer_rarefaction True" false="" kmerCalc} \
     ~{"-m" + kmerNum} \
     ~{"--subset" + splitSubset} \
-    ~{"--discard" + discard} \
-    ~{"--substitute" + substitute} \
-    ~{"--trim_only" + trimOnly} \
+    ~{true="--discard True" false="" discard} \
+    ~{true="--substitute True" false="" substitute} \
+    ~{true="--trim_only True" false="" trimOnly} \
     ~{"--replace_to_N_q" + replaceGN} \
-    ~{"--5trim_off" + trim5off} \
-    ~{"--debug" + debug} \
+    ~{true="--5trim_off True" false="" trim5off} \
+    ~{true="--debug True" false="" debug} \
     ~{true="-p" false="-u" pairedFile} \
-    ~{sep=' ' inputFastq} ~{"-d " + outDir}
+    ~{sep=' ' inputFastq} \
+    ~{"-d " + outDir}
   >>>
 
   output {
@@ -172,7 +173,7 @@ task faqcs {
   }
 
   runtime {
-        docker: "kaijli/runqc:1.0"
+        docker: "kaijli/runqc:1.1"
         continueOnReturnCode: true
     }
 }
