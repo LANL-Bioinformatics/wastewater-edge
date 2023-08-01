@@ -55,13 +55,15 @@ def main():
     # change path into list to use Path package
     # outdir_list = os.path.normpath(expanded_outdir).split(os.path.sep)
     
-    outdir_list = os.path.normpath(args.outdir).split(os.path.sep)
-    # create Path type object
-    outdir_path = Path()
-    for dir in outdir_list:
-        outdir_path = Path.joinpath(outdir_path, dir)
+    # outdir = Path(args.outdir)
+    # outdir_list = os.path.normpath(args.outdir).split(os.path.sep)
+    # # create Path type object
+    # outdir_path = Path()
+    # for dir in outdir_list:
+    #     outdir_path = Path.joinpath(outdir_path, dir)
 
-    args.outdir = outdir_path
+    # args.outdir = outdir_path
+    args.outdir = Path(args.outdir)
     outdir = args.outdir   
 
     for accession in args.accessions:

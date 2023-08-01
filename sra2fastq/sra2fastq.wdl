@@ -5,7 +5,6 @@ workflow sra {
     input {
         Array[String] accessions
         String outdir
-        String? ext_dir
         Boolean? clean
         String? platform_restrict
         Int? filesize_restrict
@@ -16,7 +15,6 @@ workflow sra {
         input:
         accessions = accessions,
         outdir = outdir,
-        ext_dir = ext_dir,
         clean = clean,
         platform_restrict = platform_restrict,
         filesize_restrict = filesize_restrict,
@@ -32,7 +30,6 @@ task sra2fastq {
     input {
         Array[String] accessions
         String outdir
-        String? ext_dir
         Boolean? clean
         String? platform_restrict
         Int? filesize_restrict
@@ -40,16 +37,19 @@ task sra2fastq {
     }
      command <<<
 
-        sra2fastq.py ~{sep=' ' accessions} ~{"--outdir=" + outdir}  ~{true=" --clean True" false="" clean} ~{" --platform_restrict=" + platform_restrict} ~{" --filesize_restrict=" + filesize_restrict} ~{" --runs_restrict=" + runs_restrict}
-        mkdir -p ~{ext_dir}
-        mv ~{outdir + "/*"} ~{ext_dir}
+        sra2fastq.py ~{sep=' ' accessions} \
+        ~{"--outdir=" + outdir}  \
+        ~{true=" --clean True" false="" clean} \
+        ~{" --platform_restrict=" + platform_restrict} \
+        ~{" --filesize_restrict=" + filesize_restrict} \
+        ~{" --runs_restrict=" + runs_restrict}
     >>>
     output {
         Array[File] outputFiles = glob("${outdir}/*")
     }
 
     runtime {
-        docker: "kaijli/sra2fastq:1.6"
+        docker: "kaijli/sra2fastq:1.6.2"
         continueOnReturnCode: true
     }
 }
