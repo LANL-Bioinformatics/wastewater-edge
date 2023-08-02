@@ -5,6 +5,7 @@ workflow sra {
     input {
         Array[String] accessions
         String outdir
+        String? ext_dir
         Boolean? clean
         String? platform_restrict
         Int? filesize_restrict
@@ -15,6 +16,7 @@ workflow sra {
         input:
         accessions = accessions,
         outdir = outdir,
+        ext_dir = ext_dir,
         clean = clean,
         platform_restrict = platform_restrict,
         filesize_restrict = filesize_restrict,
@@ -30,6 +32,7 @@ task sra2fastq {
     input {
         Array[String] accessions
         String outdir
+        String? ext_dir
         Boolean? clean
         String? platform_restrict
         Int? filesize_restrict
@@ -43,9 +46,18 @@ task sra2fastq {
         ~{" --platform_restrict=" + platform_restrict} \
         ~{" --filesize_restrict=" + filesize_restrict} \
         ~{" --runs_restrict=" + runs_restrict}
+
+        ~{ 
+           if defined(ext_dir) then 
+               "mkdir -p " + ext_dir + "; cp -R " + outdir + "/* " + ext_dir 
+           else 
+               ":"
+         }
+
+         for acc in ~{sep=' ' accessions}; do  printf '%s\n' ~{outdir}/$acc/* >> file_list; done
     >>>
     output {
-        Array[File] outputFiles = glob("${outdir}/*")
+        Array[File] outputFiles = read_lines("file_list")
     }
 
     runtime {

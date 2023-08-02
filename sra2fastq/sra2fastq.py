@@ -45,24 +45,6 @@ def main():
     args.http_proxy = f"--proxy '{args.user_proxy}' " if args.user_proxy else args.http_proxy
     args.ftp_proxy = f"--proxy '{args.user_proxy}' " if args.user_proxy else args.ftp_proxy
 
-    # Convert user path string into python path
-    # expand any ~ to full path
-
-    # expanded_outdir = os.path.expanduser(args.outdir)
-    # check if it's an absolute path, convert if not
-    # if not os.path.isabs(expanded_outdir):
-    #     expanded_outdir = os.path.abspath(expanded_outdir)
-    # change path into list to use Path package
-    # outdir_list = os.path.normpath(expanded_outdir).split(os.path.sep)
-    
-    # outdir = Path(args.outdir)
-    # outdir_list = os.path.normpath(args.outdir).split(os.path.sep)
-    # # create Path type object
-    # outdir_path = Path()
-    # for dir in outdir_list:
-    #     outdir_path = Path.joinpath(outdir_path, dir)
-
-    # args.outdir = outdir_path
     args.outdir = Path(args.outdir)
     outdir = args.outdir   
 
