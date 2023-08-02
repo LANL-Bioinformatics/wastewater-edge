@@ -24,7 +24,7 @@ workflow sra {
 
     }
     output {
-       Array[File] outputFiles = sra2fastq.outputFiles 
+       Array[File?] outputFiles = sra2fastq.outputFiles 
     }
 }
 
@@ -57,7 +57,7 @@ task sra2fastq {
          for acc in ~{sep=' ' accessions}; do  printf '%s\n' ~{outdir}/$acc/* >> file_list; done
     >>>
     output {
-        Array[File] outputFiles = read_lines("file_list")
+        Array[File?] outputFiles = read_lines("file_list")
     }
 
     runtime {
