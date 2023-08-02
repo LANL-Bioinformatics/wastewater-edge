@@ -3,8 +3,8 @@
 version 1.0
 workflow sra {
     input {
-        Array[String] accessions
-        String outdir
+        Array[String?] accessions
+        String? outdir
         String? ext_dir
         Boolean? clean
         String? platform_restrict
@@ -30,8 +30,8 @@ workflow sra {
 
 task sra2fastq {
     input {
-        Array[String] accessions
-        String outdir
+        Array[String?] accessions
+        String? outdir
         String? ext_dir
         Boolean? clean
         String? platform_restrict
