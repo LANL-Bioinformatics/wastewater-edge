@@ -3,7 +3,7 @@
 version 1.0
 workflow sra {
     input {
-        Array[String?] accessions
+        Array[String]? accessions
         String? outdir
         String? ext_dir
         Boolean? clean
@@ -24,13 +24,13 @@ workflow sra {
 
     }
     output {
-       Array[File?] outputFiles = sra2fastq.outputFiles 
+       Array[File]? outputFiles = sra2fastq.outputFiles 
     }
 }
 
 task sra2fastq {
     input {
-        Array[String?] accessions
+        Array[String]? accessions
         String? outdir
         String? ext_dir
         Boolean? clean
@@ -57,7 +57,7 @@ task sra2fastq {
          for acc in ~{sep=' ' accessions}; do  printf '%s\n' ~{outdir}/$acc/* >> file_list; done
     >>>
     output {
-        Array[File?] outputFiles = read_lines("file_list")
+        Array[File]? outputFiles = read_lines("file_list")
     }
 
     runtime {

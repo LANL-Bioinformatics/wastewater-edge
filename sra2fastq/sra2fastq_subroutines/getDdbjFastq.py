@@ -6,7 +6,7 @@ import argparse
 
 def getDdbjFastq(info: dict, run_acc: str, args: argparse.Namespace):
     OUTDIR = args.outdir
-    sys.stderr.write("Retrieving FASTQ for", run_acc, "from DDBJ...")
+    sys.stderr.write(f"Retrieving FASTQ for {run_acc} from DDBJ...")
 
     platform = info['platform']
     library = info['library']

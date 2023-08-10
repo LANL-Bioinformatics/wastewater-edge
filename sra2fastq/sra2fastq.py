@@ -22,7 +22,7 @@ def main():
         formatter_class=argparse.RawDescriptionHelpFormatter
     )
 
-    parser.add_argument('accessions', metavar='Accession#', nargs='?', help='accession number')
+    parser.add_argument('accessions', metavar='Accession#', nargs='*', help='accession number')
 
     parser.add_argument('--outdir', '-o',  type=str, default='.', help='Output directory (default: %(default)s)')
     parser.add_argument('--clean', '-c', type=bool, default=False, help='Clean up temp directory')
@@ -48,7 +48,8 @@ def main():
     args.outdir = Path(args.outdir)
     outdir = args.outdir   
 
-    if args.accessions is None:
+    print(args.accessions)
+    if len(args.accessions) == 0:
         print("No accessions run")
         quit()
         
