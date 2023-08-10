@@ -84,6 +84,9 @@ workflow runQC{
     trim5off = trim5off,
     debug = debug
   }
+  output {
+    Array[File] outputFiles = faqcs.outputFiles
+  }
 }
 
 
@@ -93,7 +96,7 @@ task faqcs {
   input{
     String outDir
     Array[File] inputFastq
-    Boolean? pairedFile
+    Boolean pairedFile
 
     String? trimMode
     Int? trimQual
@@ -134,7 +137,7 @@ task faqcs {
 
     # ln /localization/path/file.txt /analysis/path/file.txt
 
-    FaQCs ~{"--mode" + trimMode} \ 
+    FaQCs ~{"--mode" + trimMode} \
     ~{"-q" + trimQual} \
     ~{"--5end" + trim5end} \
     ~{"--3end" + trim3end} \
@@ -163,16 +166,15 @@ task faqcs {
     ~{"--replace_to_N_q" + replaceGN} \
     ~{true="--5trim_off True" false="" trim5off} \
     ~{true="--debug True" false="" debug} \
-    ~{true="-p" false="-u" pairedFile} \
-    ~{sep=' ' inputFastq} \
+    ~{if pairedFile then "-1 "+ inputFastq[0]+ " -2 "+inputFastq[1] else "-u "+inputFastq[0] } \
     ~{"-d " + outDir}
   >>>
 
   output {
     Array[File] outputFiles = glob("${outDir}/*")
-    File trimmedFastq = "${outDir}/*.trimmed.fastq"
-    File stats = "${outDir}/*.stats.txt"
-    File outPDF = "${outDir}/*.pdf"
+    Array[File] trimmedFastq = glob("${outDir}/*.trimmed.fastq")
+    File stats = if (defined(outPrefix)) then "${outDir}/${outPrefix}.stats.txt" else  "${outDir}/QC.stats.txt"
+    File outPDF =  if (defined(outPrefix)) then "${outDir}/${outPrefix}_qc_report.pdf" else "${outDir}/QC_qc_report.pdf"
   }
 
   runtime {

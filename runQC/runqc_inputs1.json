@@ -1,5 +1,5 @@
 {
     "runQC.outDir": "test_out",
-    "runQC.inputFastq": ["/home/kli/Documents/EDGE_workflows/sra2fastq/test_out2/SRR11241255/SRR11241255_1.fastq.gz"],
+    "runQC.inputFastq": ["test/test.1.fastq"],
     "runQC.pairedFile": "False"
   }
