@@ -1,5 +1,5 @@
 # syntax=docker/dockerfile:1
-FROM continuumio/miniconda3:latest
+FROM continuumio/miniconda3:23.5.2-0
 
 # specify env variables (can check with echo env for ex.)
 ENV container docker
