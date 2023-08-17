@@ -178,7 +178,7 @@ task faqcs {
   }
 
   runtime {
-        docker: "kaijli/runqc:1.1"
+        docker: "kaijli/runqc:1.0"
         continueOnReturnCode: true
     }
 }
