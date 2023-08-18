@@ -52,7 +52,7 @@ def main():
     if len(args.accessions) == 0:
         print("No accessions run")
         quit()
-        
+
     for accession in args.accessions:
         # run tool if accession number is valid
         if s.isValidAcc(accession):
@@ -60,6 +60,11 @@ def main():
             temp_dir = Path(args.outdir, "sra2fastq_temp")
             merged_dir = Path(args.outdir, "sra2fastq_temp", "merged")
             meta_file = Path(args.outdir, f"{accession}_metadata.txt")
+            finished = Path(args.outdir, ".finished")
+
+            if os.path.isfile(finished):
+                print("Accession already downloaded")
+                quit()
 
             # init out directories
             args.outdir.mkdir(parents=True, exist_ok=True)
@@ -71,7 +76,7 @@ def main():
             subprocess.run(f"pysradb metadata --detailed {accession} > {meta_file}", shell=True)
             
             # run tool
-            s.downloadAndMergeFastq(accession, args)
+            s.downloadAndMergeFastq(accession, args, finished)
             files = glob.glob(str(Path(args.outdir, "sra2fastq_temp", "merged", "*")))
             # move files into accession number folder and clean directories
 

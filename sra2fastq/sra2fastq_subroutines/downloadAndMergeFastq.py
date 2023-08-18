@@ -19,7 +19,7 @@ from .getSraFastqToolkits import getSraFastqToolkits
 from .pigZip import pigZip
 
 
-def downloadAndMergeFastq(acc: str, args: argparse.Namespace):
+def downloadAndMergeFastq(acc: str, args: argparse.Namespace, finished: Path):
     OUTDIR = args.outdir
     RUNS_RESTRICT = args.runs_restrict
     PLAT_RESTRICT = args.platform_restrict
@@ -77,5 +77,7 @@ def downloadAndMergeFastq(acc: str, args: argparse.Namespace):
                         shutil.copyfileobj(input_fastq, merged_file)
                 total_size += input_file.stat().st_size
                 os.unlink(input_file)
+        with open(finished, 'w') as fp:
+            pass
 
     sys.stderr.write(f"Finished downloading acc# {acc}.\n")
