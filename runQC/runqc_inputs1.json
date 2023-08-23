@@ -1,5 +1,5 @@
 {
-    "runQC.outDir": "test_out",
-    "runQC.inputFastq": ["/home/kli/Documents/EDGE_workflows/runQC/test/test.1.fastq"],
+    "runQC.outDir": "/home/kli/scratch/EDGE_workflows/runQC/test_out",
+    "runQC.inputFastq": ["/home/kli/scratch/EDGE_workflows/runQC/test/test.1.fastq"],
     "runQC.pairedFile": "False"
   }
