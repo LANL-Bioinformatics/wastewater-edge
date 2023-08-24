@@ -48,6 +48,7 @@ def main():
     args.outdir = Path(args.outdir)
     outdir = args.outdir   
 
+
     print(args.accessions)
     if len(args.accessions) == 0:
         print("No accessions run")
