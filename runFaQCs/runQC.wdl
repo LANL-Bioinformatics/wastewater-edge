@@ -86,6 +86,9 @@ workflow runQC{
   }
   output {
     Array[File?] outputFiles = faqcs.outputFiles
+    Array[File?] trimmedFastq = faqcs.trimmedFastq
+    File? stats = faqcs.stats
+    File? outPDF = faqcs.outPDF  
   }
 }
 
