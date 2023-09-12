@@ -176,8 +176,8 @@ task faqcs {
   >>>
 
   output {
-    Array[File?] outputFiles = glob("${outDir}/*")
-    Array[File?] trimmedFastq = glob("${outDir}/*.trimmed.fastq")
+    Array[File] outputFiles = glob("${outDir}/*")
+    Array[File] trimmedFastq = glob("${outDir}/*.trimmed.fastq")
     File? stats = if (defined(outPrefix)) then "${outDir}/${outPrefix}.stats.txt" else  "${outDir}/QC.stats.txt"
     File? outPDF =  if (defined(outPrefix)) then "${outDir}/${outPrefix}_qc_report.pdf" else "${outDir}/QC_qc_report.pdf"
   }
