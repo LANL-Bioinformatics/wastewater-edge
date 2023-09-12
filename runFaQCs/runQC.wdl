@@ -139,6 +139,8 @@ task faqcs {
   command <<<
 
     # ln /localization/path/file.txt /analysis/path/file.txt
+    mkdir ~{outDir}
+    chmod 755 ~{outDir}
 
     FaQCs ~{"--mode" + trimMode} \
     ~{"-q" + trimQual} \
