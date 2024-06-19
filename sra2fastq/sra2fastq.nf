@@ -1,5 +1,5 @@
 #!/usr/bin/env nextflow
-//to run: nextflow run sra2fastq.nf -c [config file]
+//to run: nextflow run sra2fastq.nf -params-file [config file]
 
 
 //these defaults are overriden by any config files or command-line options
@@ -7,16 +7,20 @@ params.clean = ""
 params.platform_restrict = ""
 params.filesize_restrict = ""
 params.runs_restrict = ""
+//TODO: handle periods in JSON names
 params.outdir = ""
+params.accessions = "" 
 
 process SRA2FASTQ {
+
     input: 
     val accessions //space-separated string of accessions
     //TODO: go from JSON array input to this input 
 
     output:
-    path *fastq.gz emit: fastq_files //TODO: check for the appropriate number (and names?) of output files
-    path *metadata.txt emit: metadata_files
+    //todo: find out how to let nextflow see the output files
+    path '*fastq.gz', emit: fastq_files //TODO: check for the appropriate number (and names?) of output files
+    path '*metadata.txt', emit: metadata_files
 
     script: 
     //conditionally create command-line options based on non-empty parameters, for use in the command below
@@ -39,4 +43,4 @@ process SRA2FASTQ {
 
 workflow {
     fastq_ch = SRA2FASTQ(params.accessions)
-}
+    }
