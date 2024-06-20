@@ -1,5 +1,5 @@
 #!/usr/bin/env nextflow
-//to run: nextflow run sra2fastq.nf -params-file [config file]
+//to run: nextflow run sra2fastq.nf -params-file [JSON file with parameters]
 
 
 //these defaults are overriden by any config files or command-line options
@@ -13,17 +13,19 @@ params.accessions = ""
 accessions_ch = Channel.of(params.accessions)
 
 process SRA2FASTQ {
+    maxForks 1 //remove parallelization. multiple accessions now work.
     publishDir "$params.outdir"
+    errorStrategy "finish" //complete any processes that didn't fail
 
     input: 
-    val accessions //space-separated string of accessions
-    //TODO: go from JSON array input to this input 
+
+    val accessions //single accession string
 
     output:
-    path "*/*.fastq.gz", emit: fastq_files //TODO: check for the appropriate number (and names?) of output files
+    path "*/*.fastq.gz", emit: fastq_files
     path "*/*_metadata.txt", emit: metadata_files
     path "*/sra2fastq_temp/*", emit: temp_files, optional: true
-    //TODO: allow for discovery of hidden "finished" file
+    //TODO: allow for discovery of hidden "finished" file [used in reducing duplicate downloads]
     //path "*/.finished", emit: finished_files
 
     script: 
