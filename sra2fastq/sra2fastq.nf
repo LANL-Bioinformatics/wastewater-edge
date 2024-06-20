@@ -13,10 +13,9 @@ params.accessions = ""
 accessions_ch = Channel.of(params.accessions)
 
 process SRA2FASTQ {
-
-    input: 
     publishDir "$params.outdir"
 
+    input: 
     val accessions //space-separated string of accessions
     //TODO: go from JSON array input to this input 
 
@@ -46,5 +45,5 @@ process SRA2FASTQ {
 
 
 workflow {
-    fastq_ch = SRA2FASTQ(params.accessions)
+    fastq_ch = SRA2FASTQ(accessions_ch.flatten())
     }
