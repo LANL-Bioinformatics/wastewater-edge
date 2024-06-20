@@ -24,7 +24,6 @@ def main():
 
     parser.add_argument('accessions', metavar='Accession#', nargs='*', help='accession number')
 
-    parser.add_argument('--outdir', '-o',  type=str, default='.', help='Output directory (default: %(default)s)')
     parser.add_argument('--clean', '-c', type=bool, default=False, help='Clean up temp directory')
     parser.add_argument('--platform_restrict', '-pr', type=str, default=None, help='Only allow a specific platform (default: %(default)s)')
     parser.add_argument('--filesize_restrict', '-fr', type=int, default=None, help='(in MB) Only allow to download less than a specific total size of files. (default: %(default)s)')
@@ -45,9 +44,7 @@ def main():
     args.http_proxy = f"--proxy '{args.user_proxy}' " if args.user_proxy else args.http_proxy
     args.ftp_proxy = f"--proxy '{args.user_proxy}' " if args.user_proxy else args.ftp_proxy
 
-    args.outdir = Path(args.outdir)
-    outdir = args.outdir   
-
+    outdir = Path(".")
 
     print(args.accessions)
     if len(args.accessions) == 0:
@@ -57,18 +54,18 @@ def main():
     for accession in args.accessions:
         # run tool if accession number is valid
         if s.isValidAcc(accession):
-            args.outdir = Path(outdir, accession)
-            temp_dir = Path(args.outdir, "sra2fastq_temp")
-            merged_dir = Path(args.outdir, "sra2fastq_temp", "merged")
-            meta_file = Path(args.outdir, f"{accession}_metadata.txt")
-            finished = Path(args.outdir, ".finished")
+            outdir = Path(outdir, accession)
+            temp_dir = Path(outdir, "sra2fastq_temp")
+            merged_dir = Path(outdir, "sra2fastq_temp", "merged")
+            meta_file = Path(outdir, f"{accession}_metadata.txt")
+            finished = Path(outdir, ".finished")
 
             if os.path.isfile(finished):
                 print("Accession already downloaded")
                 quit()
 
             # init out directories
-            args.outdir.mkdir(parents=True, exist_ok=True)
+            outdir.mkdir(parents=True, exist_ok=True)
             temp_dir.mkdir(exist_ok=True)
             merged_dir.mkdir(exist_ok=True)
 
@@ -78,14 +75,14 @@ def main():
             
             # run tool
             s.downloadAndMergeFastq(accession, args, finished)
-            files = glob.glob(str(Path(args.outdir, "sra2fastq_temp", "merged", "*")))
+            files = glob.glob(str(Path(outdir, "sra2fastq_temp", "merged", "*")))
             # move files into accession number folder and clean directories
 
             for file in files:
-                shutil.move(file, args.outdir)
+                shutil.move(file, outdir)
             if args.clean:
                 sys.stderr.write("Cleaning up temporary directories \n")
-                shutil.rmtree(Path(args.outdir, "sra2fastq_temp"))
+                shutil.rmtree(Path(outdir, "sra2fastq_temp"))
             
             sys.stderr.write(f"Done with {accession} \n")
         

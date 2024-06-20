@@ -7,24 +7,28 @@ params.clean = ""
 params.platform_restrict = ""
 params.filesize_restrict = ""
 params.runs_restrict = ""
-//TODO: handle periods in JSON names
 params.outdir = ""
 params.accessions = "" 
+
+accessions_ch = Channel.of(params.accessions)
 
 process SRA2FASTQ {
 
     input: 
+    publishDir "$params.outdir"
+
     val accessions //space-separated string of accessions
     //TODO: go from JSON array input to this input 
 
     output:
-    //todo: find out how to let nextflow see the output files
-    path '*fastq.gz', emit: fastq_files //TODO: check for the appropriate number (and names?) of output files
-    path '*metadata.txt', emit: metadata_files
+    path "*/*.fastq.gz", emit: fastq_files //TODO: check for the appropriate number (and names?) of output files
+    path "*/*_metadata.txt", emit: metadata_files
+    path "*/sra2fastq_temp/*", emit: temp_files, optional: true
+    //TODO: allow for discovery of hidden "finished" file
+    //path "*/.finished", emit: finished_files
 
     script: 
     //conditionally create command-line options based on non-empty parameters, for use in the command below
-    def outdir = params.outdir != "" ? "--outdir $params.outdir" : "" 
     def clean = params.clean != "" ? "--clean True" : "" 
     def platform_restrict = params.platform_restrict != "" ? "--platform_restrict $params.platform_restrict" : ""
     def filesize_restrict = params.filesize_restrict != "" ? "--filesize_restrict $params.filesize_restrict" : ""
@@ -33,13 +37,13 @@ process SRA2FASTQ {
     //invoke sra2fastq.py with those options
     """
     sra2fastq.py $accessions \
-    $outdir \
     $clean \
     $platform_restrict \
     $filesize_restrict \
     $runs_restrict
     """
 }
+
 
 workflow {
     fastq_ch = SRA2FASTQ(params.accessions)
