@@ -13,7 +13,7 @@ params.accessions = ""
 accessions_ch = Channel.of(params.accessions)
 
 process SRA2FASTQ {
-    maxForks 1 //remove parallelization. multiple accessions now work.
+    tag "$accessions"
     publishDir "$params.outdir"
     errorStrategy "finish" //complete any processes that didn't fail
 

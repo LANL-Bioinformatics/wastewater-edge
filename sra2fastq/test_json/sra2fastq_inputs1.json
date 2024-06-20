@@ -1,4 +1,4 @@
 {
-    "accessions": "SRR29462562",
+    "accessions": ["SRR29462562"],
     "outdir": "test_out"
   }

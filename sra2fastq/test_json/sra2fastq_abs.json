@@ -1,4 +1,4 @@
 {
-    "accessions": "SRR29462562",
+    "accessions": ["SRX20564104"],
     "outdir": "/home/apwat/WORK/EDGE_workflows/sra2fastq"
   }
