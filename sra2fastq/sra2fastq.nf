@@ -22,7 +22,7 @@ process SRA2FASTQ {
     val accession //single accession string
 
     output:
-    path "$accession/*.fastq.gz", emit: fastq_files
+    path "$accession/*.fastq.gz"
     path "$accession/*_metadata.txt"
     path "$accession/sra2fastq_temp/*", optional: true
 
@@ -43,5 +43,5 @@ process SRA2FASTQ {
 workflow {
 
     fastq_ch = SRA2FASTQ(accessions_ch.flatten().unique())
-    
+
     }
