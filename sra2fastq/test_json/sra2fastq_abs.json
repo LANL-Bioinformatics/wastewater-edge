@@ -1,4 +1,4 @@
 {
     "accessions": ["SRX20564104"],
-    "outdir": "/home/apwat/WORK/EDGE_workflows/sra2fastq"
+    "outdir": "/an/absolute/path"
   }

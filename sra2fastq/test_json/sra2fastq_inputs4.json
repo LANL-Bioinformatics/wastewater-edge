@@ -1,5 +1,5 @@
 {
-    "accessions": ["SRR11241255", "SRX20564104", "SRR29462562"],
-    "outdir": "sra_output/test_out",
+    "accessions": ["SRR11241255", "SRX20564104", "SRR29462562", "SRX24960352"],
+    "outdir": "test_out/4_acc",
     "clean": true
   }

@@ -1,51 +1,47 @@
 #!/usr/bin/env nextflow
-//to run: nextflow run sra2fastq.nf -params-file [JSON file with parameters]
-
+//to run: nextflow [OPT: -log /path/to/log file] run sra2fastq.nf -params-file [JSON parameter file]
+//not supporting filesize or run count restrictions
 
 //these defaults are overriden by any config files or command-line options
 params.clean = ""
 params.platform_restrict = ""
-params.filesize_restrict = ""
-params.runs_restrict = ""
 params.outdir = ""
 params.accessions = "" 
 
 accessions_ch = Channel.of(params.accessions)
 
 process SRA2FASTQ {
-    tag "$accessions"
-    publishDir "$params.outdir"
+    //debug true
+
+    tag "$accession"
+    publishDir "$params.outdir", mode: 'copy'
     errorStrategy "finish" //complete any processes that didn't fail
 
     input: 
 
-    val accessions //single accession string
+    val accession //single accession string
 
     output:
-    path "*/*.fastq.gz", emit: fastq_files
-    path "*/*_metadata.txt", emit: metadata_files
-    path "*/sra2fastq_temp/*", emit: temp_files, optional: true
-    //TODO: allow for discovery of hidden "finished" file [used in reducing duplicate downloads]
-    //path "*/.finished", emit: finished_files
+    path "$accession/*.fastq.gz", emit: fastq_files
+    path "$accession/*_metadata.txt"
+    path "$accession/sra2fastq_temp/*", optional: true
 
     script: 
     //conditionally create command-line options based on non-empty parameters, for use in the command below
     def clean = params.clean != "" ? "--clean True" : "" 
     def platform_restrict = params.platform_restrict != "" ? "--platform_restrict $params.platform_restrict" : ""
-    def filesize_restrict = params.filesize_restrict != "" ? "--filesize_restrict $params.filesize_restrict" : ""
-    def runs_restrict = params.runs_restrict != "" ? "--runs_restrict $params.runs_restrict" : ""
 
     //invoke sra2fastq.py with those options
     """
-    sra2fastq.py $accessions \
+    sra2fastq.py $accession \
     $clean \
     $platform_restrict \
-    $filesize_restrict \
-    $runs_restrict
     """
 }
 
 
 workflow {
-    fastq_ch = SRA2FASTQ(accessions_ch.flatten())
+
+    fastq_ch = SRA2FASTQ(accessions_ch.flatten().unique())
+    
     }
