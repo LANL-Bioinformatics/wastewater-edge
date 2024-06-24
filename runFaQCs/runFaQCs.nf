@@ -67,7 +67,9 @@ process runFaQCs {
     path "$params.outDir/$params.outStats", optional: true
     //when discard CLI parameter specified true
     path "$params.outDir/${params.outPrefix}.discard.trimmed.fastq", optional: true
-    //TODO: add files produced when debug CLI parameter specified true
+    //Files produced when debug CLI parameter specified true
+    path "$params.outDir/qa.*", optional: true
+    path "$params.outDir/${params.outPrefix}.*", optional: true //catchall for remaining files. TODO: specify?
 
 
 
@@ -110,7 +112,7 @@ process runFaQCs {
     def trim5off = params.trim5off != null ? "--5trim_off $params.trim5off " : ""
     def debugFlag = params.debugFlag != null ? "--debug $params.debugFlag " : ""
 
-    //creating target output directory for FaQCs, without which it silently fails
+    //creating target output directory for FaQCs
     //and invoking FaQCs with the parameterized options
     """
     mkdir $params.outDir
@@ -165,5 +167,6 @@ workflow {
         "touch NO_FILE".execute().text //placeholder if artifact file is not provided
         artifact_filter = file(params.artifactFile, checkIfExists:true)
         runFaQCs(channel.fromPath(params.inputFastq, relative: true).collect(), artifact_filter)
+        "rm NO_FILE".execute().text
     }
 }
