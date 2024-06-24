@@ -58,11 +58,11 @@ process runFaQCs {
     path "reads"
 
     output:
-    path "$params.outDir/${params.outPrefix}.1.trimmed.fastq", emit: read1_trimmed, optional:true
-    path "$params.outDir/${params.outPrefix}.2.trimmed.fastq", emit: read2_trimmed, optional: true
-    path "$params.outDir/${params.outPrefix}.unpaired.trimmed.fastq", emit: unpaired_trimmed, optional: true
-    path "$params.outDir/${params.outPrefix}_qc_report.pdf", emit: qc_report, optional: true
-    path "$params.outDir/$params.outStats", emit: stats_report, optional: true
+    path "$params.outDir/${params.outPrefix}.1.trimmed.fastq", optional:true
+    path "$params.outDir/${params.outPrefix}.2.trimmed.fastq", optional: true
+    path "$params.outDir/${params.outPrefix}.unpaired.trimmed.fastq", optional: true
+    path "$params.outDir/${params.outPrefix}_qc_report.pdf", optional: true
+    path "$params.outDir/$params.outStats", optional: true
 
 
     script:
@@ -70,8 +70,6 @@ process runFaQCs {
     def outDir = params.outDir != null ? "-d ./$params.outDir " : ""
     def files = (params.pairedFile != null && params.pairedFile) ? "-1 reads1 -2 reads2 " : "-u reads "
     
-
-    //nextflow comparisons are supposedly null-safe
     def trimMode = params.trimMode != null ? "--mode $params.trimMode " : ""
     def trimQual = params.trimQual != null ? "--q $params.trimQual " : "" 
     def trim5end = params.trim5end != null ? "--5end $params.trim5end " : "" 
@@ -108,6 +106,8 @@ process runFaQCs {
     def version = params.version != null ? "--version $params.version " : "" //check if substition needed
 
 
+    //creating target output directory for FaQCs, without which it silently fails
+    //and invoking FaQCs with the parameterized options
     """
     mkdir $params.outDir
 
@@ -150,10 +150,4 @@ $outDir
 
 workflow {
     runFaQCs(channel.of(params.inputFastq))
-    println("Created files:")
-    runFaQCs.out.read1_trimmed.view()
-    runFaQCs.out.read2_trimmed.view()
-    runFaQCs.out.unpaired_trimmed.view()
-    runFaQCs.out.qc_report.view()
-    runFaQCs.out.stats_report.view()
 }
