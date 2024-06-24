@@ -17,7 +17,7 @@ params.trim3end = null
 params.trimAdapter = null
 params.trimRate = null
 params.trimPolyA = null
-params.artifactFile = null
+params.artifactFile = "NO_FILE"
 
 //filtering parameters
 params.minLen = null
@@ -57,6 +57,7 @@ process runFaQCs {
 
     input:
     path "reads"
+    path artifacts
 
     output:
     path "$params.outDir/${params.outPrefix}.1.trimmed.fastq", optional:true
@@ -82,7 +83,7 @@ process runFaQCs {
     def trimAdapter = params.trimAdapter != null ? "--adapter $params.trimAdapter " : "" 
     def trimRate = params.trimRate != null ? "--rate $params.trimRate " : "" 
     def trimPolyA = params.trimPolyA != null ? "--polyA $params.trimPolyA " : ""
-    def artifactFile = params.artifactFile != null ? "--artifactFile $params.artifactFile " : ""
+    def artifactFile = artifacts.name != 'NO_FILE' ? "--artifactFile $artifacts " : ""
 
     def minLen = params.minLen != null ? "--min_L $params.minLen " : ""
     def avgQual = params.avgQual != null ? "--avg_q $params.avgQual " : ""
@@ -161,6 +162,8 @@ workflow {
         runVersion()
     }
     else {
-        runFaQCs(channel.fromPath(params.inputFastq, relative: true).collect())
+        "touch NO_FILE".execute().text //placeholder if artifact file is not provided
+        artifact_filter = file(params.artifactFile, checkIfExists:true)
+        runFaQCs(channel.fromPath(params.inputFastq, relative: true).collect(), artifact_filter)
     }
 }
