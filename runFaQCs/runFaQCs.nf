@@ -39,7 +39,8 @@ params.numCPU = null
 params.splitSize = null
 params.qcOnly = null
 params.kmerCalc = null
-params.kmerNum = null
+//TODO: ID why providing below value with -m throws an error
+//params.kmerNum = null
 params.splitSubset = null
 params.discard = null
 params.substitute = null
@@ -50,7 +51,7 @@ params.debugFlag = null
 params.version = null
 
 process runFaQCs {
-    debug
+    debug true
     publishDir ".", mode: 'copy'
 
 
@@ -63,6 +64,10 @@ process runFaQCs {
     path "$params.outDir/${params.outPrefix}.unpaired.trimmed.fastq", optional: true
     path "$params.outDir/${params.outPrefix}_qc_report.pdf", optional: true
     path "$params.outDir/$params.outStats", optional: true
+    //when discard CLI parameter specified true
+    path "$params.outDir/${params.outPrefix}.discard.trimmed.fastq", optional: true
+    //TODO: add files produced when debug CLI parameter specified true
+
 
 
     script:
@@ -95,7 +100,7 @@ process runFaQCs {
     def splitSize = params.splitSize != null ? "--split_size $params.splitSize " : ""
     def qcOnly = params.qcOnly != null ? "--qc_only $params.qcOnly " : ""
     def kmerCalc = params.kmerCalc != null ? "--kmer_rarefaction $params.kmerCalc " : ""
-    def kmerNum = params.kmerNum != null ? "--m $params.kmerNum " : ""
+    //def kmerNum = params.kmerNum != null ? "-m $params.kmerNum " : ""
     def splitSubset = params.splitSubset != null ? "--subset $params.splitSubset " : ""
     def discard = params.discard != null ? "--discard $params.discard " : ""
     def substitute = params.substitute != null ? "--substitute $params.substitute " : ""
@@ -103,8 +108,6 @@ process runFaQCs {
     def replaceGN = params.replaceGN != null ? "--replace_to_N_q $params.replaceGN " : ""
     def trim5off = params.trim5off != null ? "--5trim_off $params.trim5off " : ""
     def debugFlag = params.debugFlag != null ? "--debug $params.debugFlag " : ""
-    def version = params.version != null ? "--version $params.version " : "" //check if substition needed
-
 
     //creating target output directory for FaQCs, without which it silently fails
     //and invoking FaQCs with the parameterized options
@@ -132,7 +135,6 @@ $numCPU\
 $splitSize\
 $qcOnly\
 $kmerCalc\
-$kmerNum\
 $splitSubset\
 $discard\
 $substitute\
@@ -140,14 +142,25 @@ $trimOnly\
 $replaceGN\
 $trim5off\
 $debugFlag\
-$version\
 $files\
 $outDir
     """
 
 }
 
+process runVersion {
+     script:
+     """
+     FaQCs --version
+     """
+}
+
 
 workflow {
-    runFaQCs(channel.of(params.inputFastq))
+    if (params.version != null) {
+        runVersion()
+    }
+    else {
+        runFaQCs(channel.fromPath(params.inputFastq, relative: true).collect())
+    }
 }
