@@ -2,7 +2,7 @@
 //to run: nextflow [OPT: -log /path/to/log file] run runFaQCs.nf -params-file [JSON parameter file]
 
 //defaults overriden by any configuration files
-//default values for parameters are required to avoid warning
+//default values for parameters are required to avoid warning. Also serves as documentation for accepted parameters.
 
 //input and output parameters
 params.outDir = null
@@ -17,7 +17,7 @@ params.trim3end = null
 params.trimAdapter = null
 params.trimRate = null
 params.trimPolyA = null
-params.artifactFile = "NO_FILE"
+params.artifactFile = "NO_FILE" //setup for NF optional input file pattern
 
 //filtering parameters
 params.minLen = null
@@ -39,7 +39,7 @@ params.numCPU = null
 params.splitSize = null
 params.qcOnly = null
 params.kmerCalc = null
-//TODO: ID why providing below value with -m throws an error
+//-m option seems to be nonfunctional in FaQCs 2.10. 
 //params.kmerNum = null
 params.splitSubset = null
 params.discard = null
@@ -68,9 +68,7 @@ process runFaQCs {
     //when discard CLI parameter specified true
     path "$params.outDir/${params.outPrefix}.discard.trimmed.fastq", optional: true
     //Files produced when debug CLI parameter specified true
-    path "$params.outDir/qa.*", optional: true
-    path "$params.outDir/${params.outPrefix}.*", optional: true //catchall for remaining files. TODO: specify?
-
+    path "$params.outDir/*.{txt,matrix}", optional: true
 
 
     script:
