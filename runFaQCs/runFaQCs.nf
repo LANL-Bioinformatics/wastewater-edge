@@ -60,9 +60,7 @@ process runFaQCs {
     path artifacts
 
     output:
-    path "$params.outDir/${params.outPrefix}.1.trimmed.fastq", optional:true
-    path "$params.outDir/${params.outPrefix}.2.trimmed.fastq", optional: true
-    path "$params.outDir/${params.outPrefix}.unpaired.trimmed.fastq", optional: true
+    path "$params.outDir/${params.outPrefix}.{1,2,unpaired}.trimmed.fastq", optional:true
     path "$params.outDir/${params.outPrefix}_qc_report.pdf", optional: true
     path "$params.outDir/$params.outStats", optional: true
     //when discard CLI parameter specified true
