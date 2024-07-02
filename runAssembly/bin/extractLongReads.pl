@@ -12,14 +12,15 @@ my $len_cutoff=350;
 
 GetOptions(
     'p:s' => \$paired_fasta,
-    'u:s' => \$unpaired_fasta,
+    'u:s' => \$single_fasta,
     'd=s' => \$outputDir,
     'len:s' => \$len_cutoff
-)
+);
+
 
 my $short_paired_fasta="short_paired.fa";
-my $short_single="short_single.fa";
-my $long_fasta="long.fa"
+my $short_single_fasta="short_single.fa";
+my $long_fasta="long.fa";
 
 open (my $o_paired, ">$short_paired_fasta") or die "Cannot write $short_paired_fasta\n";
 open (my $o_single, ">$short_single_fasta") or die "Cannot write $short_single_fasta\n";
@@ -29,6 +30,7 @@ if (-s $paired_fasta) {
     open (my $fh, $paired_fasta) or die "$! $paired_fasta";
     while (<$fh>)
     { 
+        print "reading file!";
         $_ =~ s/\>//g;
         my ($id, @seq) = split /\n/, $_;
         next if (!$id);

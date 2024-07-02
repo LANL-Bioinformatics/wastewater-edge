@@ -12,30 +12,73 @@ params.unpairedFile = "NO_FILE"
 params.pacbioFasta = "NO_FILE"
 
 
-// process idbaUD {
-//     //TODO
-// }
+process idbaUD {
+    //TODO: implement avglen safety
+    publishDir "test_idba"
 
-process idbaExtractLong {
-    //TODO
     input:
-    path paired
-    path unpaired
+    path short_paired
+    path short_single
+    path long_reads
 
     output:
     path "*"
 
     script:
+    println(short_paired.name)
+    println(short_single.name)
+    println(long_reads.name)
+    def runFlag = ""
+    if(short_paired.name != "NO_FILE" && short_single.name != "NO_FILE2") {
+        runFlag = "-r $short_single --read_level_2 $short_paired "
+    }
+    else if(short_paired.name != "NO_FILE") {
+        runFlag = "-r $short_paired "
+    }
+    else if(short_single.name != "NO_FILE2") {
+        runFlag = "-r $short_single "
+    }
+    def longReadsFile = long_reads.name != "NO_FILE3" ? "-l $long_reads" : ""
+    def maxK = params.idba.maxK != null ? "--maxk $params.idba.maxK " : ""
+    def minK = params.idba.minK != null ? "--mink $params.idba.minK " : ""
+    def step = params.idba.step != null ? "--step $params.idba.step " : ""
+    def minLen = params.minContigSize != null ? "--min_contig $params.minContigSize " : ""
+
+    def memLimit = params.memLimit != null ? "ulimit -v $params.memLimit 2>/dev/null;" : ""
     """
-    extractLongReads.pl
-    -p paired
-    -u unpaired
-    -d . 
+    ${memLimit}idba_ud --pre_correction -o . --num_threads $params.threads\
+    $runFlag\
+    $longReadsFile\
+    $maxK\
+    $minK\
+    $step\
+    $minLen
+    """
+
+ }
+
+process idbaExtractLong {
+    input:
+    path "paired"
+    path "unpaired"
+
+    output:
+    path "short_paired.fa"
+    path "short_single.fa"
+    path "long.fa"
+
+    script:
+    def pair_file = paired.name != "NO_FILE" ? "-p paired " : ""
+    def unpaired_file = unpaired.name != "NO_FILE" ? "-u unpaired " : ""
+    """
+    extractLongReads.pl\
+    $pair_file\
+    $unpaired_file\
+    -d .
     """
 }
 
 process idbaPrep {
-
     input:
     path "paired"
     path "unpaired"
@@ -82,20 +125,20 @@ process spades {
     def memlimit = params.memlimit != null ? "-m ${params.memlimit/1024*1024}" : ""
 
     """
-    spades.py -o $params.outDir -t $params.threads 
-    $paired
-    $meta_flag
-    $sc_flag
-    $rna_flag
-    $plasmid_flag
-    $bio_flag
-    $corona_flag
-    $metaviral_flag
-    $metaplasmid_flag
-    $rnaviral_flag
-    $unpaired
-    $pacbio_file
-    $nanopore_file
+    spades.py -o $params.outDir -t $params.threads\
+    $paired\
+    $meta_flag\
+    $sc_flag\
+    $rna_flag\
+    $plasmid_flag\
+    $bio_flag\
+    $corona_flag\
+    $metaviral_flag\
+    $metaplasmid_flag\
+    $rnaviral_flag\
+    $unpaired\
+    $pacbio_file\
+    $nanopore_file\
     $memlimit
     """
 }
@@ -115,10 +158,10 @@ process megahit {
     def megahit_preset = params.megahit.preset != null ? "--presets $params.megahit.preset " : ""
 
     """
-    megahit -o $params.outDir -t $params.threads
-    $megahit_preset
-    $paired
-    $unpaired
+    megahit -o $params.outDir -t $params.threads\
+    $megahit_preset\
+    $paired\
+    $unpaired\
     2>&1
     """
 
@@ -135,8 +178,8 @@ process unicyclerPrep {
     script:
 
     """
-    seqtk seq -A -L
-    $params.unicycler.minLongReads
+    seqtk seq -A -L\
+    $params.unicycler.minLongReads\
     longreads > long_reads.fasta
     """
 }
@@ -159,9 +202,9 @@ process unicycler {
     //test to see if unicycler can be run from the environment
     //and if we need to export some java options
     """
-    unicycler -t $params.threads -o $params.outDir
-    $paired
-    $filt_lr
+    unicycler -t $params.threads -o $params.outDir\
+    $paired\
+    $filt_lr\
     $bridge 2>&1 1>/dev/null
     """
 
@@ -191,14 +234,14 @@ process lrasm {
     def flyeOpt = params.lrasm.algorithm == "metaflye" ? "--fo '--meta' ": ""
 
     """
-    lrasm -o $params.OutDir -t $params.threads
-    $preset
-    $consensus
-    $errorCorrection
-    $algorithm
-    $minLenOpt
-    $flyeOpt
-    $unpaired
+    lrasm -o $params.OutDir -t $params.threads\
+    $preset\
+    $consensus\
+    $errorCorrection\
+    $algorithm\
+    $minLenOpt\
+    $flyeOpt\
+    $unpaired\
     2>/dev/null
     """
     
@@ -206,6 +249,8 @@ process lrasm {
 
 workflow {
     "touch NO_FILE".execute().text
+    "touch NO_FILE2".execute().text
+    "touch NO_FILE3".execute().text
 
     paired_ch = channel.fromPath(params.pairedFiles, relative:true, checkIfExists:true).collect()
     unpaired_ch = channel.fromPath(params.unpairedFile, relative:true, checkIfExists:true)
@@ -215,10 +260,13 @@ workflow {
 
     if (params.assembler == "IDBA_UD") {
         //idbaUD(idbaExtractLong(idbaPrep(paired_ch, unpaired_ch)))
-        idbaExtractLong(idbaPrep(paired_ch, unpaired_ch))//even though the files to pipe exist, passed channel seems empty
-
-
-        
+        //idbaExtractLong(idbaPrep(paired_ch, unpaired_ch))//even though the files to pipe exist, passed channel seems empty
+        (c1,c2) = idbaPrep(paired_ch, unpaired_ch)
+        (sp,su,l) = idbaExtractLong(c1,c2.ifEmpty({file("NO_FILE", checkIfExists:true)}))
+        l.filter{it.size()>0}.ifEmpty("EMPTY!!!!!").view()
+        idbaUD(sp.filter{ it.size()>0 }.ifEmpty({file("NO_FILE", checkIfExists:true)}),
+            su.filter{ it.size()>0 }.ifEmpty({file("NO_FILE2", checkIfExists:true)}),
+            l.filter{ it.size()>0 }.ifEmpty({file("NO_FILE3", checkIfExists:true)}))
 
     }
     else if (params.assembler == "SPAdes") {
