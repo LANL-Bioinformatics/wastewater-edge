@@ -1,0 +1,6 @@
+{
+    "assembler":"uNicycleR",
+    "threads":4,
+    "projName":"test_unicycler",
+    "pairedFiles":["test_files/Ecoli_10x.1.fastq","test_files/Ecoli_10x.2.fastq"]
+}

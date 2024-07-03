@@ -2,14 +2,17 @@
 //to run: nextflow [OPT: -log /path/to/log file] run runAssembly.nf -params-file [JSON parameter file]
 
 //TODO: rethink inputs and outputs given nextflow's work directory aspects, esp. output directories
+//TODO: detection system for memory limit
+//TODO: output and transparency needs to be compared to EDGE website
+//TODO: specificity on output from assemblers, separate from cleanup. Will require seeing what's needed for downstream processes.
+
 params.assembler = "IDBA_UD"
 
 params.outDir = '.'
-params.threads = null //default?
+params.threads = 8 //default?
 params.projName = null
 params.pairedFiles = "NO_FILE"
-params.unpairedFile = "NO_FILE"
-params.pacbioFasta = "NO_FILE"
+params.unpairedFile = "NO_FILE2"
 
 
 process idbaUD {
@@ -25,9 +28,6 @@ process idbaUD {
     path "*"
 
     script:
-    println(short_paired.name)
-    println(short_single.name)
-    println(long_reads.name)
     def runFlag = ""
     if(short_paired.name != "NO_FILE" && short_single.name != "NO_FILE2") {
         runFlag = "-r $short_single --read_level_2 $short_paired "
@@ -99,6 +99,8 @@ process idbaPrep {
 }
 
 process spades {
+    publishDir "test_spades"
+
     input:
     path paired
     path unpaired
@@ -106,14 +108,14 @@ process spades {
     path nanopore
 
     output:
-    path "$params.assembler/*"
+    path "*"
 
     script:
-    def paired = params.pairedFiles != "NO_FILE" ? "--pe1-1 paired1 --pe2-2 paired2 " : ""
-    def unpaired = params.unpairedFile != "NO_FILE" ? "--s1 unpaired " : ""
-    def pacbio_file = params.spades.pacbio != "NO_FILE" ? "--pacbio pacbio " : ""
-    def nanopore_file = params.spades.nanopore != "NO_FILE" ? "--nanopore nanopore " : ""
-    def meta_flag = (params.pairedFiles != "NO_FILE" && params.spades.algorithm == "metagenome") ? "--meta " : ""
+    def paired = paired.name != "NO_FILE" ? "--pe1-1 ${paired[0]} --pe1-2 ${paired[1]} " : ""
+    def unpaired = unpaired.name != "NO_FILE2" ? "--s1 $unpaired " : ""
+    def pacbio_file = pacbio.name != "NO_FILE3" ? "--pacbio $pacbio " : ""
+    def nanopore_file = nanopore.name != "NO_FILE4" ? "--nanopore $nanopore " : ""
+    def meta_flag = (paired != "" && params.spades.algorithm == "metagenome") ? "--meta " : ""
     def sc_flag = params.spades == "singlecell" ? "--sc " : ""
     def rna_flag = params.spades == "rna" ? "--rna " : ""
     def plasmid_flag = params.spades == "plasmid" ? "--plasmid " : ""
@@ -122,7 +124,7 @@ process spades {
     def metaviral_flag = params.spades == "metaviral" ? "--metaviral " : ""
     def metaplasmid_flag = params.spades == "metaplasmid" ? "--metaplasmid " : ""
     def rnaviral_flag = params.spades == "rnaviral" ? "--rnaviral " : ""
-    def memlimit = params.memlimit != null ? "-m ${params.memlimit/1024*1024}" : ""
+    //def memlimit = params.memlimit != null ? "-m ${params.memlimit/1024*1024}" : ""
 
     """
     spades.py -o $params.outDir -t $params.threads\
@@ -138,27 +140,29 @@ process spades {
     $rnaviral_flag\
     $unpaired\
     $pacbio_file\
-    $nanopore_file\
-    $memlimit
+    $nanopore_file
     """
+    //$memlimit
 }
 
 
 process megahit {
+    publishDir "test_megahit"
+
     input:
     path paired
     path unpaired
 
     output:
-    path "$params.assembler/*"
+    path "megahit/*"
 
     script:
-    def paired = params.pairedFiles != "NO_FILE" ? "-1 paired1 -2 paired2 " : ""
-    def unpaired = params.unpairedFile != "NO_FILE" ? "-r unpaired " : ""
+    def paired = paired.name != "NO_FILE" ? "-1 ${paired[0]} -2 ${paired[1]} " : ""
+    def unpaired = unpaired.name != "NO_FILE" ? "-r $unpaired " : ""
     def megahit_preset = params.megahit.preset != null ? "--presets $params.megahit.preset " : ""
 
     """
-    megahit -o $params.outDir -t $params.threads\
+    megahit -o $params.outDir/megahit -t $params.threads\
     $megahit_preset\
     $paired\
     $unpaired\
@@ -180,23 +184,25 @@ process unicyclerPrep {
     """
     seqtk seq -A -L\
     $params.unicycler.minLongReads\
-    longreads > long_reads.fasta
+    $longreads > long_reads.fasta
     """
 }
 
 process unicycler {
+    publishDir "unicycler_test"
+
     input:
     path paired
     path unpaired
     path longreads //must check for NO_FILE. If present, expects filtered long reads.
 
     output:
-    path "$params.outDir/$params.assembler/*"
+    path "*"
 
     script:
-    def paired = params.pairedFiles != "NO_FILE" ? "-1 paired1 -2 paired2 " : ""
-    def unpaired = params.unpairedFile != "NO_FILE" ? "-r unpaired " : ""
-    def filt_lr = params.unicycler.longreads != "NO_FILE" ? "-l longreads " : ""
+    def paired = paired.name != "NO_FILE" ? "-1 ${paired[0]} -2 ${paired[1]} " : ""
+    def unpaired = unpaired.name != "NO_FILE2" ? "-r $unpaired " : ""
+    def filt_lr = longreads.name != "NO_FILE3" ? "-l $longreads " : ""
     def bridge = params.unicycler.bridgingMode != "normal" ? "--mode $params.unicycler.bridgingMode" : "--mode normal"
 
     //test to see if unicycler can be run from the environment
@@ -251,6 +257,7 @@ workflow {
     "touch NO_FILE".execute().text
     "touch NO_FILE2".execute().text
     "touch NO_FILE3".execute().text
+    "touch NO_FILE4".execute().text
 
     paired_ch = channel.fromPath(params.pairedFiles, relative:true, checkIfExists:true).collect()
     unpaired_ch = channel.fromPath(params.unpairedFile, relative:true, checkIfExists:true)
@@ -258,25 +265,22 @@ workflow {
     spades_np = file(params.spades.nanopore, checkIfExists:true)
     unicycler_lr = file(params.unicycler.longreads, checkIfExists:true)
 
-    if (params.assembler == "IDBA_UD") {
-        //idbaUD(idbaExtractLong(idbaPrep(paired_ch, unpaired_ch)))
-        //idbaExtractLong(idbaPrep(paired_ch, unpaired_ch))//even though the files to pipe exist, passed channel seems empty
+    if (params.assembler.equalsIgnoreCase("IDBA_UD")) {
         (c1,c2) = idbaPrep(paired_ch, unpaired_ch)
         (sp,su,l) = idbaExtractLong(c1,c2.ifEmpty({file("NO_FILE", checkIfExists:true)}))
-        l.filter{it.size()>0}.ifEmpty("EMPTY!!!!!").view()
         idbaUD(sp.filter{ it.size()>0 }.ifEmpty({file("NO_FILE", checkIfExists:true)}),
             su.filter{ it.size()>0 }.ifEmpty({file("NO_FILE2", checkIfExists:true)}),
             l.filter{ it.size()>0 }.ifEmpty({file("NO_FILE3", checkIfExists:true)}))
 
     }
-    else if (params.assembler == "SPAdes") {
+    else if (params.assembler.equalsIgnoreCase("SPAdes")) {
         spades(paired_ch, unpaired_ch, spades_pb, spades_np)
     }
-    else if (params.assembler == "MEGAHIT") {
-        megahit(paired_ch, unpaired_ch, unicycler_lr)
+    else if (params.assembler.equalsIgnoreCase("MEGAHIT")) {
+        megahit(paired_ch, unpaired_ch)
     }
-    else if (params.assembler == "UniCycler") {
-        if (params.unicycler.longreads != "NO_FILE") {
+    else if (params.assembler.equalsIgnoreCase("UniCycler")) {
+        if (params.unicycler.longreads != "NO_FILE3") {
             println("Filter long reads with $params.unicycler.minLongReads (bp) cutoff")
             unicycler(paired_ch, unpaired_ch, unicyclerPrep(unicycler_lr))
         }
@@ -284,7 +288,7 @@ workflow {
             unicycler(paired_ch, unpaired_ch, unicycler_lr)
         }
     }
-    else if (params.assembler == "LRASM") {
+    else if (params.assembler.equalsIgnoreCase("LRASM")) {
         //lrasm(unpaired_ch) //issues installing LRASM
     }
     else {
