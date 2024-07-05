@@ -1,23 +1,19 @@
 #!/usr/bin/env nextflow
 //to run: nextflow [OPT: -log /path/to/log file] run runAssembly.nf -params-file [JSON parameter file]
 
-//TODO: rethink inputs and outputs given nextflow's work directory aspects, esp. output directories
 //TODO: detection system for memory limit
 //TODO: output and transparency needs to be compared to EDGE website
-//TODO: specificity on output from assemblers, separate from cleanup. Will require seeing what's needed for downstream processes.
 
 params.assembler = "IDBA_UD"
 
 params.outDir = '.'
 params.threads = 8 //default?
 params.projName = null
-params.pairedFiles = "NO_FILE"
-params.unpairedFile = "NO_FILE2"
 
 
 process idbaUD {
     //TODO: implement avglen safety
-    publishDir "test_idba"
+    publishDir "$params.outDir/idba", mode: 'copy'
 
     input:
     path short_paired
@@ -55,12 +51,11 @@ process idbaUD {
     $minLen
     """
 
- }
-
+}
 process idbaExtractLong {
     input:
-    path "paired"
-    path "unpaired"
+    path paired
+    path unpaired
 
     output:
     path "short_paired.fa"
@@ -68,8 +63,8 @@ process idbaExtractLong {
     path "long.fa"
 
     script:
-    def pair_file = paired.name != "NO_FILE" ? "-p paired " : ""
-    def unpaired_file = unpaired.name != "NO_FILE" ? "-u unpaired " : ""
+    def pair_file = paired.name != "NO_FILE" ? "-p $paired " : ""
+    def unpaired_file = unpaired.name != "NO_FILE2" ? "-u $unpaired " : ""
     """
     extractLongReads.pl\
     $pair_file\
@@ -77,19 +72,18 @@ process idbaExtractLong {
     -d .
     """
 }
-
 process idbaPrep {
     input:
-    path "paired"
-    path "unpaired"
+    path paired
+    path unpaired
 
     output:
     path "pairedForAssembly.fasta", emit:idba_prep_paired
     path "unpairedForAssembly.fasta", optional:true
 
     script:
-    def pair_process = params.pairedFiles != "NO_FILE" ? "fq2fa --filter --merge paired1 paired2 pairedForAssembly.fasta;" : "" 
-    def unpair_process = params.unpairedFile != "NO_FILE" ? "fq2fa --filter unpaired unpairedForAssembly.fasta;" : "" 
+    def pair_process = paired.name != "NO_FILE" ? "fq2fa --filter --merge ${paired[0]} ${paired[1]} pairedForAssembly.fasta;" : "" 
+    def unpair_process = unpaired.name != "NO_FILE2" ? "fq2fa --filter $unpaired unpairedForAssembly.fasta;" : "" 
     
     """
     $pair_process
@@ -99,7 +93,7 @@ process idbaPrep {
 }
 
 process spades {
-    publishDir "test_spades"
+    publishDir "$params.outDir/spades", mode: 'copy'
 
     input:
     path paired
@@ -116,18 +110,18 @@ process spades {
     def pacbio_file = pacbio.name != "NO_FILE3" ? "--pacbio $pacbio " : ""
     def nanopore_file = nanopore.name != "NO_FILE4" ? "--nanopore $nanopore " : ""
     def meta_flag = (paired != "" && params.spades.algorithm == "metagenome") ? "--meta " : ""
-    def sc_flag = params.spades == "singlecell" ? "--sc " : ""
-    def rna_flag = params.spades == "rna" ? "--rna " : ""
-    def plasmid_flag = params.spades == "plasmid" ? "--plasmid " : ""
-    def bio_flag = params.spades == "bio" ? "--bio " : ""
-    def corona_flag = params.spades == "corona" ? "--corona " : ""
-    def metaviral_flag = params.spades == "metaviral" ? "--metaviral " : ""
-    def metaplasmid_flag = params.spades == "metaplasmid" ? "--metaplasmid " : ""
-    def rnaviral_flag = params.spades == "rnaviral" ? "--rnaviral " : ""
+    def sc_flag = params.spades.algorithm == "singlecell" ? "--sc " : ""
+    def rna_flag = params.spades.algorithm == "rna" ? "--rna " : ""
+    def plasmid_flag = params.spades.algorithm == "plasmid" ? "--plasmid " : ""
+    def bio_flag = params.spades.algorithm == "bio" ? "--bio " : ""
+    def corona_flag = params.spades.algorithm == "corona" ? "--corona " : ""
+    def metaviral_flag = params.spades.algorithm == "metaviral" ? "--metaviral " : ""
+    def metaplasmid_flag = params.spades.algorithm == "metaplasmid" ? "--metaplasmid " : ""
+    def rnaviral_flag = params.spades.algorithm == "rnaviral" ? "--rnaviral " : ""
     //def memlimit = params.memlimit != null ? "-m ${params.memlimit/1024*1024}" : ""
 
     """
-    spades.py -o $params.outDir -t $params.threads\
+    spades.py -o . -t $params.threads\
     $paired\
     $meta_flag\
     $sc_flag\
@@ -145,24 +139,23 @@ process spades {
     //$memlimit
 }
 
-
 process megahit {
-    publishDir "test_megahit"
+    publishDir "$params.outDir", mode: 'copy'
 
     input:
     path paired
     path unpaired
 
     output:
-    path "megahit/*"
+    path "*"
 
     script:
     def paired = paired.name != "NO_FILE" ? "-1 ${paired[0]} -2 ${paired[1]} " : ""
-    def unpaired = unpaired.name != "NO_FILE" ? "-r $unpaired " : ""
+    def unpaired = unpaired.name != "NO_FILE2" ? "-r $unpaired " : ""
     def megahit_preset = params.megahit.preset != null ? "--presets $params.megahit.preset " : ""
 
     """
-    megahit -o $params.outDir/megahit -t $params.threads\
+    megahit -o ./megahit -t $params.threads\
     $megahit_preset\
     $paired\
     $unpaired\
@@ -187,14 +180,13 @@ process unicyclerPrep {
     $longreads > long_reads.fasta
     """
 }
-
 process unicycler {
-    publishDir "unicycler_test"
+    publishDir "$params.outDir/unicycler", mode: 'copy'
 
     input:
     path paired
     path unpaired
-    path longreads //must check for NO_FILE. If present, expects filtered long reads.
+    path longreads //If present, expects filtered long reads.
 
     output:
     path "*"
@@ -208,7 +200,7 @@ process unicycler {
     //test to see if unicycler can be run from the environment
     //and if we need to export some java options
     """
-    unicycler -t $params.threads -o $params.outDir\
+    unicycler -t $params.threads -o .\
     $paired\
     $filt_lr\
     $bridge 2>&1 1>/dev/null
@@ -217,30 +209,30 @@ process unicycler {
 }
 
 process lrasm {
+    publishDir "$params.outDir/lrasm", mode: 'copy'
 
     input:
     path unpaired
 
     output:
+    path "*"
 
     script:
     def consensus = params.lrasm.numConsensus != null ? "-n $params.lrasm.numConsensus ": ""
     def preset = params.lrasm.preset != null ? "-x $params.lrasm.preset " : ""
     def errorCorrection = params.lrasm.ec != null ? "-e " : ""
     def algorithm = params.lrasm.algorithm != null ? "-a $params.lrasm.algorithm " : ""
+    def minLenOpt = ""
     if (params.lrasm.algorithm == "miniasm") {
-        def minLenOpt = "--ao \'-s $params.lrasm.minLength\' "
+        minLenOpt = "--ao \'-s $params.lrasm.minLength\' "
     }
     else if (params.lrasm.algorithm == "wtdbg2") {
-        def minLenOpt = "--wo \'-L $params.lrasm.minLength\' "
-    }
-    else {
-        def minLenOpt = ""
+        minLenOpt = "--wo \'-L $params.lrasm.minLength\' "
     }
     def flyeOpt = params.lrasm.algorithm == "metaflye" ? "--fo '--meta' ": ""
 
     """
-    lrasm -o $params.OutDir -t $params.threads\
+    lrasm -o . -t $params.threads\
     $preset\
     $consensus\
     $errorCorrection\
@@ -254,10 +246,11 @@ process lrasm {
 }
 
 workflow {
-    "touch NO_FILE".execute().text
-    "touch NO_FILE2".execute().text
-    "touch NO_FILE3".execute().text
-    "touch NO_FILE4".execute().text
+    "mkdir nf_assets".execute().text
+    "touch nf_assets/NO_FILE".execute().text
+    "touch nf_assets/NO_FILE2".execute().text
+    "touch nf_assets/NO_FILE3".execute().text
+    "touch nf_assets/NO_FILE4".execute().text
 
     paired_ch = channel.fromPath(params.pairedFiles, relative:true, checkIfExists:true).collect()
     unpaired_ch = channel.fromPath(params.unpairedFile, relative:true, checkIfExists:true)
@@ -267,10 +260,10 @@ workflow {
 
     if (params.assembler.equalsIgnoreCase("IDBA_UD")) {
         (c1,c2) = idbaPrep(paired_ch, unpaired_ch)
-        (sp,su,l) = idbaExtractLong(c1,c2.ifEmpty({file("NO_FILE", checkIfExists:true)}))
-        idbaUD(sp.filter{ it.size()>0 }.ifEmpty({file("NO_FILE", checkIfExists:true)}),
-            su.filter{ it.size()>0 }.ifEmpty({file("NO_FILE2", checkIfExists:true)}),
-            l.filter{ it.size()>0 }.ifEmpty({file("NO_FILE3", checkIfExists:true)}))
+        (sp,su,l) = idbaExtractLong(c1,c2.ifEmpty({file("nf_assets/NO_FILE")}))
+        idbaUD(sp.filter{ it.size()>0 }.ifEmpty({file("nf_assets/NO_FILE")}),
+            su.filter{ it.size()>0 }.ifEmpty({file("nf_assets/NO_FILE2")}),
+            l.filter{ it.size()>0 }.ifEmpty({file("nf_assets/NO_FILE3")}))
 
     }
     else if (params.assembler.equalsIgnoreCase("SPAdes")) {
@@ -280,16 +273,18 @@ workflow {
         megahit(paired_ch, unpaired_ch)
     }
     else if (params.assembler.equalsIgnoreCase("UniCycler")) {
-        if (params.unicycler.longreads != "NO_FILE3") {
+        if (params.unicycler.longreads != "nf_assets/NO_FILE3") {
             println("Filter long reads with $params.unicycler.minLongReads (bp) cutoff")
-            unicycler(paired_ch, unpaired_ch, unicyclerPrep(unicycler_lr))
+            unicycler(paired_ch,
+                unpaired_ch,
+                unicyclerPrep(unicycler_lr).filter{it.size()>0}.ifEmpty({file("nf_assets/NO_FILE3")}))
         }
         else {
             unicycler(paired_ch, unpaired_ch, unicycler_lr)
         }
     }
     else if (params.assembler.equalsIgnoreCase("LRASM")) {
-        //lrasm(unpaired_ch) //issues installing LRASM
+        lrasm(unpaired_ch)
     }
     else {
         error "Invalid assembler: $params.assembler"
