@@ -30,7 +30,6 @@ if (-s $paired_fasta) {
     open (my $fh, $paired_fasta) or die "$! $paired_fasta";
     while (<$fh>)
     { 
-        print "reading file!";
         $_ =~ s/\>//g;
         my ($id, @seq) = split /\n/, $_;
         next if (!$id);

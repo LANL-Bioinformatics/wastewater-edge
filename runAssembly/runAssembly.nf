@@ -7,23 +7,41 @@
 params.assembler = "IDBA_UD"
 
 params.outDir = '.'
-params.threads = 8 //default?
-params.projName = null
+params.threads = 8 //default
+params.projName = "project"
 
 
 process idbaUD {
-    //TODO: implement avglen safety
-    publishDir "$params.outDir/idba", mode: 'copy'
+    publishDir (
+    path:"$params.outDir/idba",
+    mode: 'copy',
+    saveAs: {
+        filename ->
+        if(filename ==~ /log/) {
+            "assembly.log"
+        }
+        else if(filename ==~ /scaffold(s|-level-2|).fa(sta)?/) {
+            "scaffold.fa"
+        }
+        else{
+            filename
+        }
+    }
+    )
 
     input:
     path short_paired
     path short_single
     path long_reads
+    val avg_len
 
     output:
-    path "*"
+    path "log"
+    path "scaffold*.{fa,fasta}", optional:true 
+    path "contig-max.fa"
 
     script:
+    def avg_len = avg_len as Integer
     def runFlag = ""
     if(short_paired.name != "NO_FILE" && short_single.name != "NO_FILE2") {
         runFlag = "-r $short_single --read_level_2 $short_paired "
@@ -35,7 +53,14 @@ process idbaUD {
         runFlag = "-r $short_single "
     }
     def longReadsFile = long_reads.name != "NO_FILE3" ? "-l $long_reads" : ""
-    def maxK = params.idba.maxK != null ? "--maxk $params.idba.maxK " : ""
+    def maxK = 121
+    def maxK_option = "--maxk $maxK "
+    if (params.idba.maxK == null || params.idba.maxK > avg_len) {
+        if(avg_len > 0 && avg_len <= 151) {
+            maxK = avg_len - 1
+            maxK_option = "--maxk ${avg_len - 1}"
+        }
+    }
     def minK = params.idba.minK != null ? "--mink $params.idba.minK " : ""
     def step = params.idba.step != null ? "--step $params.idba.step " : ""
     def minLen = params.minContigSize != null ? "--min_contig $params.minContigSize " : ""
@@ -45,10 +70,12 @@ process idbaUD {
     ${memLimit}idba_ud --pre_correction -o . --num_threads $params.threads\
     $runFlag\
     $longReadsFile\
-    $maxK\
+    $maxK_option\
     $minK\
     $step\
     $minLen
+
+    mv contig-${maxK}.fa contig-max.fa
     """
 
 }
@@ -72,7 +99,7 @@ process idbaExtractLong {
     -d .
     """
 }
-process idbaPrep {
+process idbaPrepReads {
     input:
     path paired
     path unpaired
@@ -92,8 +119,73 @@ process idbaPrep {
 
 }
 
+process idbaReadFastq {
+    input:
+    path paired
+    path unpaired
+
+    output:
+    path "fastqCount.txt"
+
+    script:
+    def paired_list = paired.name != "NO_FILE" ? "-p ${paired}" : ""
+    def unpaired_list = unpaired.name != "NO_FILE2" ? "-u ${unpaired}" : ""
+
+    """
+    getAvgLen.pl\
+    $paired_list\
+    $unpaired_list\
+    -d .
+    """
+}
+
+process idbaAvgLen {
+    input:
+
+    path countFastq
+
+    output:
+    stdout
+
+    shell:
+    '''
+    #!/usr/bin/env perl
+    my $fastq_count_file = "./!{countFastq}";
+    my $total_count = 0;
+    my $total_len = 0;
+    open (my $fh, "<", $fastq_count_file) or die "Cannot open $fastq_count_file\n";
+    while(<$fh>){
+        chomp;
+        my ($name,$count,$len,$avg) = split /\t/,$_;
+        $total_count += $count;
+        $total_len += $len;
+    }
+    close $fh;
+    my $avg_len = ($total_count > 0)? $total_len/$total_count : 0;
+    print "$avg_len";
+    '''
+}
+
 process spades {
-    publishDir "$params.outDir/spades", mode: 'copy'
+    publishDir (
+    path: "$params.outDir/spades", 
+    mode: 'copy',
+    saveAs: {
+        filename ->
+        if(filename ==~ /spades.log/) {
+            "assembly.log"
+        }
+        else if(filename ==~ /scaffold(s|-level-2|).fa(sta)?/) {
+            "scaffold.fa"
+        }
+        else if(filename.equals("assembly_graph.fastg")) {
+            "${params.projName}_contigs.fastg"
+        }
+        else{
+            filename
+        }
+    }
+    )
 
     input:
     path paired
@@ -102,7 +194,12 @@ process spades {
     path nanopore
 
     output:
-    path "*"
+    path "scaffold*.{fa,fasta}", optional:true 
+    path "spades.log" 
+    path "{contigs,transcripts}.fasta"
+    path "assembly_graph.fastg", optional:true
+    path "assembly_graph_with_scaffolds.gfa", optional:true
+
 
     script:
     def paired = paired.name != "NO_FILE" ? "--pe1-1 ${paired[0]} --pe1-2 ${paired[1]} " : ""
@@ -140,14 +237,47 @@ process spades {
 }
 
 process megahit {
-    publishDir "$params.outDir", mode: 'copy'
+    publishDir(
+    path: "$params.outDir/megahit",
+    mode: 'copy',
+    pattern: "${params.projName}_contigs.fastg"
+    )
+    publishDir(
+    path: "$params.outDir", 
+    mode: 'copy',
+    pattern: "{megahit/log,megahit/final.contigs.fa}",
+    saveAs: {
+        filename ->
+        if(filename.equals("megahit/log")) {
+            "megahit/assembly.log"
+        }
+        else if(filename ==~ /scaffold(s|-level-2|).fa(sta)?/) {
+            "scaffold.fa"
+        }
+        else{
+            filename
+        }
+    }
+    )
+    publishDir(
+    path: "$params.outDir", 
+    mode: 'copy',
+    pattern: "megahit/scaffold*.{fa,fasta}",
+    saveAs: {
+        filename ->
+        "scaffold.fa"
+    }
+    )
 
     input:
     path paired
     path unpaired
 
     output:
-    path "*"
+    path "megahit/log"
+    path "megahit/scaffold*.{fa,fasta}", optional:true //I don't believe this is a normal output of megahit, but just in case
+    path "megahit/final.contigs.fa"
+    path "${params.projName}_contigs.fastg"
 
     script:
     def paired = paired.name != "NO_FILE" ? "-1 ${paired[0]} -2 ${paired[1]} " : ""
@@ -160,6 +290,10 @@ process megahit {
     $paired\
     $unpaired\
     2>&1
+
+    LARGESTKMER=\$(head -n 1 megahit/final.contigs.fa | perl -ne '/^>k(\\d+)\\_/; print \$1;')
+
+    megahit_toolkit contig2fastg \$LARGESTKMER megahit/intermediate_contigs/k\${LARGESTKMER}.contigs.fa  > ${params.projName}_contigs.fastg
     """
 
 }
@@ -181,7 +315,25 @@ process unicyclerPrep {
     """
 }
 process unicycler {
-    publishDir "$params.outDir/unicycler", mode: 'copy'
+    publishDir (
+        path: "$params.outDir/unicycler", 
+        mode: 'copy',
+        saveAs: {
+        filename ->
+        if(filename ==~ /unicycler.log/) {
+            "assembly.log"
+        }
+        else if(filename ==~ /scaffold(s|-level-2|).fa(sta)?/) {
+            "scaffold.fa"
+        }
+        else if(filename.equals("assembly.gfa")) {
+            "${params.projName}_contigs.fastg"
+        }
+        else{
+            filename
+        }
+    }
+    )
 
     input:
     path paired
@@ -189,7 +341,10 @@ process unicycler {
     path longreads //If present, expects filtered long reads.
 
     output:
-    path "*"
+    path "unicycler.log"
+    path "scaffold*.{fa,fasta}", optional:true //I don't believe this is a normal output of unicycler, but just in case
+    path "assembly.fasta"
+    path "assembly.gfa", optional:true
 
     script:
     def paired = paired.name != "NO_FILE" ? "-1 ${paired[0]} -2 ${paired[1]} " : ""
@@ -197,9 +352,9 @@ process unicycler {
     def filt_lr = longreads.name != "NO_FILE3" ? "-l $longreads " : ""
     def bridge = params.unicycler.bridgingMode != "normal" ? "--mode $params.unicycler.bridgingMode" : "--mode normal"
 
-    //test to see if unicycler can be run from the environment
-    //and if we need to export some java options
     """
+    export _JAVA_OPTIONS='-Xmx20G'; export TERM='xterm';
+
     unicycler -t $params.threads -o .\
     $paired\
     $filt_lr\
@@ -209,13 +364,46 @@ process unicycler {
 }
 
 process lrasm {
-    publishDir "$params.outDir/lrasm", mode: 'copy'
+    publishDir (
+        path: "$params.outDir/lrasm", 
+        mode: 'copy',
+        saveAs: {
+        filename ->
+        if(filename ==~ /log/) {
+            "assembly.log"
+        }
+        else if(filename ==~ /scaffold(s|-level-2|).fa(sta)?/) {
+            "scaffold.fa"
+        }
+        else if(filename.equals("Assembly/unitig.gfa")) {
+            "${params.projName}_contigs.fastg"
+        }
+        else if(filename.equals("Assembly/assembly_graph.gfa")) {
+            "${params.projName}_contigs.fastg"
+        }
+        else if(filename.equals("Assembly/assembly_graph.gv")) {
+            "${params.projName}_contigs.gv"
+        }
+        else if(filename.equals("Assembly/assembly_info.txt")) {
+            "assembly_info.txt"
+        }
+        else{
+            filename
+        }
+    }
+    )
 
     input:
     path unpaired
 
     output:
-    path "*"
+    path "contigs.log" 
+    path "scaffold*.{fa,fasta}", optional:true //I don't believe this is a normal output of lrasm, but just in case
+    path "contigs.fa"
+    path "Assembly/unitig.gfa", optional:true
+    path "Assembly/assembly_graph.gfa", optional:true
+    path "Assembly/assembly_graph.gv", optional:true
+    path "Assembly/assembly_info.txt", optional:true
 
     script:
     def consensus = params.lrasm.numConsensus != null ? "-n $params.lrasm.numConsensus ": ""
@@ -240,9 +428,8 @@ process lrasm {
     $minLenOpt\
     $flyeOpt\
     $unpaired\
-    2>/dev/null
     """
-    
+    //2>/dev/null
 }
 
 workflow {
@@ -259,11 +446,13 @@ workflow {
     unicycler_lr = file(params.unicycler.longreads, checkIfExists:true)
 
     if (params.assembler.equalsIgnoreCase("IDBA_UD")) {
-        (c1,c2) = idbaPrep(paired_ch, unpaired_ch)
+        avg_len_ch = idbaAvgLen(idbaReadFastq(paired_ch, unpaired_ch))
+        (c1,c2) = idbaPrepReads(paired_ch, unpaired_ch)
         (sp,su,l) = idbaExtractLong(c1,c2.ifEmpty({file("nf_assets/NO_FILE")}))
         idbaUD(sp.filter{ it.size()>0 }.ifEmpty({file("nf_assets/NO_FILE")}),
             su.filter{ it.size()>0 }.ifEmpty({file("nf_assets/NO_FILE2")}),
-            l.filter{ it.size()>0 }.ifEmpty({file("nf_assets/NO_FILE3")}))
+            l.filter{ it.size()>0 }.ifEmpty({file("nf_assets/NO_FILE3")}),
+            avg_len_ch)
 
     }
     else if (params.assembler.equalsIgnoreCase("SPAdes")) {
@@ -290,12 +479,12 @@ workflow {
         error "Invalid assembler: $params.assembler"
     }
 
-    //TODO: add in rest of runAssembly
+    //TODO: add safety in case of assembly failure/incomplete assembly
 
-    //scaffold cleanup
-    //contigs
     //assembly graph
+
     //rename by project name 
+
     //cleanup
 
 }
