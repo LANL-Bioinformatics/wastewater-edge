@@ -4,11 +4,7 @@
 //TODO: detection system for memory limit
 //TODO: output and transparency needs to be compared to EDGE website
 
-params.assembler = "IDBA_UD"
-
-params.outDir = '.'
-params.threads = 8 //default
-params.projName = "project"
+//default parameters are in nextflow.config
 
 
 process idbaUD {
@@ -38,7 +34,7 @@ process idbaUD {
     output:
     path "log"
     path "scaffold*.{fa,fasta}", optional:true 
-    path "contig-max.fa"
+    path "contig-max.fa", emit: contigs
 
     script:
     def avg_len = avg_len as Integer
@@ -196,7 +192,7 @@ process spades {
     output:
     path "scaffold*.{fa,fasta}", optional:true 
     path "spades.log" 
-    path "{contigs,transcripts}.fasta"
+    path "{contigs,transcripts}.fasta", emit:contigs
     path "assembly_graph.fastg", optional:true
     path "assembly_graph_with_scaffolds.gfa", optional:true
 
@@ -276,7 +272,7 @@ process megahit {
     output:
     path "megahit/log"
     path "megahit/scaffold*.{fa,fasta}", optional:true //I don't believe this is a normal output of megahit, but just in case
-    path "megahit/final.contigs.fa"
+    path "megahit/final.contigs.fa", emit: contigs
     path "${params.projName}_contigs.fastg"
 
     script:
@@ -343,7 +339,7 @@ process unicycler {
     output:
     path "unicycler.log"
     path "scaffold*.{fa,fasta}", optional:true //I don't believe this is a normal output of unicycler, but just in case
-    path "assembly.fasta"
+    path "assembly.fasta", emit: contigs
     path "assembly.gfa", optional:true
 
     script:
@@ -399,7 +395,7 @@ process lrasm {
     output:
     path "contigs.log" 
     path "scaffold*.{fa,fasta}", optional:true //I don't believe this is a normal output of lrasm, but just in case
-    path "contigs.fa"
+    path "contigs.fa", emit:contigs
     path "Assembly/unitig.gfa", optional:true
     path "Assembly/assembly_graph.gfa", optional:true
     path "Assembly/assembly_graph.gv", optional:true
@@ -432,6 +428,32 @@ process lrasm {
     //2>/dev/null
 }
 
+process rename {
+    publishDir(
+        path: "$params.outDir/final_files",
+        mode: 'copy'
+    )
+    input:
+    path contigs
+
+    output:
+    path "*"
+
+    script:
+    """
+    CONTIG_NUMBER=\$(grep -c '>' ${contigs})
+    
+    renameFilterFasta.pl \
+    -u $contigs\
+    -d .\
+    -filt $params.minContigSize\
+    -maxseq \$CONTIG_NUMBER\
+    -ann $params.contigSizeForAnnotation\
+    -n $params.projName
+    """
+
+}
+
 workflow {
     "mkdir nf_assets".execute().text
     "touch nf_assets/NO_FILE".execute().text
@@ -453,13 +475,16 @@ workflow {
             su.filter{ it.size()>0 }.ifEmpty({file("nf_assets/NO_FILE2")}),
             l.filter{ it.size()>0 }.ifEmpty({file("nf_assets/NO_FILE3")}),
             avg_len_ch)
+        rename(idbaUD.out.contigs)
 
     }
     else if (params.assembler.equalsIgnoreCase("SPAdes")) {
         spades(paired_ch, unpaired_ch, spades_pb, spades_np)
+        rename(spades.out.contigs)
     }
     else if (params.assembler.equalsIgnoreCase("MEGAHIT")) {
         megahit(paired_ch, unpaired_ch)
+        rename(megahit.out.contigs)
     }
     else if (params.assembler.equalsIgnoreCase("UniCycler")) {
         if (params.unicycler.longreads != "nf_assets/NO_FILE3") {
@@ -467,24 +492,22 @@ workflow {
             unicycler(paired_ch,
                 unpaired_ch,
                 unicyclerPrep(unicycler_lr).filter{it.size()>0}.ifEmpty({file("nf_assets/NO_FILE3")}))
+            rename(unicycler.out.contigs)
         }
         else {
             unicycler(paired_ch, unpaired_ch, unicycler_lr)
+            rename(unicycler.out.contigs)
         }
     }
     else if (params.assembler.equalsIgnoreCase("LRASM")) {
         lrasm(unpaired_ch)
+        rename(lrasm.out.contigs)
     }
     else {
         error "Invalid assembler: $params.assembler"
     }
 
     //TODO: add safety in case of assembly failure/incomplete assembly
-
-    //assembly graph
-
-    //rename by project name 
-
     //cleanup
 
 }
