@@ -2,11 +2,6 @@
 //to run: nextflow [OPT: -log /path/to/log file] run sra2fastq.nf -params-file [JSON parameter file]
 //not supporting filesize or run count restrictions
 
-//these defaults are overriden by any config files or command-line options
-params.clean = ""
-params.platform_restrict = ""
-params.outdir = ""
-params.accessions = "" 
 
 accessions_ch = Channel.of(params.accessions)
 
@@ -44,4 +39,4 @@ workflow {
 
     fastq_ch = SRA2FASTQ(accessions_ch.flatten().unique())
 
-    }
+}
