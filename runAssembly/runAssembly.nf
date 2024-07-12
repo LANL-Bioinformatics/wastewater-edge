@@ -4,9 +4,6 @@
 //TODO: detection system for memory limit
 //TODO: output and transparency needs to be compared to EDGE website
 
-//default parameters are in nextflow.config
-
-
 process idbaUD {
     publishDir (
     path:"$params.outDir/idba",
@@ -508,6 +505,5 @@ workflow {
     }
 
     //TODO: add safety in case of assembly failure/incomplete assembly
-    //cleanup
 
 }
