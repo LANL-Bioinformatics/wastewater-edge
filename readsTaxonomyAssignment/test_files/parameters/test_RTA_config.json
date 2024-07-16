@@ -1,0 +1,6 @@
+{
+    "cpus":4,
+    "pairFile":["test_files/Ecoli_10x.1.fastq","test_files/Ecoli_10x.2.fastq"],
+    "outDir": "test_rta",
+    "enabledTools" : "gottcha-genDB-b,gottcha-speDB-b,gottcha-strDB-b,gottcha-genDB-v,gottcha-speDB-v,gottcha-strDB-v,bwa,metaphlan2,kraken2"
+}
