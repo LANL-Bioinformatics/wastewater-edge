@@ -9,7 +9,7 @@ use HTML::Template;
 #use DataG::Dumper;
 
 my %opt;
-my $EDGE_HOME = "$Bin/../..";
+my $EDGE_HOME = "$Bin/../../..";
 GetOptions(\%opt,
            "template:s",
            "tools=s",

@@ -103,7 +103,7 @@ process readsTaxonomyConfig {
     def metaphlan = params.custom_metaphlan_db != null ? "-metaphlan-db $params.custom_metaphlan_db " : ""
     def kraken = params.custom_kraken_db != null ? "-kraken-db $params.custom_kraken_db " : ""
     def centrifuge = params.custom_centrifuge_db != null ? "-centrifuge-db $params.custom_centrifuge_db " : ""
-    def pangea = params.custom_pangea_db != null ? "-pangea-db $params.custom_pangea_db " : ""
+    def pangia = params.custom_pangia_db != null ? "-pangia-db $params.custom_pangia_db " : ""
     def diamond = params.custom_diamond_db != null ? "-diamond-db $params.custom_diamond_db " : ""
 
     def gottcha_speDB_v = params.custom_gottcha_speDB_v != null ? "-gottcha-speDB-v $params.custom_gottcha_speDB_v " : ""
@@ -126,7 +126,7 @@ process readsTaxonomyConfig {
     $metaphlan\
     $kraken\
     $centrifuge\
-    $pangea\
+    $pangia\
     $diamond\
     $gottcha_speDB_v\
     $gottcha_speDB_b\
