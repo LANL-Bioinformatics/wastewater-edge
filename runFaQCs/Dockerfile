@@ -29,7 +29,7 @@ RUN conda-pack -n runFaQCs -o /tmp/env.tar && \
 
 RUN /venv/bin/conda-unpack
 
-FROM debian:buster AS runtime
+FROM debian:latest AS runtime
 
 COPY --from=build /venv /venv
 ENV PATH=/venv/bin:$PATH
