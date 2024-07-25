@@ -106,20 +106,21 @@ process readsTaxonomyConfig {
     def pangia = params.custom_pangia_db != null ? "-pangia-db $params.custom_pangia_db " : ""
     def diamond = params.custom_diamond_db != null ? "-diamond-db $params.custom_diamond_db " : ""
 
-    def gottcha_speDB_v = params.custom_gottcha_speDB_v != null ? "-gottcha-speDB-v $params.custom_gottcha_speDB_v " : ""
-    def gottcha_speDB_b = params.custom_gottcha_speDB_b != null ? "-gottcha-speDB-b $params.custom_gottcha_speDB_b " : ""
-    def gottcha_strDB_v = params.custom_gottcha_strDB_v != null ? "-gottcha-strDB-v $params.custom_gottcha_strDB_v " : ""
-    def gottcha_strDB_b = params.custom_gottcha_strDB_b != null ? "-gottcha-strDB-b $params.custom_gottcha_strDB_b " : ""
-    def gottcha_genDB_v = params.custom_gottcha_genDB_v != null ? "-gottcha-genDB-v $params.custom_gottcha_genDB_v " : ""
-    def gottcha_genDB_b = params.custom_gottcha_genDB_b != null ? "-gottcha-genDB-b $params.custom_gottcha_genDB_b " : ""
+    def gottcha_speDB_v = params.custom_gottcha_speDB_v != null ? "-gottcha-v-speDB $params.custom_gottcha_speDB_v " : ""
+    def gottcha_speDB_b = params.custom_gottcha_speDB_b != null ? "-gottcha-b-speDB $params.custom_gottcha_speDB_b " : ""
+    def gottcha_strDB_v = params.custom_gottcha_strDB_v != null ? "-gottcha-v-strDB $params.custom_gottcha_strDB_v " : ""
+    def gottcha_strDB_b = params.custom_gottcha_strDB_b != null ? "-gottcha-b-strDB $params.custom_gottcha_strDB_b " : ""
+    def gottcha_genDB_v = params.custom_gottcha_genDB_v != null ? "-gottcha-v-genDB $params.custom_gottcha_genDB_v " : ""
+    def gottcha_genDB_b = params.custom_gottcha_genDB_b != null ? "-gottcha-b-genDB $params.custom_gottcha_genDB_b " : ""
 
-    def gottcha2_genDB_v = params.custom_gottcha2_genDB_v != null ? "-gottcha2-genDB-v $params.custom_gottcha2_genDB_v " : ""
-    def gottcha2_speDB_v = params.custom_gottcha2_speDB_v != null ? "-gottcha2-speDB-v $params.custom_gottcha2_speDB_v " : ""
-    def gottcha2_speDB_b = params.custom_gottcha2_speDB_b != null ? "-gottcha2-speDB-b $params.custom_gottcha2_speDB_b " : ""
+    def gottcha2_genDB_v = params.custom_gottcha2_genDB_v != null ? "-gottcha2-v-genDB $params.custom_gottcha2_genDB_v " : ""
+    def gottcha2_speDB_v = params.custom_gottcha2_speDB_v != null ? "-gottcha2-v-speDB $params.custom_gottcha2_speDB_v " : ""
+    def gottcha2_speDB_b = params.custom_gottcha2_speDB_b != null ? "-gottcha2-b-speDB $params.custom_gottcha2_speDB_b " : ""
 
     def np = (params.fastq_source != null && params.fastq_source.equalsIgnoreCase("nanopore")) ? "--nanopore " : ""
 
     """
+    echo $gottcha2_speDB_b
     microbial_profiling_configure.pl $template \
     $tools -bwaScoreCut $bwaScoreCut\
     $bwa\

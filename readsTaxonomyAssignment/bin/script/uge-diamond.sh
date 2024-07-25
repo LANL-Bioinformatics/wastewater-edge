@@ -73,7 +73,7 @@ echo "[BEGIN DIAMOND]"
 time diamond blastx -p $THREADS -q $FASTQ -d $REFDB --taxonmap $EDGE_HOME/database/diamond/taxonomy/prot.accession2taxid.gz --taxonnodes $EDGE_HOME/database/diamond/taxonomy/nodes.dmp -f 102 -o $OUTPATH/$PREFIX.diamondRawOutput.txt
 
 # Make the taxonomy list file.
-python $EDGE_HOME/scripts/microbial_profiling/script/convert_diamond2list.py -tp $EDGE_HOME/database/diamond/taxonomy < $OUTPATH/$PREFIX.diamondRawOutput.txt > $OUTPATH/$PREFIX.out.list
+convert_diamond2list.py -tp $EDGE_HOME/database/diamond/taxonomy < $OUTPATH/$PREFIX.diamondRawOutput.txt > $OUTPATH/$PREFIX.out.list
 
 # Convert for krona plot and generate taxon-based krona plot. Use -s 2 flag for ignoring abundance data and splitting wedge size evenly among all listed taxa (if taxa are listed >1 time,
 # then they will get a larger wedge. This is the same as ktImportText using the tab_tree file.
@@ -84,10 +84,10 @@ python $EDGE_HOME/scripts/microbial_profiling/script/convert_diamond2list.py -tp
 #ktImportTaxonomy -t 1 -m 2 -o $OUTPATH/$PREFIX.krona.html $OUTPATH/$PREFIX.out.krona
 
 # Convert into tab_tree file
-python $EDGE_HOME/scripts/microbial_profiling/script/convert_diamond2tabTree.py -i $OUTPATH/$PREFIX.out.list -dp $EDGE_HOME/database/diamond/taxonomy > $OUTPATH/$PREFIX.out.tab_tree
+convert_diamond2tabTree.py -i $OUTPATH/$PREFIX.out.list -dp $EDGE_HOME/database/diamond/taxonomy > $OUTPATH/$PREFIX.out.tab_tree
 # Make Krona plot
 ktImportText  $OUTPATH/$PREFIX.out.tab_tree -o $OUTPATH/$PREFIX.krona.html
 
 # Convert into a megan file (if necessary for EDGE)
-python $EDGE_HOME/scripts/microbial_profiling/script/convert_diamond2megan.py -i $OUTPATH/$PREFIX.out.list > $OUTPATH/$PREFIX.out.megan
+convert_diamond2megan.py -i $OUTPATH/$PREFIX.out.list > $OUTPATH/$PREFIX.out.megan
 

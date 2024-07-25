@@ -38,8 +38,7 @@ OUTPATH=
 LVL="species"
 THREADS=4
 PRE_SPLITRIM=
-DB=$EDGE_HOME/database/GOTTCHA2/RefSeq-r90.cg.BacteriaViruses.species.fna
-
+DB=$EDGE_HOME/database/GOTTCHA2/gottcha_db.species.fna
 while getopts "i:o:p:l:d:t:a:q:f:m:s:h" OPTION
 do
      case $OPTION in

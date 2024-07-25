@@ -116,7 +116,7 @@ cp $OUTPATH/$PREFIX.pangia.log $LOCAL_PVIA_DATA/report.pangia.log
 
 # generate scaled-down genome depth files for PanGIA-VIS, save to $OUTPATH/pangia-vis then symlink to global pangia-vis
 find $MERGED_SAM_DIR -type f -name '*.depth' | cut -d"|" -f3 | sort | uniq > $OUTPATH/${PREFIX}_tmp/unique_taxid.txt
-parallel "$EDGE_HOME/thirdParty/pangia/pangia-vis/scripts/depth_scale_down.py $MERGED_SAM_DIR/*\|{}\|*.depth > $LOCAL_PVIA_DATA/report/{}.depth.scaledown" :::: $OUTPATH/${PREFIX}_tmp/unique_taxid.txt
+parallel "depth_scale_down.py $MERGED_SAM_DIR/*\|{}\|*.depth > $LOCAL_PVIA_DATA/report/{}.depth.scaledown" :::: $OUTPATH/${PREFIX}_tmp/unique_taxid.txt
 
 # remove temporary files
 find $OUTPATH/${PREFIX}_tmp -type f -exec rm {} +

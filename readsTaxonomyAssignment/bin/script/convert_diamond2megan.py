@@ -1,4 +1,4 @@
-#!/usr/bin/python
+#!/usr/bin/env python
 
 # This is a very basic script to convert DIAMOND's list file to a file for megan (if necessary in EDGE),
 # which has two columns (with no header):
