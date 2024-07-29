@@ -120,6 +120,10 @@ process readsTaxonomyConfig {
     def np = (params.fastq_source != null && params.fastq_source.equalsIgnoreCase("nanopore")) ? "--nanopore " : ""
 
     """
+    updateTaxonomy.sh
+
+    updateAccessions.sh 
+    
     echo $gottcha2_speDB_b
     microbial_profiling_configure.pl $template \
     $tools -bwaScoreCut $bwaScoreCut\

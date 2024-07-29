@@ -71,12 +71,11 @@ FROM debian:latest AS runtime
 COPY --from=build /venv /venv
 
 #add environment, pangia base and vis-scripts to PATH
-ENV PATH=/venv/bin:/venv/opt/pangia:/venv/opt/pangia/pangia-vis/scripts:$PATH
+ENV PATH=/venv/bin:/venv/opt/pangia:/venv/opt/pangia/pangia-vis/scripts:/venv/opt/krona:$PATH
 #run krona scripts
-RUN /venv/opt/krona/updateTaxonomy.sh
-RUN /venv/opt/krona/updateAccessions.sh 
+#RUN /venv/opt/krona/updateTaxonomy.sh
+#RUN /venv/opt/krona/updateAccessions.sh 
 #very long step. attempting w/greater resources, then may consider shifting to workflow.
-
 
 SHELL ["/bin/bash", "-c"]
 CMD /bin/bash
