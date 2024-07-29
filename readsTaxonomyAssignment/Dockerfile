@@ -35,12 +35,6 @@ RUN conda install -n readsTaxonomyAssignment -c conda-forge parallel
 RUN conda install -n readsTaxonomyAssignment -c bioconda gottcha
 RUN conda install -c conda-forge conda-pack
 
-#download latest PanGIA 
-#ISSUE: differs from version in EDGE's third-party software, in ways that break scripts
-#so far unable to find matching version of PanGIA anywhere else.
-RUN git clone --depth 1 https://github.com/mriglobal/pangia.git \
-    && chmod 755 -R pangia \
-    && mv pangia /opt/conda/envs/readsTaxonomyAssignment/bin 
 
 #correct diamond version
 RUN wget https://github.com/bbuchfink/diamond/releases/download/v2.0.5/diamond-linux64.tar.gz \
@@ -57,6 +51,14 @@ RUN wget https://github.com/LANL-Bioinformatics/GOTTCHA/archive/refs/tags/1.0c.t
 #add scripts from this project to bin
 ADD bin/* /opt/conda/envs/readsTaxonomyAssignment/bin
 
+#download latest PanGIA 
+#ISSUE: differs from version in EDGE's third-party software, in ways that break scripts
+#we can get EDGE's version from its third-party tarball, but it's a wastefully large download.
+RUN wget https://ref-db.edgebioinformatics.org/EDGE/dev/edge_dev_thirdParty_softwares.tgz \
+    && tar -xvzf edge_dev_thirdParty_softwares.tgz \
+    && tar -xvzf thirdParty/pangia-1.0.0.tar.gz -C . \
+    && mv pangia /opt/conda/envs/readsTaxonomyAssignment/opt
+
 #pack environment for runtime image
 RUN conda-pack -n readsTaxonomyAssignment -o /tmp/env.tar && \
     mkdir /venv && cd /venv && tar xf /tmp/env.tar && \
@@ -68,9 +70,13 @@ FROM debian:latest AS runtime
 
 COPY --from=build /venv /venv
 
-#add pangia base and vis-scripts to PATH
-#run both krona scripts
-ENV PATH=/venv/bin:$PATH
+#add environment, pangia base and vis-scripts to PATH
+ENV PATH=/venv/bin:/venv/opt/pangia:/venv/opt/pangia/pangia-vis/scripts:$PATH
+#run krona scripts
+RUN /venv/opt/krona/updateTaxonomy.sh
+RUN /venv/opt/krona/updateAccessions.sh 
+#very long step. attempting w/greater resources, then may consider shifting to workflow.
+
 
 SHELL ["/bin/bash", "-c"]
 CMD /bin/bash
