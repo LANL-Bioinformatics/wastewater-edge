@@ -120,6 +120,9 @@ process readsTaxonomyConfig {
     def np = (params.fastq_source != null && params.fastq_source.equalsIgnoreCase("nanopore")) ? "--nanopore " : ""
 
     """
+    mkdir -p /venv/opt/krona/taxonomy
+    touch /venv/opt/krona/taxonomy/taxdump.tar.gz
+    chmod 777 /venv/opt/krona/taxonomy/taxdump.tar.gz
     updateTaxonomy.sh
 
     updateAccessions.sh 
