@@ -1,23 +1,24 @@
 #!/usr/bin/env nextflow
-//to run: nextflow [OPT: -log /path/to/log file] run runAssembly.nf -params-file [JSON parameter file]
+//to run: nextflow run runAssembly.nf -params-file [JSON parameter file]
 
-//TODO: detection system for memory limit
-//TODO: output and transparency needs to be compared to EDGE website
+//this workflow is unable to set memory limits (used in idba and spades assemblies) by itself, 
+//but a limit (in KB) can be provided as a parameter.
 
+//main process for assembly with IDBA
 process idbaUD {
     publishDir (
-    path:"$params.outDir/idba",
+    path:"$params.outDir/AssemblyBasedAnalysis",
     mode: 'copy',
     saveAs: {
         filename ->
         if(filename ==~ /log/) {
             "assembly.log"
         }
-        else if(filename ==~ /scaffold(s|-level-2|).fa(sta)?/) {
+        else if(filename ==~ /scaffold(s|-level-2|)\.fa(sta)?/) {
             "scaffold.fa"
         }
         else{
-            filename
+            null //do not publish contig-max.fa yet, but use it for downstream process
         }
     }
     )
@@ -72,6 +73,8 @@ process idbaUD {
     """
 
 }
+
+//prep for idba
 process idbaExtractLong {
     input:
     path paired
@@ -92,6 +95,8 @@ process idbaExtractLong {
     -d .
     """
 }
+
+//prep for idba
 process idbaPrepReads {
     input:
     path paired
@@ -112,6 +117,7 @@ process idbaPrepReads {
 
 }
 
+//prep for idba
 process idbaReadFastq {
     input:
     path paired
@@ -132,6 +138,7 @@ process idbaReadFastq {
     """
 }
 
+//prep for idba
 process idbaAvgLen {
     input:
 
@@ -159,20 +166,27 @@ process idbaAvgLen {
     '''
 }
 
+//assemble using spades
 process spades {
     publishDir (
-    path: "$params.outDir/spades", 
+    path: "$params.outDir/AssemblyBasedAnalysis", 
     mode: 'copy',
     saveAs: {
         filename ->
-        if(filename ==~ /spades.log/) {
+        if(filename ==~ /spades\.log/) {
             "assembly.log"
         }
-        else if(filename ==~ /scaffold(s|-level-2|).fa(sta)?/) {
+        else if(filename ==~ /scaffold(s|-level-2|)\.fa(sta)?/) {
             "scaffold.fa"
         }
-        else if(filename.equals("assembly_graph.fastg")) {
+        else if(filename ==~ /assembly_graph\.fastg/) {
             "${params.projName}_contigs.fastg"
+        }
+        else if(filename ==~ /assembly_graph_with_scaffolds\.gfa/) {
+            "assembly_graph_with_scaffolds.gfa"
+        }
+        else if(filename ==~ /(contigs|transcripts)\.fasta/) {
+            null //do not publish, but use downstream
         }
         else{
             filename
@@ -189,6 +203,7 @@ process spades {
     output:
     path "scaffold*.{fa,fasta}", optional:true 
     path "spades.log" 
+    path "contigs.paths"
     path "{contigs,transcripts}.fasta", emit:contigs
     path "assembly_graph.fastg", optional:true
     path "assembly_graph_with_scaffolds.gfa", optional:true
@@ -208,7 +223,7 @@ process spades {
     def metaviral_flag = params.spades.algorithm == "metaviral" ? "--metaviral " : ""
     def metaplasmid_flag = params.spades.algorithm == "metaplasmid" ? "--metaplasmid " : ""
     def rnaviral_flag = params.spades.algorithm == "rnaviral" ? "--rnaviral " : ""
-    //def memlimit = params.memlimit != null ? "-m ${params.memlimit/1024*1024}" : ""
+    def memLimit = params.memLimit != null ? "-m ${params.memLimit/1024*1024}" : ""
 
     """
     spades.py -o . -t $params.threads\
@@ -224,41 +239,30 @@ process spades {
     $rnaviral_flag\
     $unpaired\
     $pacbio_file\
-    $nanopore_file
+    $nanopore_file\
+    $memLimit
     """
-    //$memlimit
 }
 
+//assemble using megahit
 process megahit {
     publishDir(
-    path: "$params.outDir/megahit",
+    path: "$params.outDir/AssemblyBasedAnalysis", 
     mode: 'copy',
-    pattern: "${params.projName}_contigs.fastg"
-    )
-    publishDir(
-    path: "$params.outDir", 
-    mode: 'copy',
-    pattern: "{megahit/log,megahit/final.contigs.fa}",
     saveAs: {
         filename ->
         if(filename.equals("megahit/log")) {
-            "megahit/assembly.log"
+            "assembly.log"
         }
-        else if(filename ==~ /scaffold(s|-level-2|).fa(sta)?/) {
+        else if(filename ==~ /megahit\/scaffold(.*)\.fa(sta)?/) {
             "scaffold.fa"
+        }
+        else if(filename ==~ /megahit\/final\.contigs\.fa/) {
+            null //don't publish, but pass to downstream "rename" process
         }
         else{
             filename
         }
-    }
-    )
-    publishDir(
-    path: "$params.outDir", 
-    mode: 'copy',
-    pattern: "megahit/scaffold*.{fa,fasta}",
-    saveAs: {
-        filename ->
-        "scaffold.fa"
     }
     )
 
@@ -291,6 +295,7 @@ process megahit {
 
 }
 
+//filter long reads for unicycler
 process unicyclerPrep {
     input:
     path longreads
@@ -307,20 +312,25 @@ process unicyclerPrep {
     $longreads > long_reads.fasta
     """
 }
+
+//assembly using unicycler
 process unicycler {
     publishDir (
-        path: "$params.outDir/unicycler", 
+        path: "$params.outDir/AssemblyBasedAnalysis", 
         mode: 'copy',
         saveAs: {
         filename ->
-        if(filename ==~ /unicycler.log/) {
+        if(filename ==~ /unicycler\.log/) {
             "assembly.log"
         }
-        else if(filename ==~ /scaffold(s|-level-2|).fa(sta)?/) {
+        else if(filename ==~ /scaffold(s|-level-2|)\.fa(sta)?/) {
             "scaffold.fa"
         }
         else if(filename.equals("assembly.gfa")) {
             "${params.projName}_contigs.fastg"
+        }
+        else if(filename ==~ /assembly\.fasta/) {
+            null //don't publish, but emit for use in downstream process "rename"
         }
         else{
             filename
@@ -356,16 +366,17 @@ process unicycler {
 
 }
 
+//assembly using lrasm
 process lrasm {
     publishDir (
-        path: "$params.outDir/lrasm", 
+        path: "$params.outDir/AssemblyBasedAnalysis", 
         mode: 'copy',
         saveAs: {
         filename ->
-        if(filename ==~ /log/) {
+        if(filename ==~ /contigs\.log/) {
             "assembly.log"
         }
-        else if(filename ==~ /scaffold(s|-level-2|).fa(sta)?/) {
+        else if(filename ==~ /scaffold(s|-level-2|)\.fa(sta)?/) {
             "scaffold.fa"
         }
         else if(filename.equals("Assembly/unitig.gfa")) {
@@ -379,6 +390,9 @@ process lrasm {
         }
         else if(filename.equals("Assembly/assembly_info.txt")) {
             "assembly_info.txt"
+        }
+        else if(filename ==~ /contigs\.fa/) {
+            null //do not publish, but emit for use in downstream process "rename"
         }
         else{
             filename
@@ -427,7 +441,7 @@ process lrasm {
 
 process rename {
     publishDir(
-        path: "$params.outDir/final_files",
+        path: "$params.outDir/AssemblyBasedAnalysis",
         mode: 'copy'
     )
     input:
@@ -437,6 +451,7 @@ process rename {
     path "*"
 
     script:
+    def annotation = params.annotation ? "-ann 1" : ""
     """
     CONTIG_NUMBER=\$(grep -c '>' ${contigs})
     
@@ -445,11 +460,32 @@ process rename {
     -d .\
     -filt $params.minContigSize\
     -maxseq \$CONTIG_NUMBER\
-    -ann $params.contigSizeForAnnotation\
-    -n $params.projName
+    -ann_size $params.contigSizeForAnnotation\
+    -n $params.projName\
+    $annotation
     """
 
 }
+
+// process ifNoOutputContigs {
+//     input:
+//     val x
+//     path contigDirectory
+
+//     when:
+//     x == 'EMPTY'
+
+//     output:
+//     path "*"
+
+//     shell:
+//     '''
+//     #!/usr/bin/env perl
+//     my @intermediate_contigs = sort { -M $a <=> -M $b} glob("$AssemblerOutDir/contig-* $AssemblerOutDir/intermediate_contigs/*contigs.fa $AssemblerOutDir/K*/final_contigs.fasta" );
+
+//     '''
+
+// }
 
 workflow {
     "mkdir nf_assets".execute().text

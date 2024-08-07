@@ -13,6 +13,7 @@ my $max_seq_number;
 my $id_mapping;
 my $contig_size_for_annotation;
 my $project_name;
+my $do_annotation;
 
 GetOptions(
     'u=s{1,}' => \$fasta,
@@ -20,8 +21,9 @@ GetOptions(
     'filt=i' => \$size_filter,
     'maxseq=i' => \$max_seq_number,
     'id:s' => \$id_mapping,
-    'ann=i' => \$contig_size_for_annotation,
-    'n=s' => \$project_name
+    'ann_size=i' => \$contig_size_for_annotation,
+    'n=s' => \$project_name,
+    'ann:i' => \$do_annotation #default to false (0)
 );
 
 my $output= "$outputDir/${project_name}_contigs.fa";
@@ -56,18 +58,17 @@ while (my $line=<$fh>)
         chomp $seq;
         my $fasta_header;
     $id =~ s/\W/_/g;
-        #not doing any of the annotation-specific tasks for this modularized version of runAssembly
-        #if($configuration->{DoAnnotation}){
+        if($do_annotation){
             # genbank format limit the LOCUS name length
-            #if ($id_mapping){
-                #$fasta_header = ( length($id) > 20 ) ? "contig_$serial_id $id" : "$id contig_$serial_id";
-                #print $idmap_ofh "contig_$serial_id\t$id\n";
-            #}else{
-                #$fasta_header = ( length($project_name) > 20 || $project_name =~/^Assembly/i ) ? "contig_$serial_id $id_info GC_content_$GC_content": "${project_name}_$serial_id $id_info GC_content_$GC_content";
-            #}
-        #}else{
+            if ($id_mapping){
+                $fasta_header = ( length($id) > 20 ) ? "contig_$serial_id $id" : "$id contig_$serial_id";
+                print $idmap_ofh "contig_$serial_id\t$id\n";
+            }else{
+                $fasta_header = ( length($project_name) > 20 || $project_name =~/^Assembly/i ) ? "contig_$serial_id $id_info GC_content_$GC_content": "${project_name}_$serial_id $id_info GC_content_$GC_content";
+            }
+        }else{
         $fasta_header = ($id_mapping)? "$id" : "${project_name}_$serial_id $id_info GC_content_$GC_content";
-        #}
+        }
         if ($len >= $contig_size_for_annotation)
         {
         print $ofh2 ">$fasta_header\n" . $seq."\n";
