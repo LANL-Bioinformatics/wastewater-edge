@@ -18,7 +18,7 @@ process idbaUD {
             "scaffold.fa"
         }
         else{
-            null //do not publish contig-max.fa yet, but use it for downstream process
+            null //do not publish contig-max.fa or intermediate contigs yet, but use them for downstream processes
         }
     }
     )
@@ -32,7 +32,8 @@ process idbaUD {
     output:
     path "log"
     path "scaffold*.{fa,fasta}", optional:true 
-    path "contig-max.fa", emit: contigs
+    path "contig-max.fa", emit: contigs, optional:true
+    path "{contig-*,*contigs.fa,K*/final_contigs.fasta}", emit: intContigs
 
     script:
     def avg_len = avg_len as Integer
@@ -168,6 +169,7 @@ process idbaAvgLen {
 
 //assemble using spades
 process spades {
+
     publishDir (
     path: "$params.outDir/AssemblyBasedAnalysis", 
     mode: 'copy',
@@ -186,7 +188,10 @@ process spades {
             "assembly_graph_with_scaffolds.gfa"
         }
         else if(filename ==~ /(contigs|transcripts)\.fasta/) {
-            null //do not publish, but use downstream
+            null //do not publish contigs, but use downstream
+        }
+        else if(filename ==~ /((contig-.*)|(.*contigs\.fa)|(K.*\/final_contigs\.fasta))/) {
+            null //do not publish intermediate contigs, but use downstream
         }
         else{
             filename
@@ -204,9 +209,10 @@ process spades {
     path "scaffold*.{fa,fasta}", optional:true 
     path "spades.log" 
     path "contigs.paths"
-    path "{contigs,transcripts}.fasta", emit:contigs
+    path "{contigs,transcripts}.fasta", emit:contigs, optional:true
     path "assembly_graph.fastg", optional:true
     path "assembly_graph_with_scaffolds.gfa", optional:true
+    path "{contig-*,*contigs.fa,K*/final_contigs.fasta}", emit: intContigs
 
 
     script:
@@ -246,6 +252,7 @@ process spades {
 
 //assemble using megahit
 process megahit {
+
     publishDir(
     path: "$params.outDir/AssemblyBasedAnalysis", 
     mode: 'copy',
@@ -258,7 +265,10 @@ process megahit {
             "scaffold.fa"
         }
         else if(filename ==~ /megahit\/final\.contigs\.fa/) {
-            null //don't publish, but pass to downstream "rename" process
+            null //don't publish, but pass to downstream "renameFilterFasta" process
+        }
+        else if(filename ==~ /megahit\/((contig-.*)|(.*contigs\.fa)|(K.*\/final_contigs\.fasta))/) {
+            null //do not publish intermediate contigs, but use downstream
         }
         else{
             filename
@@ -273,8 +283,9 @@ process megahit {
     output:
     path "megahit/log"
     path "megahit/scaffold*.{fa,fasta}", optional:true //I don't believe this is a normal output of megahit, but just in case
-    path "megahit/final.contigs.fa", emit: contigs
+    path "megahit/final.contigs.fa", emit: contigs, optional:true
     path "${params.projName}_contigs.fastg"
+    path "megahit/{contig-*,*contigs.fa,K*/final_contigs.fasta}", emit: intContigs
 
     script:
     def paired = paired.name != "NO_FILE" ? "-1 ${paired[0]} -2 ${paired[1]} " : ""
@@ -291,6 +302,61 @@ process megahit {
     LARGESTKMER=\$(head -n 1 megahit/final.contigs.fa | perl -ne '/^>k(\\d+)\\_/; print \$1;')
 
     megahit_toolkit contig2fastg \$LARGESTKMER megahit/intermediate_contigs/k\${LARGESTKMER}.contigs.fa  > ${params.projName}_contigs.fastg
+    """
+
+}
+
+
+//assembly using unicycler
+process unicycler {
+    publishDir (
+        path: "$params.outDir/AssemblyBasedAnalysis", 
+        mode: 'copy',
+        saveAs: {
+        filename ->
+        if(filename ==~ /unicycler\.log/) {
+            "assembly.log"
+        }
+        else if(filename ==~ /scaffold(s|-level-2|)\.fa(sta)?/) {
+            "scaffold.fa"
+        }
+        else if(filename.equals("assembly.gfa")) {
+            "${params.projName}_contigs.fastg"
+        }
+        else if(filename ==~ /assembly\.fasta/) {
+            null //don't publish, but emit for use in downstream process "renameFilterFasta"
+        }
+        else{
+            filename
+        }
+    }
+    )
+
+    input:
+    path paired
+    path unpaired
+    path longreads //If present, expects filtered long reads.
+
+    output:
+    path "unicycler.log"
+    path "scaffold*.{fa,fasta}", optional:true //I don't believe this is a normal output of unicycler, but just in case
+    path "assembly.fasta", emit: contigs
+    path "assembly.gfa", optional:true
+    //path "{contig-*,*contigs.fa,K*/final_contigs.fasta}", emit: intContigs | not produced by unicycler
+
+    script:
+    def paired = paired.name != "NO_FILE" ? "-1 ${paired[0]} -2 ${paired[1]} " : ""
+    def unpaired = unpaired.name != "NO_FILE2" ? "-r $unpaired " : ""
+    def filt_lr = longreads.name != "NO_FILE3" ? "-l $longreads " : ""
+    def bridge = params.unicycler.bridgingMode != "normal" ? "--mode $params.unicycler.bridgingMode" : "--mode normal"
+
+    """
+    export _JAVA_OPTIONS='-Xmx20G'; export TERM='xterm';
+
+    unicycler -t $params.threads -o .\
+    $paired\
+    $filt_lr\
+    $bridge 2>&1 1>/dev/null
     """
 
 }
@@ -313,61 +379,10 @@ process unicyclerPrep {
     """
 }
 
-//assembly using unicycler
-process unicycler {
-    publishDir (
-        path: "$params.outDir/AssemblyBasedAnalysis", 
-        mode: 'copy',
-        saveAs: {
-        filename ->
-        if(filename ==~ /unicycler\.log/) {
-            "assembly.log"
-        }
-        else if(filename ==~ /scaffold(s|-level-2|)\.fa(sta)?/) {
-            "scaffold.fa"
-        }
-        else if(filename.equals("assembly.gfa")) {
-            "${params.projName}_contigs.fastg"
-        }
-        else if(filename ==~ /assembly\.fasta/) {
-            null //don't publish, but emit for use in downstream process "rename"
-        }
-        else{
-            filename
-        }
-    }
-    )
-
-    input:
-    path paired
-    path unpaired
-    path longreads //If present, expects filtered long reads.
-
-    output:
-    path "unicycler.log"
-    path "scaffold*.{fa,fasta}", optional:true //I don't believe this is a normal output of unicycler, but just in case
-    path "assembly.fasta", emit: contigs
-    path "assembly.gfa", optional:true
-
-    script:
-    def paired = paired.name != "NO_FILE" ? "-1 ${paired[0]} -2 ${paired[1]} " : ""
-    def unpaired = unpaired.name != "NO_FILE2" ? "-r $unpaired " : ""
-    def filt_lr = longreads.name != "NO_FILE3" ? "-l $longreads " : ""
-    def bridge = params.unicycler.bridgingMode != "normal" ? "--mode $params.unicycler.bridgingMode" : "--mode normal"
-
-    """
-    export _JAVA_OPTIONS='-Xmx20G'; export TERM='xterm';
-
-    unicycler -t $params.threads -o .\
-    $paired\
-    $filt_lr\
-    $bridge 2>&1 1>/dev/null
-    """
-
-}
 
 //assembly using lrasm
 process lrasm {
+
     publishDir (
         path: "$params.outDir/AssemblyBasedAnalysis", 
         mode: 'copy',
@@ -392,7 +407,10 @@ process lrasm {
             "assembly_info.txt"
         }
         else if(filename ==~ /contigs\.fa/) {
-            null //do not publish, but emit for use in downstream process "rename"
+            null //do not publish, but emit for use in downstream process "renameFilterFasta"
+        }
+        else if(filename ==~ /((contig-.*)|(.*contigs\.fa)|(K.*\/final_contigs\.fasta))/) {
+            null //do not publish intermediate contigs, but use downstream
         }
         else{
             filename
@@ -406,11 +424,12 @@ process lrasm {
     output:
     path "contigs.log" 
     path "scaffold*.{fa,fasta}", optional:true //I don't believe this is a normal output of lrasm, but just in case
-    path "contigs.fa", emit:contigs
+    path "contigs.fa", emit:contigs, optional:true
     path "Assembly/unitig.gfa", optional:true
     path "Assembly/assembly_graph.gfa", optional:true
     path "Assembly/assembly_graph.gv", optional:true
     path "Assembly/assembly_info.txt", optional:true
+    path "{contig-*,*contigs.fa,K*/final_contigs.fasta}", emit: intContigs
 
     script:
     def consensus = params.lrasm.numConsensus != null ? "-n $params.lrasm.numConsensus ": ""
@@ -439,7 +458,7 @@ process lrasm {
     //2>/dev/null
 }
 
-process rename {
+process renameFilterFasta {
     publishDir(
         path: "$params.outDir/AssemblyBasedAnalysis",
         mode: 'copy'
@@ -467,25 +486,30 @@ process rename {
 
 }
 
-// process ifNoOutputContigs {
-//     input:
-//     val x
-//     path contigDirectory
+process bestIncompleteAssembly {
+    input:
+    val x
+    path intContigs
 
-//     when:
-//     x == 'EMPTY'
+    when:
+    x == 'EMPTY'
 
-//     output:
-//     path "*"
+    output:
+    path "bestIntContig/*"
 
-//     shell:
-//     '''
-//     #!/usr/bin/env perl
-//     my @intermediate_contigs = sort { -M $a <=> -M $b} glob("$AssemblerOutDir/contig-* $AssemblerOutDir/intermediate_contigs/*contigs.fa $AssemblerOutDir/K*/final_contigs.fasta" );
+    shell:
+    '''
+    #!/usr/bin/env perl
+    use Cwd;
+    my $dir = getcwd;
+    use Cwd 'abs_path';
+    my @intermediate_contigs = sort { -M $a <=> -M $b} glob("!{intContigs}");
+    my $best_int = $dir . "/" . $intermediate_contigs[0];
+    mkdir bestIntContig;
+    system("cp $best_int ./bestIntContig");
+    '''
 
-//     '''
-
-// }
+}
 
 workflow {
     "mkdir nf_assets".execute().text
@@ -508,16 +532,22 @@ workflow {
             su.filter{ it.size()>0 }.ifEmpty({file("nf_assets/NO_FILE2")}),
             l.filter{ it.size()>0 }.ifEmpty({file("nf_assets/NO_FILE3")}),
             avg_len_ch)
-        rename(idbaUD.out.contigs)
+        
+        bestIncompleteAssembly(idbaUD.out.contigs.ifEmpty('EMPTY'), idbaUD.out.intContigs)
+        renameFilterFasta(idbaUD.out.contigs.concat(bestIncompleteAssembly.out).first())
 
     }
     else if (params.assembler.equalsIgnoreCase("SPAdes")) {
         spades(paired_ch, unpaired_ch, spades_pb, spades_np)
-        rename(spades.out.contigs)
+        
+        bestIncompleteAssembly(spades.out.contigs.ifEmpty('EMPTY'), spades.out.intContigs)
+        renameFilterFasta(spades.out.contigs.concat(bestIncompleteAssembly.out).first())
     }
     else if (params.assembler.equalsIgnoreCase("MEGAHIT")) {
         megahit(paired_ch, unpaired_ch)
-        rename(megahit.out.contigs)
+        
+        bestIncompleteAssembly(megahit.out.contigs.ifEmpty('EMPTY'), megahit.out.intContigs)
+        renameFilterFasta(megahit.out.contigs.concat(bestIncompleteAssembly.out).first())
     }
     else if (params.assembler.equalsIgnoreCase("UniCycler")) {
         if (params.unicycler.longreads != "nf_assets/NO_FILE3") {
@@ -525,21 +555,22 @@ workflow {
             unicycler(paired_ch,
                 unpaired_ch,
                 unicyclerPrep(unicycler_lr).filter{it.size()>0}.ifEmpty({file("nf_assets/NO_FILE3")}))
-            rename(unicycler.out.contigs)
+            //unicycler produces no intermediate contigs, we let it error out above rather than try to rescue a failed assembly
+            renameFilterFasta(unicycler.out.contigs)
         }
         else {
             unicycler(paired_ch, unpaired_ch, unicycler_lr)
-            rename(unicycler.out.contigs)
+            renameFilterFasta(unicycler.out.contigs)
         }
     }
     else if (params.assembler.equalsIgnoreCase("LRASM")) {
         lrasm(unpaired_ch)
-        rename(lrasm.out.contigs)
+
+        bestIncompleteAssembly(lrasm.out.contigs.ifEmpty('EMPTY'), lrasm.out.intContigs)
+        renameFilterFasta(lrasm.out.contigs.concat(bestIncompleteAssembly.out).first())
     }
     else {
         error "Invalid assembler: $params.assembler"
     }
-
-    //TODO: add safety in case of assembly failure/incomplete assembly
 
 }
