@@ -33,6 +33,7 @@ RUN conda install -n readsTaxonomyAssignment -c conda-forge parallel
 #but we encounter errors when compiling splitrim.d in gottcha's latest source code release. 
 #we will install gottcha here and later replace the non-splitrim scripts with the latest source code.
 RUN conda install -n readsTaxonomyAssignment -c bioconda gottcha
+RUN conda install -n readsTaxonomyAssignment -c conda-forge perl-app-cpanminus
 RUN conda install -c conda-forge conda-pack
 
 
