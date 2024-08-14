@@ -52,7 +52,7 @@ then
 fi
 
 export PYTHONPATH=$EDGE_HOME/bin/python/lib
-export PATH=$EDGE_HOME/bin:$EDGE_HOME/scripts:$EDGE_HOME/scripts/microbial_profiling/script:$PATH;
+#export PATH=$EDGE_HOME/bin:$EDGE_HOME/scripts:$EDGE_HOME/scripts/microbial_profiling/script:$PATH;
 mkdir -p $OUTPATH
 
 set -x;

@@ -25,6 +25,7 @@
 use strict;
 use FindBin qw($Bin);
 use lib $Bin;
+print "$Bin";
 use gi2lineage;
 
 my $list;

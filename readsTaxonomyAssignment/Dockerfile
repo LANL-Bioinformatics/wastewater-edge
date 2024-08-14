@@ -13,7 +13,7 @@ RUN conda init bash \
     && conda activate readsTaxonomyAssignment 
 
 RUN conda install -n readsTaxonomyAssignment -c bioconda metaphlan=4.1.1
-RUN conda install -n readsTaxonomyAssignment python=3.11
+RUN conda install -n readsTaxonomyAssignment python=3.10
 #the required version of diamond is 2.0.5, but this runs into conda installation problems
 #we will install it here to handle any dependencies, then later replace diamond with the appropriate release
 RUN conda install -n readsTaxonomyAssignment -c bioconda diamond 
@@ -33,24 +33,9 @@ RUN conda install -n readsTaxonomyAssignment -c conda-forge parallel
 #but we encounter errors when compiling splitrim.d in gottcha's latest source code release. 
 #we will install gottcha here and later replace the non-splitrim scripts with the latest source code.
 RUN conda install -n readsTaxonomyAssignment -c bioconda gottcha
-RUN conda install -n readsTaxonomyAssignment -c conda-forge perl-app-cpanminus
+RUN conda install -n readsTaxonomyAssignment -c bioconda bowtie2=2.5.1
 RUN conda install -c conda-forge conda-pack
 
-
-#correct diamond version
-RUN wget https://github.com/bbuchfink/diamond/releases/download/v2.0.5/diamond-linux64.tar.gz \
-    && tar -xvzf diamond-linux64.tar.gz \
-    && rm /opt/conda/envs/readsTaxonomyAssignment/bin/diamond \
-    && mv diamond /opt/conda/envs/readsTaxonomyAssignment/bin
-
-#correct gottcha version
-RUN wget https://github.com/LANL-Bioinformatics/GOTTCHA/archive/refs/tags/1.0c.tar.gz \
-    && tar -xvzf 1.0c.tar.gz \
-    && chmod 755 GOTTCHA-1.0c/src/*.pl \
-    && mv -f -v GOTTCHA-1.0c/src/*.pl /opt/conda/envs/readsTaxonomyAssignment/bin
-
-#add scripts from this project to bin
-ADD bin/* /opt/conda/envs/readsTaxonomyAssignment/bin
 
 #download latest PanGIA 
 #ISSUE: differs from version in EDGE's third-party software, in ways that break scripts
@@ -59,6 +44,19 @@ RUN wget https://ref-db.edgebioinformatics.org/EDGE/dev/edge_dev_thirdParty_soft
     && tar -xvzf edge_dev_thirdParty_softwares.tgz \
     && tar -xvzf thirdParty/pangia-1.0.0.tar.gz -C . \
     && mv pangia /opt/conda/envs/readsTaxonomyAssignment/opt
+
+#correct diamond version
+RUN wget https://github.com/bbuchfink/diamond/releases/download/v2.0.5/diamond-linux64.tar.gz \
+    && tar -xvzf diamond-linux64.tar.gz
+
+#correct gottcha version
+RUN wget https://github.com/LANL-Bioinformatics/GOTTCHA/archive/refs/tags/1.0c.tar.gz \
+    && tar -xvzf 1.0c.tar.gz \
+    && chmod 755 GOTTCHA-1.0c/src/*.pl
+
+
+#add scripts from this project to bin
+ADD bin/* /opt/conda/envs/readsTaxonomyAssignment/bin
 
 #pack environment for runtime image
 RUN conda-pack -n readsTaxonomyAssignment -o /tmp/env.tar && \
@@ -70,13 +68,13 @@ RUN /venv/bin/conda-unpack
 FROM debian:latest AS runtime
 
 COPY --from=build /venv /venv
+COPY --from=build /diamond /venv/bin
+COPY --from=build /GOTTCHA-1.0c/src/*.pl /venv/bin
 
 #add environment, pangia base and vis-scripts to PATH
 ENV PATH=/venv/bin:/venv/opt/pangia:/venv/opt/pangia/pangia-vis/scripts:/venv/opt/krona:$PATH
-#run krona scripts
-#RUN /venv/opt/krona/updateTaxonomy.sh
-#RUN /venv/opt/krona/updateAccessions.sh 
-#very long step. attempting w/greater resources, then may consider shifting to workflow.
+ENV PERL5LIB=/venv/lib/perl5/core_perl/
+
 
 SHELL ["/bin/bash", "-c"]
 CMD /bin/bash
