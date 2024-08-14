@@ -3,6 +3,5 @@
     "pairFile":["test_files/Ecoli_10x.1.fastq","test_files/Ecoli_10x.2.fastq"],
     "outDir": "test_rta",
     "enabledTools" : "diamond,pangia",
-    "custom_gottcha2_speDB_b" : "/media/volume/sdd/nextflow/database/GOTTCHA2/gottcha_db.species.fna",
     "debugFlag" : true
 }
