@@ -48,21 +48,29 @@ process avgLen {
 }
 
 process readsTaxonomy {
+    publishDir(
+        path: "$params.outDir/ReadsBasedAnalysis/Taxonomy",
+	mode: 'copy'
+    )
+    
     input:
     path paired
     path unpaired
     path settings
 
     output:
+    //outputs are many and variable
+    path "*"
 
     script:
     def debugging = (params.debugFlag != null && params.debugFlag) ? "--debug " : ""
     def numCPU = params.cpus != null ? params.cpus : 8
     """
     cat $paired $unpaired > allReads.fastq
-    microbial_profiling.pl $debugging -o ./RTA \
+    microbial_profiling.pl $debugging -o . \
     -s microbial_profiling.settings.ini \
     -c $numCPU \
+    $debugging \
     allReads.fastq 
     """
     //2>error.log
@@ -159,7 +167,6 @@ workflow {
     avg_len_ch = avgLen(lenFile(paired_ch, unpaired_ch))
     readsTaxonomyConfig(avg_len_ch)
     readsTaxonomy(paired_ch, unpaired_ch, readsTaxonomyConfig.out.settings)
-    //TODO: allow unmapped read input
-    //TODO: access EDGE databases and troubleshoot main profiling script.
+    //TODO: check for compatibility with unmapped reads - dependent on other module
     //TODO: clean up output
 }
