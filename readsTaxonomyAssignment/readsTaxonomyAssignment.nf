@@ -50,17 +50,23 @@ process avgLen {
 process readsTaxonomy {
     publishDir(
         path: "$params.outDir/ReadsBasedAnalysis/Taxonomy",
-	mode: 'copy'
+	mode: 'copy',
+	pattern: "{*.log,log**,report**}"
     )
     
     input:
     path paired
     path unpaired
     path settings
+    path errorlog
 
     output:
     //outputs are many and variable
-    path "*"
+    path "error.log"
+    path "taxonomyProfiling.log"
+    path "log**"
+    path "report**"
+    //we expect a final 
 
     script:
     def debugging = (params.debugFlag != null && params.debugFlag) ? "--debug " : ""
@@ -71,22 +77,17 @@ process readsTaxonomy {
     -s microbial_profiling.settings.ini \
     -c $numCPU \
     $debugging \
-    allReads.fastq 
+    allReads.fastq 2>>$errorlog 
     """
-    //2>error.log
 }
 
 process readsTaxonomyConfig {
-    publishDir(
-        path: "$params.outDir",
-        mode: 'copy'
-    )
 
     input:
     val avgLen
 
     output:
-    path "error.log"
+    path "error.log", emit: errorlog
     path "microbial_profiling.settings.ini", emit: settings 
 
     script:
@@ -166,7 +167,7 @@ workflow {
     unpaired_ch = channel.fromPath(params.unpairFile, checkIfExists:true)
     avg_len_ch = avgLen(lenFile(paired_ch, unpaired_ch))
     readsTaxonomyConfig(avg_len_ch)
-    readsTaxonomy(paired_ch, unpaired_ch, readsTaxonomyConfig.out.settings)
+    readsTaxonomy(paired_ch, unpaired_ch, readsTaxonomyConfig.out.settings, readsTaxonomyConfig.out.errorlog)
     //TODO: check for compatibility with unmapped reads - dependent on other module
     //TODO: clean up output
 }
