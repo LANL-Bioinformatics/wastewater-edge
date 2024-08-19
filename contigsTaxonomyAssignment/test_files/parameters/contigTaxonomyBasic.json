@@ -1,0 +1,6 @@
+{
+    "cpus":4,
+    "contigFile":"test_files/contigs.fa",
+    "outDir": "contigTaxonomyOut",
+    "projName": "contigTaxTest"
+}
