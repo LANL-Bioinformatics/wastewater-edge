@@ -12,14 +12,13 @@ RUN conda init bash \
     && conda create --name contigsTaxonomyAssignment \
     && conda activate contigsTaxonomyAssignment 
 
-RUN conda install -n contigsTaxonomyAssignment python=3.9
+RUN conda install -n contigsTaxonomyAssignment python=3.5
 RUN conda install -n contigsTaxonomyAssignment r-base=4.3.1
-RUN conda install -n contigsTaxonomyAssignment -c bioconda minimap2=2.22
-RUN conda install -n contigsTaxonomyAssignment -c bioconda pandas=2.2.2
+RUN conda install -n contigsTaxonomyAssignment -c bioconda minimap2=2.24
+RUN conda install -n contigsTaxonomyAssignment -c bioconda pandas=0.23.4
 RUN conda install -c conda-forge conda-pack
-
-RUN git clone --depth 1 https://github.com/poeli/miccr.git
-
+#use latest miccr (v0.0.3) with Chienchi's fix for tokenizing alignment file
+RUN git clone --depth 1 https://github.com/chienchi/miccr.git
 #add scripts from this project to bin
 ADD bin/* /opt/conda/envs/contigsTaxonomyAssignment/bin
 
