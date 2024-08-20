@@ -12,13 +12,13 @@ process contigTaxonomy {
 
     script:
     """
-    miccr.py -x asm10 -d $params.dbPath -t $params.numCPU -p $params.projName -i $params.contigFile 1>log.txt 2>&1" 
+    miccr.py -x asm10 -d $params.dbPath -t $params.cpus -p $params.projName -i $contigs 1>log.txt 2>&1 
     """
 }
 
 workflow {
-    contigs = channel.fromPath(params.contigFile, relative:true, checkIfExists:true)
-    coverageTable = channel.fromPath(params.coverageTable, relative:true, checkIfExists:true)
+    contigs = channel.fromPath(params.contigFile, checkIfExists:true)
+    coverageTable = channel.fromPath(params.coverageTable, checkIfExists:true)
     contigTaxonomy(contigs, coverageTable)
 
 }
