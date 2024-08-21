@@ -16,7 +16,7 @@ RUN conda install -n contigsTaxonomyAssignment python=3.5
 RUN conda install -n contigsTaxonomyAssignment r-base=4.3.1
 RUN conda install -n contigsTaxonomyAssignment -c bioconda minimap2=2.24
 RUN conda install -n contigsTaxonomyAssignment -c bioconda pandas=0.23.4
-#RUN conda install -n contigsTaxonomyAssignment -c bioconda perl-json
+RUN conda install -n contigsTaxonomyAssignment -c bioconda perl-json
 RUN conda install -c conda-forge conda-pack
 #use latest miccr (v0.0.3) with Chienchi's fix for tokenizing alignment file
 RUN git clone --depth 1 https://github.com/chienchi/miccr.git
