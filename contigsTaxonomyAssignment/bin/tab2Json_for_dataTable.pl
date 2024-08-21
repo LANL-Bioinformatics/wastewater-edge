@@ -5,8 +5,8 @@
 use strict;
 use Getopt::Long;
 use File::Basename;
-use FindBin qw($RealBin);
-use lib "$RealBin/../lib";
+#use FindBin qw($RealBin);
+#use lib "$RealBin/../lib";
 use JSON;
 
 my $limit=3000;
