@@ -2,7 +2,6 @@
 use strict;
 use Getopt::Long;
 use File::Basename;
-use FindBin qw($RealBin);
 
 my $input;
 my $classified_result;
