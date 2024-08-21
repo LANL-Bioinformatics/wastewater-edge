@@ -20,31 +20,49 @@ process contigTaxonomy {
 }
 
 process addLineage {
+    publishDir(
+        path: "$params.outDir/AssemblyBasedAnalysis/Taxonomy",
+        mode: 'copy'
+    )
+    
     input:
     path taxResult
 
     output:
-    path "*"
+    path "*.lineage", emit: lineage
 
     script:
+    def dbFolder = params.dbPath.take(params.dbPath.lastIndexOf("/")) //get folder path containing DB
     """
-    add_lineage.py $params.dbPath $taxResult > ${taxResult.name}.lineage
+    add_lineage.py $dbFolder $taxResult > ${taxResult.name}.lineage
     """
 }
 
-// process plotAndTable {
-//     input:
-//     output:
-//     script:
-//     """
-//     """
-// }
+process plotAndTable {
+    publishDir(
+        path: "$params.outDir/AssemblyBasedAnalysis/Taxonomy",
+	mode: 'copy'
+    )
+    input:
+    path lineage
+    path covTable
+    path lcaResult
+    
+    output:
+    //TODO: check which files EDGE normally publishes
+    path "*"
+    
+    script:
+    """
+    classification_plot.R $lineage $covTable
+    tab2Json_for_dataTable.pl -project_dir $params.outDir -mode contig -limit $params.rowLimit $lcaResult > ${params.projName}.ctg_class.LCA.json
+    """
+}
 
 workflow {
     contigs = channel.fromPath(params.contigFile, checkIfExists:true)
     coverageTable = channel.fromPath(params.coverageTable, checkIfExists:true)
     contigTaxonomy(contigs)
     addLineage(contigTaxonomy.out.taxResult)
-    //plotAndTable(contigTaxonomy.out, coverageTable)
-
+    plotAndTable(addLineage.out.lineage, coverageTable, contigTaxonomy.out.taxLcaResult)
 }
