@@ -34,6 +34,12 @@ RUN conda install -n readsTaxonomyAssignment -c conda-forge parallel
 #we will install gottcha here and later replace the non-splitrim scripts with the latest source code.
 RUN conda install -n readsTaxonomyAssignment -c bioconda gottcha
 RUN conda install -n readsTaxonomyAssignment -c bioconda bowtie2=2.5.1
+RUN conda install -n readsTaxonomyAssignment -c bioconda perl-html-template
+RUN conda install -n readsTaxonomyAssignment -c bioconda perl-xml-simple
+RUN conda install -n readsTaxonomyAssignment -c bioconda perl-excel-writer-xlsx
+RUN conda install -n readsTaxonomyAssignment -c bioconda perl-bioperl
+RUN conda install -n readsTaxonomyAssignment -c conda-forge perl-app-cpanminus
+RUN conda install -n readsTaxonomyAssignment -c bioconda perl-bioperl-core
 RUN conda install -c conda-forge conda-pack
 
 

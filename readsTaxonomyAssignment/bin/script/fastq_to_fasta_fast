@@ -1,4 +1,4 @@
-#!/usr/bin/perl
+#!/usr/bin/env perl
 
 
 ## Warning no santity checking, just blindly outputs the name and sequence

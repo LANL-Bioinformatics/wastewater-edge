@@ -1,6 +1,7 @@
-#!/usr/bin/perl -w
+#!/usr/bin/env perl
 use Storable;
 use strict;
+use warnings;
 
 my ($infile, $cutoff) = @ARGV;
 my $node_phylo;

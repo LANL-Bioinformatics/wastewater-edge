@@ -1,4 +1,4 @@
-#!/usr/bin/perl -w
+#!/usr/bin/env perl
 use Bio::TreeIO;
 use Bio::Tree::TreeI;
 use Bio::Tree::Node;
@@ -8,8 +8,9 @@ use FindBin qw($Bin);
 use lib "$Bin";
 use phylo_dot_plot;
 use strict;
+use warnings;
 
-$ENV{PATH} = "$Bin:$Bin/../:$Bin/script/:$Bin/bin/:$ENV{PATH}";
+#$ENV{PATH} = "$Bin:$Bin/../:$Bin/script/:$Bin/bin/:$ENV{PATH}";
 
 $|=1;
 my %opt;

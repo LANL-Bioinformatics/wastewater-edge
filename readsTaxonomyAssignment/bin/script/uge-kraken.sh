@@ -56,7 +56,6 @@ then
      exit 1;
 fi
 
-export PATH=$EDGE_HOME/bin:$EDGE_HOME/scripts/microbial_profiling/script:$EDGE_HOME/scripts:$PATH;
 
 mkdir -p $OUTPATH
 

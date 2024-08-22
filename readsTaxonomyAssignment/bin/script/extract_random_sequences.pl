@@ -1,8 +1,9 @@
-#! /usr/bin/perl
+#! /usr/bin/env perl
 # chienchi at lanl.gov
 # 20110412
 
 use strict;
+use wanings;
 use Getopt::Long;
 
 my $file;

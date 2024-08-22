@@ -1,6 +1,7 @@
-#! /usr/bin/perl
+#! /usr/bin/env perl
 use Getopt::Long;
 use strict;
+use warnings;
 
 $|=1;
 my ($inFastq, $maxReads);

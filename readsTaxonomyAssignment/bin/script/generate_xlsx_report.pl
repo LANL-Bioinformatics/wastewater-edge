@@ -1,7 +1,8 @@
-#!/usr/bin/perl -w
+#!/usr/bin/env perl
 use strict;
+use warnings;
 use FindBin;
-use lib "$FindBin::Bin/../../../lib";
+#use lib "$FindBin::Bin/../../../lib";
 use Excel::Writer::XLSX;
 use Getopt::Long;
 

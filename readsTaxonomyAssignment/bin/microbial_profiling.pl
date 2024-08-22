@@ -10,7 +10,7 @@ use File::Basename;
 my $script_dirname = dirname(__FILE__);
 
 $|=1;
-$ENV{PATH} = "$Bin:$Bin/../:$Bin/script/:$Bin/bin/:$ENV{PATH}:/cm/shared/apps/uge/8.4.4/bin/lx-amd64/";
+#$ENV{PATH} = "$Bin:$Bin/../:$Bin/script/:$Bin/bin/:$ENV{PATH}:/cm/shared/apps/uge/8.4.4/bin/lx-amd64/";
 $ENV{EDGE_HOME} = "$Bin/../../..";
 my $main_pid = $$;
 
@@ -334,7 +334,6 @@ foreach my $idx ( sort {$a<=>$b} keys %$file_info ){
 	chomp $pwd;
 
 	print $post_fh "
-      export PATH=$Bin:$Bin/../:$Bin/script/:$Bin/bin/:$ENV{EDGE_HOME}/thirdParty/Mambaforge/bin:\$PATH;
 	  cd $pwd;
 
       echo \"[Post-processing #$idx $fnb]\";

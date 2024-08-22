@@ -1,5 +1,7 @@
-#! /usr/bin/perl -w
+#! /usr/bin/env perl
 use strict;
+use warnings;
+
 #use Storable;
 use lib (`ktGetLibPath`);
 use KronaTools;

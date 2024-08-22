@@ -1,12 +1,13 @@
-#!/usr/bin/perl
+#!/usr/bin/env perl
 use strict;
+use warnings;
 use Getopt::Long;
 use FindBin qw($Bin);
-use lib "$Bin/../../../lib";
+#use lib "$Bin/../../../lib";
 use HTML::Template;
 
 $|=1;
-$ENV{PATH} = "$Bin:$Bin/bin/:$Bin/scripts/:$ENV{PATH}";
+#$ENV{PATH} = "$Bin:$Bin/bin/:$Bin/scripts/:$ENV{PATH}";
 
 my $template;
 my %opt;
@@ -28,6 +29,9 @@ $opt{outprefix}   ||= "";
 $opt{top}         ||= 5;
 $opt{filter_taxa} ||= "";
 $opt{level}       ||= "genus";
+
+print for @INC;
+print "list2radar_INC";
 
 if( -r $opt{template}){
 	$template = HTML::Template->new(filename => $opt{template});
