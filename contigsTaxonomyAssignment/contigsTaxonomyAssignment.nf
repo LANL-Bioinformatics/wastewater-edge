@@ -11,7 +11,9 @@ process contigTaxonomy {
     path "log.txt"
     path "${params.projName}.lca_ctg.tsv", emit: taxLcaResult
     path "${params.projName}.ctg.tsv", emit: taxResult
-
+    path "${params.projName}.unclassified.fasta"
+    path "${params.projName}.paf"
+    
     script:
     """
     miccr.py -x asm10 -d $params.dbPath -t $params.cpus -p $params.projName -i $contigs 1>log.txt 2>&1 
@@ -49,12 +51,13 @@ process plotAndTable {
     path lcaResult
     
     output:
-    //TODO: check which files EDGE normally publishes
-    path "*"
+    path "${params.projName}.ctg_class.LCA.json"
+    path "summary_by_*.txt"
+    path "*.pdf"
     
     script:
     """
-    classification_plot.R $lineage $covTable
+    classification_plot.R $lineage $params.projName $covTable
     tab2Json_for_dataTable.pl -project_dir $params.outDir -mode contig -limit $params.rowLimit $lcaResult > ${params.projName}.ctg_class.LCA.json
     """
 }
