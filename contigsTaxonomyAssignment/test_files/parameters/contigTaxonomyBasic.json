@@ -3,6 +3,6 @@
     "contigFile":"test_files/Final_contigs.fasta",
     "outDir": "contigTaxonomyOut",
     "projName": "contigTaxTest",
-    "dbPath": "/venv/database/miccrDB/NCBI-Bacteria-Virus.fna.mmi",
+    "dbPath": "/path/to/miccrDB/NCBI-Bacteria-Virus.fna.mmi",
     "coverageTable": "test_files/basic_coverage.table"
 }
