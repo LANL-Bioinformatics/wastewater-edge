@@ -40,6 +40,7 @@ RUN conda install -n readsTaxonomyAssignment -c bioconda perl-excel-writer-xlsx
 RUN conda install -n readsTaxonomyAssignment -c bioconda perl-bioperl
 RUN conda install -n readsTaxonomyAssignment -c conda-forge perl-app-cpanminus
 RUN conda install -n readsTaxonomyAssignment -c bioconda perl-bioperl-core
+RUN conda install -n readsTaxonomyAssignment -c conda-forge cairosvg=2.7.1
 RUN conda install -c conda-forge conda-pack
 
 

@@ -62,11 +62,11 @@ process readsTaxonomy {
 
     output:
     //outputs are many and variable
-    path "error.log"
+    path "error.log", emit: logfile
     path "taxonomyProfiling.log"
+    path "report/**/**/*.svg", emit: svgs
     path "log**"
     path "report**"
-    //we expect a final 
 
     script:
     def debugging = (params.debugFlag != null && params.debugFlag) ? "--debug " : ""
@@ -78,6 +78,22 @@ process readsTaxonomy {
     -c $numCPU \
     $debugging \
     allReads.fastq 2>>$errorlog 
+    """
+}
+
+process svg2pdf {
+    errorStrategy 'ignore'
+
+    input:
+    path svg
+    path logfile
+
+    output:
+    path "*"
+
+    script:
+    """
+    svg2pdf.sh $svg  2>>$logFile
     """
 }
 
@@ -168,6 +184,6 @@ workflow {
     avg_len_ch = avgLen(lenFile(paired_ch, unpaired_ch))
     readsTaxonomyConfig(avg_len_ch)
     readsTaxonomy(paired_ch, unpaired_ch, readsTaxonomyConfig.out.settings, readsTaxonomyConfig.out.errorlog)
+    svg2pdf(readsTaxonomy.out.svgs, readsTaxonomy.out.logfile)
     //TODO: check for compatibility with unmapped reads - dependent on other module
-    //TODO: clean up output
 }
