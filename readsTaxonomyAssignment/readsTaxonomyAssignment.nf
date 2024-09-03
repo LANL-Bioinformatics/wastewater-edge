@@ -170,6 +170,4 @@ workflow {
     avg_len_ch = avgLen(lenFile(paired_ch, unpaired_ch))
     readsTaxonomyConfig(avg_len_ch)
     readsTaxonomy(paired_ch, unpaired_ch, readsTaxonomyConfig.out.settings, readsTaxonomyConfig.out.errorlog)
-    //svg2pdf(readsTaxonomy.out.svgs.collect(), readsTaxonomy.out.logfile)
-    //TODO: check for compatibility with unmapped reads - dependent on other module
 }
