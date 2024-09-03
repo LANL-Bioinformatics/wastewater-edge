@@ -241,7 +241,7 @@ def heatmap_panel( fig, D, minv, maxv, idx1, idx2, cm_name, scale, cols, rows, l
 
     norm_f = matplotlib.colors.LogNorm if scale == 'log' else matplotlib.colors.Normalize
 
-    im = axmatrix.matshow(  D, norm = norm_f(   vmin=None if scale == 'log' else minv if  minv > 0.0 else 0.000000001,
+    im = axmatrix.matshow(  D, norm = norm_f(   vmin=D.min() if scale == 'log' else minv if  minv > 0.0 else 0.000000001,
                                                 vmax=maxv),
                             aspect='auto', origin='lower', cmap=cm)
                             #aspect='auto', origin='lower', cmap=cm, vmax=maxv, vmin=None if scale == 'log' else 0.000000001)
