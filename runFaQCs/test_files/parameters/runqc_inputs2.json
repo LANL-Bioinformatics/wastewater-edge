@@ -1,5 +1,4 @@
 {
     "outDir": "test_out",
-    "inputFastq": ["test_files/test.1.fastq","test_files/test.2.fastq"],
-    "pairedFile": true
+    "pairFile": ["../test_data/Ecoli_10x.1.fastq","../test_data/Ecoli_10x.2.fastq"]
   }

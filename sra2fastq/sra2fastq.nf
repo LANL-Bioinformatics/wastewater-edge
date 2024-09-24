@@ -7,7 +7,7 @@
 process SRA2FASTQ {
 
     tag "$accession"
-    publishDir "$params.outdir/SRA_Download", mode: 'copy'
+    publishDir "$params.outDir/SRA_Download", mode: 'copy'
     errorStrategy "finish" //complete any processes that didn't fail
 
     input: 
