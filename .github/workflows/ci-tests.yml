@@ -36,4 +36,5 @@ jobs:
           sudo mv nf-test /usr/local/bin/
 
       - name: Run Tests (Shard ${{ matrix.shard }}/${{ strategy.job-total }})
+        working-directory: ./workflows/Nextflow
         run: nf-test test --ci --shard ${{ matrix.shard }}/${{ strategy.job-total }}
