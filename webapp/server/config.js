@@ -48,8 +48,8 @@ const makeIntIfDefined = (val) => typeof val === 'string' ? parseInt(val, 10) : 
 // Determine several reusable directory paths based upon environment variables
 // and/or the path to the directory containing this `config.js` file.
 const CLIENT_BASE_DIR = path.join(__dirname, '../client');
-const DATA_BASE_DIR = path.join(__dirname, '../../data');
 const NEXTFLOW_BASE_DIR = path.join(__dirname, '../../workflows/Nextflow');
+const CROMWELL_BASE_DIR = path.join(__dirname, '../../workflows/Cromwell');
 const IO_BASE_DIR = process.env.IO_BASE_DIR || path.join(__dirname, '../../io');
 
 const config = {
@@ -62,8 +62,6 @@ const config = {
     UI_BASE_URL: process.env.APP_UI_BASE_URL || 'https://edge-dev.edgebioinformatics.org/',
     // Port number on which the web server will listen for HTTP requests.
     SERVER_PORT: makeIntIfDefined(process.env.APP_SERVER_PORT) || 5000,
-    // Path to the "docs" directory on the filesystem.
-    DOCS_BASE_DIR: process.env.DOCS_BASE_DIR || path.join(DATA_BASE_DIR, 'docs'),
     // Version identifier of the application.
     VERSION: process.env.EDGE_WEB_APP_VERSION || 'v3.0.0-default',
     API_ERROR: process.env.API_ERROR || 'system error',
@@ -79,15 +77,16 @@ const config = {
     BUILD_DIR: process.env.CLIENT_BASE_DIR || path.join(CLIENT_BASE_DIR, 'build'),
   },
   NEXTFLOW: {
-    // Base URL at which HTTP clients can access the workflow API.
-    API_BASE_URL: process.env.NEXTFLOW_API_BASE_URL || 'http://localhost:8000/api/nextflow',
     // Max allowed number of jobs in nextflow.
     NUM_JOBS_MAX: makeIntIfDefined(process.env.NEXTFLOW_NUM_JOBS_MAX) || 100000,
     // Total size of the input files allowed per job.
     // Note: 161061273600 Bytes is 150 Gibibytes (161 Gigabytes).
     JOBS_INPUT_MAX_SIZE_BYTES: makeIntIfDefined(process.env.NEXTFLOW_JOBS_INPUT_MAX_SIZE_BYTES) || 161061273600,
-    // Directory of the workflow templates. The Workflow templates are used for creating nexflow config.
-    TEMPLATE_DIR: process.env.NEXTFLOW_TEMPLATE_DIR || path.join(NEXTFLOW_BASE_DIR, 'Nextflow/templates'),
+    CONF: process.env.NEXTFLOW_CONF || path.join(NEXTFLOW_BASE_DIR, 'nextflow.config'),
+    // Directory of the workflow files.
+    WORKFLOW_DIR: process.env.NEXTFLOW_WORKFLOW_DIR || NEXTFLOW_BASE_DIR,
+    // Directory of the workflow templates. The Workflow templates are used for creating cromwell inputs.
+    TEMPLATE_DIR: process.env.NEXTFLOW_TEMPLATE_DIR || path.join(NEXTFLOW_BASE_DIR, 'templates'),
   },
   CROMWELL: {
     // Base URL at which HTTP clients can access the Cromwell API.
@@ -102,10 +101,10 @@ const config = {
     // The version of the workflow language. Valid versions: 'draft-2', '1.0'.
     WORKFLOW_TYPE_VERSION: process.env.CROMWELL_WORKFLOW_TYPE_VERSION || 'draft-2',
     // Directory of the workflow WDL files.
-    WDL_DIR: process.env.CROMWELL_WDL_DIR || path.join(DATA_BASE_DIR, 'workflow/cromwell/WDL'),
+    WDL_DIR: process.env.CROMWELL_WDL_DIR || path.join(CROMWELL_BASE_DIR, 'WDL'),
     // Directory of the workflow templates. The Workflow templates are used for creating cromwell inputs.
-    TEMPLATE_DIR: process.env.CROMWELL_TEMPLATE_DIR || path.join(DATA_BASE_DIR, 'workflow/cromwell/templates'),
-    CONF: process.env.CROMWELL_CONF || path.join(DATA_BASE_DIR, 'workflow/cromwell/conf.json'),
+    TEMPLATE_DIR: process.env.CROMWELL_TEMPLATE_DIR || path.join(CROMWELL_BASE_DIR, 'templates'),
+    CONF: process.env.CROMWELL_CONF || path.join(CROMWELL_BASE_DIR, 'conf.json'),
   },
   CRON: {
     // Port number on which the cron web server will listen for HTTP requests.

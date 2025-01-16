@@ -1,9 +1,7 @@
 const fs = require('fs');
 const Project = require('../models/project');
-const Job = require('../models/job');
 const { getAllFiles } = require('../../utils/common');
 const { generateRunStats } = require('../../utils/cromwell');
-const { generateRunStats: generateRunStatsNextflow } = require('../../utils/nextflow');
 const { generateWorkflowResult } = require('../../utils/workflow');
 const config = require('../../config');
 
@@ -166,18 +164,9 @@ const getProjectRunStats = async (code, type, req) => {
     if (proj) {
       const projHome = `${config.IO.PROJECT_BASE_DIR}/${code}`;
       const statsJson = `${projHome}/run_stats.json`;
-
-      // find related workflow job
-      const job = await Job.findOne({ 'project': proj.code });
-      if (!job) {
-        return stats;
-      }
-      if (job.queue === 'nextflow') {
-        generateRunStatsNextflow(job);
-      } else if (job.queue === 'cromwell') {
-        generateRunStats(proj);
-      }
+      generateRunStats(proj);
       stats = JSON.parse(fs.readFileSync(statsJson));
+
     }
     return stats;
   } catch (err) {
