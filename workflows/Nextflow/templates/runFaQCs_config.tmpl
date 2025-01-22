@@ -87,6 +87,8 @@ executor {
     submitRateLimit = '1/5sec'
 }
 
-
-//cleanup
-cleanup = true
+trace {
+    enabled = true
+    file = 'trace.txt'
+    fields = 'name,status,start,complete,duration'
+}

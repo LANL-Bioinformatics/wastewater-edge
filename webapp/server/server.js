@@ -57,7 +57,6 @@ app.use('/api-docs', swaggerUi.serve, swaggerUi.setup(swaggerSpec, { explorer: f
 app.use('/projects', express.static(config.IO.PROJECT_BASE_DIR, { dotfiles: 'allow' }));
 app.use('/uploads', express.static(config.IO.UPLOADED_FILES_DIR));
 app.use('/publicdata', express.static(config.IO.PUBLIC_BASE_DIR));
-app.use('/docs', express.static(config.APP.DOCS_BASE_DIR, { dotfiles: 'allow' }));
 
 // Serving React as static files in Express and redirect url path to React client app
 if (config.NODE_ENV === 'production') {

@@ -17,8 +17,6 @@ if [ ! -d  $io_home ]; then
     "public"
     "sra"
     "db"
-    "nextflow"
-    "nextflow/work"
   )
 
   for dir in "${dirs[@]}"
@@ -28,7 +26,7 @@ if [ ! -d  $io_home ]; then
 
   test_data_home=$app_home/workflows/Nextflow/test_data
   if [ -d  $test_data_home ]; then
-    ln -s ${test_data_home} ${io_home}/public/test_data
+    ln -s ${test_data_home} ${io_home}/public/nextflow
   fi
 fi
 

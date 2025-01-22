@@ -11,7 +11,7 @@ const config = require('../config');
 const generateWDL = async (projHome, projectConf) => {
   // projectConf: project conf.js
   // workflowList in utils/workflow
-  const wdl = `${config.CROMWELL.WDL_DIR}/${projectConf.category}/${workflowList[projectConf.workflow.name].wdl}`;
+  const wdl = `${config.CROMWELL.WDL_DIR}/${workflowList[projectConf.workflow.name].wdl}`;
   if (fs.existsSync(wdl)) {
     // add pipeline.wdl link
     fs.symlinkSync(wdl, `${projHome}/pipeline.wdl`, 'file');

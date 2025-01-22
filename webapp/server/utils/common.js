@@ -3,7 +3,6 @@ const ufs = require('url-file-size');
 const fs = require('fs');
 const path = require('path');
 const { exec } = require('child_process');
-const nodeUtil = require('util');
 const logger = require('./logger');
 
 // append message to a log
@@ -146,19 +145,24 @@ const findInputsize = async (projectConf) => {
   return size;
 };
 
-const execCmd = async (cmd) => {
-  logger.info(cmd);
+const execCmd = (cmd) => new Promise((resolve, reject) => {
   // run local
+  logger.info(`exec: ${cmd}`);
   exec(cmd, (error, stdout, stderr) => {
     if (error) {
-      logger.error(error.message);
-      logger.error(nodeUtil.inspect(stderr));
-      return { code: -1, message: error.message };
+      logger.error(error);
+      reject(error);
     }
-    logger.info(nodeUtil.inspect(stdout));
-    return { code: 0, message: stdout };
+    if (stderr) {
+      logger.error(`exec stderr: ${stderr}`);
+      resolve({ code: -1, message: stderr });
+    }
+    logger.info(`exec stdout: ${stdout}`);
+    resolve({ code: 0, message: stdout });
   });
-};
+});
+
+const sleep = (ms) => new Promise(resolve => { setTimeout(resolve, ms); });
 
 module.exports = {
   write2log,
@@ -168,4 +172,5 @@ module.exports = {
   getAllFiles,
   findInputsize,
   execCmd,
+  sleep,
 };

@@ -82,7 +82,6 @@ const config = {
     // Total size of the input files allowed per job.
     // Note: 161061273600 Bytes is 150 Gibibytes (161 Gigabytes).
     JOBS_INPUT_MAX_SIZE_BYTES: makeIntIfDefined(process.env.NEXTFLOW_JOBS_INPUT_MAX_SIZE_BYTES) || 161061273600,
-    CONF: process.env.NEXTFLOW_CONF || path.join(NEXTFLOW_BASE_DIR, 'nextflow.config'),
     // Directory of the workflow files.
     WORKFLOW_DIR: process.env.NEXTFLOW_WORKFLOW_DIR || NEXTFLOW_BASE_DIR,
     // Directory of the workflow templates. The Workflow templates are used for creating cromwell inputs.

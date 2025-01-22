@@ -11,18 +11,15 @@ const workflowList = {
   sra2fastq: {
     wdl: 'sra2fastq.wdl',
     wdl_imports: 'imports.zip',
-    inputs_tmpl: 'sra2fastq_inputs.tmpl',
+    inputs_tmpl: 'data/sra2fastq_inputs.tmpl',
     cromwell_calls: ['sra.sra2fastq'],
     outdir: 'output/sra2fastq',
     // set if not default 1.0
     // wdl_version: '1.0',
   },
   runFaQCs: {
-    wdl: 'runQC.wdl',
-    wdl_imports: 'imports.zip',
-    inputs_tmpl: 'runFaQCs_inputs.tmpl',
     outdir: 'output/runFaQCs',
-    nextflow_main: 'runFaQCs_main.nf',
+    nextflow_main: 'testmain.nf',
     config_tmpl: 'runFaQCs_config.tmpl',
   },
 };
