@@ -3,7 +3,7 @@ const fs = require('fs');
 const ejs = require('ejs');
 const Papa = require('papaparse');
 const Job = require('../edge-api/models/job');
-const { workflowList, generateWorkflowResult } = require('./workflow');
+const { nextflowConfigs, workflowList, generateWorkflowResult } = require('./workflow');
 const { write2log, execCmd, sleep } = require('./common');
 const logger = require('./logger');
 const config = require('../config');
@@ -13,7 +13,12 @@ const generateInputs = async (projHome, projectConf, proj) => {
   // workflowList in utils/workflow
   const workflowSettings = workflowList[projectConf.workflow.name];
   const template = String(fs.readFileSync(`${config.NEXTFLOW.TEMPLATE_DIR}/${workflowSettings.config_tmpl}`));
-  const params = { ...projectConf.workflow.input, outdir: `${projHome}/${workflowSettings.outdir}`, project: proj.name };
+  const params = {
+    ...projectConf.workflow.input,
+    outdir: `${projHome}/${workflowSettings.outdir}`,
+    project: proj.name,
+    report_config: `${config.NEXTFLOW.CONFIG_DIR}/${nextflowConfigs.report_config}`
+  };
   // render input template and write to nextflow_params.json
   const inputs = ejs.render(template, params);
   await fs.promises.writeFile(`${projHome}/nextflow.config`, inputs);
@@ -35,12 +40,8 @@ const submitWorkflow = async (proj, projectConf, inputsize) => {
     return;
   }
   // submit workflow
-  const runReport = `${projHome}/nextflow/report.html`;
-  const runTrace = `${projHome}/nextflow/trace.txt`;
-  const runTimeline = `${projHome}/nextflow/timeline.html`;
   const runName = `edge-${proj.code}`;
-  const nextflowRunOptions = `-with-report ${runReport} -with-trace ${runTrace} -with-timeline ${runTimeline}`;
-  const cmd = `cd ${workDir}; nextflow -c ${projHome}/nextflow.config -bg -q run ${config.NEXTFLOW.WORKFLOW_DIR}/${workflowList[projectConf.workflow.name].nextflow_main} -name ${runName} ${nextflowRunOptions}`;
+  const cmd = `cd ${workDir}; nextflow -c ${projHome}/nextflow.config -bg -q run ${config.NEXTFLOW.WORKFLOW_DIR}/${workflowList[projectConf.workflow.name].nextflow_main} -name ${runName}`;
   write2log(log, 'Run pipeline');
   // Don't need to wait for the command to complete. It may take long time to finish and cause an error.
   // The updateJobStatus will catch the error if this command failed.

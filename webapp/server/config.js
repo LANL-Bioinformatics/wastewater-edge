@@ -84,8 +84,10 @@ const config = {
     JOBS_INPUT_MAX_SIZE_BYTES: makeIntIfDefined(process.env.NEXTFLOW_JOBS_INPUT_MAX_SIZE_BYTES) || 161061273600,
     // Directory of the workflow files.
     WORKFLOW_DIR: process.env.NEXTFLOW_WORKFLOW_DIR || NEXTFLOW_BASE_DIR,
-    // Directory of the workflow templates. The Workflow templates are used for creating cromwell inputs.
+    // Directory of the workflow templates. The Workflow templates are used for creating nextflow workflow inputs.
     TEMPLATE_DIR: process.env.NEXTFLOW_TEMPLATE_DIR || path.join(NEXTFLOW_BASE_DIR, 'templates'),
+    // Directory of the workflow configs. The Workflow configs are used for running nextflow workflows.
+    CONFIG_DIR: process.env.NEXTFLOW_TEMPLATE_DIR || path.join(NEXTFLOW_BASE_DIR, 'configs'),
   },
   CROMWELL: {
     // Base URL at which HTTP clients can access the Cromwell API.

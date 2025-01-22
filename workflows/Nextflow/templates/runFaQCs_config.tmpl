@@ -87,8 +87,4 @@ executor {
     submitRateLimit = '1/5sec'
 }
 
-trace {
-    enabled = true
-    file = 'trace.txt'
-    fields = 'name,status,start,complete,duration'
-}
+includeConfig "<%= report_config %>"
