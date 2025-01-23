@@ -13,7 +13,7 @@ const AppContent = () => {
     <CContainer className="px-4" lg>
       <Suspense fallback={<CSpinner color="primary" />}>
         <Row className="justify-content-center">
-          <Col xs="12" md="11" lg="10">
+          <Col xs="12" md="11" lg="11">
             <Routes>
               {routes.map((route, idx) => {
                 return (
