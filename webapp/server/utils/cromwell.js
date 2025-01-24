@@ -24,7 +24,7 @@ const generateInputs = async (projHome, projectConf, workflowConf) => {
   // projectConf: project conf.js
   // workflowList in utils/workflow
   const workflowSettings = workflowList[projectConf.workflow.name];
-  const template = String(fs.readFileSync(`${config.CROMWELL.TEMPLATE_DIR}/${projectConf.category}/${workflowSettings.inputs_tmpl}`));
+  const template = String(fs.readFileSync(`${config.CROMWELL.TEMPLATE_DIR}/${workflowSettings.inputs_tmpl}`));
   const params = { ...workflowConf, ...projectConf.workflow.input, outdir: `${projHome}/${workflowSettings.outdir}` };
 
   if (projectConf.workflow.name === 'sra2fastq') {
@@ -35,8 +35,8 @@ const generateInputs = async (projHome, projectConf, workflowConf) => {
   const inputs = ejs.render(template, params);
   await fs.promises.writeFile(`${projHome}/pipeline_inputs.json`, inputs);
   // render options template and write to pipeline_options.json
-  if (fs.existsSync(`${config.CROMWELL.TEMPLATE_DIR}/${projectConf.category}/${workflowSettings.options_tmpl}`)) {
-    const optionsTemplate = String(fs.readFileSync(`${config.CROMWELL.TEMPLATE_DIR}/${projectConf.category}/${workflowSettings.options_tmpl}`));
+  if (fs.existsSync(`${config.CROMWELL.TEMPLATE_DIR}/${workflowSettings.options_tmpl}`)) {
+    const optionsTemplate = String(fs.readFileSync(`${config.CROMWELL.TEMPLATE_DIR}/${workflowSettings.options_tmpl}`));
     const options = ejs.render(optionsTemplate, params);
     await fs.promises.writeFile(`${projHome}/pipeline_options.json`, options);
   }
@@ -52,7 +52,7 @@ const submitWorkflow = (proj, projectConf, inputsize) => {
   formData.append('workflowInputs', fs.createReadStream(`${projHome}/pipeline_inputs.json`));
   // logger.debug(`workflowInputs${projHome}/pipeline_inputs.json`);
 
-  const imports = `${config.CROMWELL.WDL_DIR}/${projectConf.category}/${workflowList[projectConf.workflow.name].wdl_imports}`;
+  const imports = `${config.CROMWELL.WDL_DIR}/${workflowList[projectConf.workflow.name].wdl_imports}`;
   const optionsJson = `${projHome}/pipeline_options.json`;
 
   if (fs.existsSync(optionsJson)) {
