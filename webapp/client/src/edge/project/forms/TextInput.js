@@ -12,6 +12,7 @@ export const TextInput = (props) => {
 
   const {
     register,
+    reset,
     formState: { errors },
     trigger,
   } = useForm({
@@ -53,6 +54,15 @@ export const TextInput = (props) => {
       setNewState2('textInput', '')
     }
   }, []) // eslint-disable-line react-hooks/exhaustive-deps
+
+  useEffect(() => {
+    if (props.defaultValue) {
+      reset({ textInput: props.defaultValue })
+    } else {
+      reset({ textInput: '' })
+    }
+    setDoValidation(doValidation + 1)
+  }, [props.reset]) // eslint-disable-line react-hooks/exhaustive-deps
 
   useEffect(() => {
     //validate form

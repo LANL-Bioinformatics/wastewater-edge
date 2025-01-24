@@ -12,8 +12,8 @@ const nextflowConfigs = {
 const workflowList = {
   default_wdl_version: '1.0',
   sra2fastq: {
-    wdl: 'sra2fastq.wdl',
-    wdl_imports: 'imports.zip',
+    wdl: 'data/sra2fastq.wdl',
+    wdl_imports: 'data/imports.zip',
     inputs_tmpl: 'data/sra2fastq_inputs.tmpl',
     cromwell_calls: ['sra.sra2fastq'],
     outdir: 'output/sra2fastq',
