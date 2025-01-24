@@ -7,7 +7,7 @@ export const workflows = {
     validForm: false,
     errMessage: 'input error',
     inputs: {
-      pairedFile: {
+      interleaved: {
         text: 'Is interleaved',
         value: true,
       },

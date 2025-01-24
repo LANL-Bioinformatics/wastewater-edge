@@ -166,6 +166,9 @@ const getProjectRunStats = async (code, type, req) => {
     if (proj) {
       // get associated job
       const job = await Job.findOne({ 'project': { $eq: code } });
+      if (!job) {
+        return {};
+      }
       const projHome = `${config.IO.PROJECT_BASE_DIR}/${code}`;
       const statsJson = `${projHome}/run_stats.json`;
       if (job.queue === 'nextflow') {

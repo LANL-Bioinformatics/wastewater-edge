@@ -66,13 +66,15 @@ const abortJob = async (proj) => {
   // If is local, find pid in .nextflow.pid and kill process and all descendant processes: pkill -TERM -P <pid>
   // If is slurm, delete slurm job?
   const pidFile = `${config.IO.PROJECT_BASE_DIR}/${proj.code}/nextflow/.nextflow.pid`;
-  let all = fs.readFileSync(pidFile, 'utf8');
-  all = all.trim();  // final crlf in file
-  const lines = all.split('\n');
-  const pid = parseInt(lines[0], 10);
-  const cmd = `pkill -TERM -P ${pid}`;
-  // Don't need to wait for the deletion, the process may already complete
-  execCmd(cmd);
+  if (fs.existsSync(pidFile)) {
+    let all = fs.readFileSync(pidFile, 'utf8');
+    all = all.trim();  // final crlf in file
+    const lines = all.split('\n');
+    const pid = parseInt(lines[0], 10);
+    const cmd = `pkill -TERM -P ${pid}`;
+    // Don't need to wait for the deletion, the process may already complete
+    execCmd(cmd);
+  }
   // delete job
   Job.deleteOne({ project: proj.code }, (err) => {
     if (err) {

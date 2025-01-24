@@ -26,7 +26,7 @@ export const RunFaQCs = (props) => {
   }
 
   const setIntegerInput = (inForm, name) => {
-    console.log(inForm, name)
+    //console.log(inForm, name)
     if (inForm.validForm) {
       form.inputs[name].value = inForm.integerInput
       if (validInputs[name]) {
@@ -65,7 +65,7 @@ export const RunFaQCs = (props) => {
 
   const setFastqInput = (inForm, name) => {
     if (inForm.validForm) {
-      form.inputs['pairedFile'].value = !inForm.interleaved
+      form.inputs['interleaved'].value = inForm.interleaved
       if (inForm.interleaved) {
         form.inputs[name].value = inForm.fileInput
         form.inputs[name].display = inForm.fileInput_display
@@ -77,7 +77,8 @@ export const RunFaQCs = (props) => {
         validInputs[name].isValid = true
       }
     } else {
-      form.inputs['pairedFile'].value = inForm.interleaved
+      // reset values
+      form.inputs['interleaved'].value = true
       form.inputs[name].value = []
       form.inputs[name].display = []
       if (validInputs[name]) {
@@ -172,6 +173,7 @@ export const RunFaQCs = (props) => {
           />
           <br></br>
           <Switcher
+            id={'trimAdapter'}
             name={'trimAdapter'}
             setParams={setSwitcher}
             text={workflows[workflowName].inputs['trimAdapter'].text}
@@ -193,6 +195,7 @@ export const RunFaQCs = (props) => {
           />
           <br></br>
           <Switcher
+            id={'trimPolyA'}
             name={'trimPolyA'}
             setParams={setSwitcher}
             text={workflows[workflowName].inputs['trimPolyA'].text}
@@ -261,6 +264,7 @@ export const RunFaQCs = (props) => {
           />
           <br></br>
           <Switcher
+            id={'filtPhiX'}
             name={'filtPhiX'}
             setParams={setSwitcher}
             text={workflows[workflowName].inputs['filtPhiX'].text}

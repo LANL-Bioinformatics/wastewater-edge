@@ -32,7 +32,7 @@ const Main = (props) => {
     setDoValidation(doValidation + 1)
   }
   const setWorkflowParams = (params, workflowName) => {
-    console.log(workflowName, params)
+    //console.log(workflowName, params)
     setSelectedWorkflows({ ...selectedWorkflows, [workflowName]: params })
     setDoValidation(doValidation + 1)
   }
@@ -63,6 +63,9 @@ const Main = (props) => {
           selectedWorkflows[workflow].inputs[key].value
       }
     })
+    // set pairedFile flag
+    myWorkflow.input['pairedFile'] = !myWorkflow.input['interleaved']
+
     //update input for nextflow
     if (!myWorkflow.input['artifactFile']) {
       myWorkflow.input['artifactFile'] = '${projectDir}/nf_assets/NO_FILE3'
