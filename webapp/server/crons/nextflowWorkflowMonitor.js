@@ -67,6 +67,7 @@ module.exports = async function nextflowWorkflowMonitor() {
     common.write2log(`${config.IO.PROJECT_BASE_DIR}/${proj.code}/log.txt`, 'submit workflow to nextflow');
     logger.info('submit workflow to nextflow');
     submitWorkflow(proj, projectConf, inputsize);
+    logger.info('Done workflow submission');
   } catch (err) {
     logger.error(`nextflowWorkflowMonitor failed:${err}`);
   }

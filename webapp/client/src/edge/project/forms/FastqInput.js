@@ -67,6 +67,7 @@ export const FastqInput = (props) => {
       {!props.disableSwitcher && (
         <>
           <Switcher
+            id={'interleaved'}
             name={'interleaved'}
             setParams={setSwitcher}
             text={components[componentName].params['interleaved'].text}

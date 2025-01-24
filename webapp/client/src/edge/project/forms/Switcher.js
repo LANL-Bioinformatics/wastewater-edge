@@ -6,7 +6,7 @@ import { components } from './defaults'
 
 export const Switcher = (props) => {
   const componentName = 'switcher'
-  const [form, setState] = useState({ ...components[componentName] })
+  const [form, setState] = useState({ ...components[componentName], isTrue: props.defaultValue })
   const [doValidation, setDoValidation] = useState(0)
 
   const setNewState2 = (name, value) => {
@@ -18,11 +18,7 @@ export const Switcher = (props) => {
   }
 
   useEffect(() => {
-    form.isTrue = props.defaultValue
-  }, []) // eslint-disable-line react-hooks/exhaustive-deps
-
-  useEffect(() => {
-    setState({ ...components[componentName] })
+    setState({ ...components[componentName], isTrue: props.defaultValue })
   }, [props.reset]) // eslint-disable-line react-hooks/exhaustive-deps
 
   useEffect(() => {

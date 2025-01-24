@@ -32,7 +32,7 @@ cron.schedule(config.CRON.SCHEDULES.CROMWELL_WORKFLOW_MONITOR, async () => {
 });
 // monitor nextflow jobs on every 2 minutes
 cron.schedule(config.CRON.SCHEDULES.NEXTFLOW_JOB_MONITOR, async () => {
-  // await nextflowJobMonitor();
+  await nextflowJobMonitor();
 });
 // cron jobs
 // monitor workflow requests on every 2 minutes

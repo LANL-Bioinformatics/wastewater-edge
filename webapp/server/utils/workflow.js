@@ -5,24 +5,25 @@ const config = require('../config');
 
 const cromwellWorkflows = ['sra2fastq'];
 const nextflowWorkflows = ['runFaQCs'];
+const nextflowConfigs = {
+  report_config: 'report.config',
+};
 
 const workflowList = {
   default_wdl_version: '1.0',
   sra2fastq: {
     wdl: 'sra2fastq.wdl',
     wdl_imports: 'imports.zip',
-    inputs_tmpl: 'sra2fastq_inputs.tmpl',
+    inputs_tmpl: 'data/sra2fastq_inputs.tmpl',
     cromwell_calls: ['sra.sra2fastq'],
     outdir: 'output/sra2fastq',
     // set if not default 1.0
     // wdl_version: '1.0',
   },
   runFaQCs: {
-    wdl: 'runQC.wdl',
-    wdl_imports: 'imports.zip',
-    inputs_tmpl: 'runFaQCs_inputs.tmpl',
-    outdir: 'output/runFaQCs',
-    nextflow_main: 'runFaQCs_main.nf',
+    // workflow will create 'ReadsQC' directory in the output/.
+    outdir: 'output',
+    nextflow_main: 'main.nf',
     config_tmpl: 'runFaQCs_config.tmpl',
   },
 };
@@ -87,6 +88,7 @@ const generateWorkflowResult = (proj) => {
 module.exports = {
   cromwellWorkflows,
   nextflowWorkflows,
+  nextflowConfigs,
   workflowList,
   linkUpload,
   generateWorkflowResult,
