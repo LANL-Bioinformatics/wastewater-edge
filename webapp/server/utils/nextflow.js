@@ -61,7 +61,7 @@ const submitWorkflow = async (proj, projectConf, inputsize) => {
   proj.save();
 };
 
-const abortJob = async (proj) => {
+const getPid = async (proj) => {
   // To stop the running pipeline depends on the executor.
   // If is local, find pid in .nextflow.pid and kill process and all descendant processes: pkill -TERM -P <pid>
   // If is slurm, delete slurm job?
@@ -70,7 +70,29 @@ const abortJob = async (proj) => {
     let all = fs.readFileSync(pidFile, 'utf8');
     all = all.trim();  // final crlf in file
     const lines = all.split('\n');
-    const pid = parseInt(lines[0], 10);
+    if (lines[0]) {
+      return parseInt(lines[0], 10);
+    }
+  }
+  return null;
+};
+// check pid
+const pidIsRunning = (pid) => {
+  try {
+    // a signal of 0 can be used to test for the existence of a process.
+    process.kill(pid, 0);
+    return true;
+  } catch (e) {
+    return false;
+  }
+};
+
+const abortJob = async (proj) => {
+  // To stop the running pipeline depends on the executor.
+  // If is local, find pid in .nextflow.pid and kill process and all descendant processes: pkill -TERM -P <pid>
+  // If is slurm, delete slurm job?
+  const pid = await getPid(proj);
+  if (pid && pidIsRunning(pid)) {
     const cmd = `pkill -TERM -P ${pid}`;
     // Don't need to wait for the deletion, the process may already complete
     execCmd(cmd);
@@ -125,15 +147,29 @@ const updateJobStatus = async (job, proj) => {
   // Pipeline status. Possible values are: OK, ERR and empty
   let cmd = `cd ${projHome}/nextflow; nextflow log|awk '/${job.id}/ &&(/OK/||/ERR/)'|awk '{split($0,array,/\t/); print array[4]}'`;
   let ret = await execCmd(cmd);
+
   if (!ret || ret.code !== 0) {
     // command failed
     return;
   }
-  // if empty, the workflow is still running, return
-  if (!ret.message.includes('OK') && !ret.message.includes('ERR')) {
-    // update job updated datetime to move job to the end of job queue
-    job.updated = Date.now();
-    job.save();
+  // if empty, check pid
+  if (ret.message === '') {
+    const pid = await getPid(proj);
+    if (pid && pidIsRunning(pid)) {
+      // workflow is still running, update job updated datetime to move job to the end of job queue
+      job.updated = Date.now();
+      job.save();
+    } else {
+      // workflow failed
+      job.status = 'Failed';
+      job.updated = Date.now();
+      job.save();
+      // result not as expected
+      proj.status = 'failed';
+      proj.updated = Date.now();
+      proj.save();
+      write2log(`${projHome}/log.txt`, 'Nextflow job status: Failed');
+    }
     return;
   }
 
