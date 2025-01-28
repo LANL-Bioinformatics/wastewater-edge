@@ -10,7 +10,8 @@ export const PrivateRoute = ({ children }) => {
   if (isAuthenticated) {
     return children
   }
-
+  // store from path for Orcid login
+  localStorage.setItem('loginFrom', location.pathname)
   return <Navigate to={'/login'} state={{ from: location }} />
 }
 export default PrivateRoute

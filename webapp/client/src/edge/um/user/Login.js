@@ -6,7 +6,6 @@ import { Button, Col, Row } from 'reactstrap'
 import { login } from 'src/redux/reducers/edge/userSlice'
 import { cleanMessage, cleanError } from '../../../redux/reducers/messageSlice'
 import LoginForm from './forms/LoginForm'
-import ORCIDLogin from './forms/ORCIDLogin'
 import config from 'src/config'
 
 const Login = (props) => {
@@ -35,6 +34,10 @@ const Login = (props) => {
   const handleValidSubmit = (data) => {
     const userData = { ...data }
     dispatch(login(userData))
+  }
+
+  const toOrcidLogin = () => {
+    navigate('/oauth')
   }
 
   return (
@@ -72,7 +75,18 @@ const Login = (props) => {
               <>
                 <Col xs="12">
                   <hr></hr>
-                  <ORCIDLogin />
+                  <p className="text-muted">
+                    Use your ORCID account for faster login or registration
+                  </p>
+
+                  <Button
+                    color="success"
+                    className="px-4 text-white"
+                    block
+                    onClick={() => toOrcidLogin()}
+                  >
+                    Login with ORCiD
+                  </Button>
                 </Col>
               </>
             )}
