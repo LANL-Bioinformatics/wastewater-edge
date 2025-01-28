@@ -16,10 +16,6 @@ const JobQueue = () => {
         header: 'project',
       },
       {
-        accessorKey: 'owner',
-        header: 'Owner',
-      },
-      {
         accessorKey: 'type', //normal accessorKey
         header: 'Type',
         Cell: ({ cell }) => <>{workflowList[cell.getValue()].label}</>,
@@ -79,8 +75,8 @@ const JobQueue = () => {
         data={tableData}
         enableFullScreenToggle={false}
         enableColumnActions={false}
-        enableSorting={false}
-        enableColumnFilters={false}
+        enableSorting={true}
+        enableColumnFilters={true}
         state={{
           isLoading: loading,
         }}
