@@ -5,7 +5,7 @@ const PublicProjects = React.lazy(() => import('src/edge/um/public/Projects'))
 const PublicProjectPage = React.lazy(() => import('src/edge/project/results/projectPage/Public'))
 const UserRegister = React.lazy(() => import('src/edge/um/user/Register'))
 const UserLogin = React.lazy(() => import('src/edge/um/user/Login'))
-const OAuth = React.lazy(() => import('src/edge/um/user/ORCIDOAuthCallback'))
+const OAuth = React.lazy(() => import('src/edge/um/user/OrcidLogin'))
 const UserActivate = React.lazy(() => import('src/edge/um/user/Activate'))
 const UserResetPassword = React.lazy(() => import('src/edge/um/user/ResetPassword'))
 
