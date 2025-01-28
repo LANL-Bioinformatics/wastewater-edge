@@ -26,17 +26,24 @@ https://docs.mongodb.com/manual/installation/#mongodb-community-edition-installa
 
     - Populate the "client build" environment configuration file (i.e. `webapp/client/.env`). 
 
-        You can initialize it based upon the corresponding development/production example file:
+        You can initialize it based upon the corresponding example file:
         ```shell
-        cp webapp/client/.env.development.example \
+        cp webapp/client/.env.example \
         webapp/client/.env
         ```
         > Those environment variables are used within `webapp/client/src/config.js`.
+
+    -  Create a build directory with a production build of the client:
+        ```shell
+        cd webapp/client
+        npm run build
+        ```
+
     - Populate the server environment configuration file (i.e. `webapp/server/.env`). 
     
-        You can initialize it based upon the corresponding development/production example file:
+        You can initialize it based upon the corresponding example file:
         ```shell
-        cp webapp/server/.env.development.example \
+        cp webapp/server/.env.example \
         webapp/server/.env
         ```
         > Those environment variables are used within `webapp/server/config.js`.

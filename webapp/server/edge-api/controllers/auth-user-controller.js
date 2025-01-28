@@ -11,11 +11,11 @@ const sysError = config.APP.API_ERROR;
 const info = async (req, res) => {
   try {
     logger.debug(`/api/auth-user/info: ${JSON.stringify(req.user.email)}`);
-    if (config.SYSTEM_MESSAGE) {
+    if (config.APP.SYSTEM_MESSAGE) {
       return res.send({
         info: {
           allowNewRuns: false,
-          message: config.SYSTEM_MESSAGE,
+          message: config.APP.SYSTEM_MESSAGE,
         },
         message: 'Action successful',
         success: true,

@@ -109,10 +109,7 @@ const Main = (props) => {
   }, [])
 
   return (
-    <div
-      className="animated fadeIn"
-      style={disabled ? { pointerEvents: 'none', opacity: '0.4' } : {}}
-    >
+    <div className="animated fadeIn">
       <MessageDialog
         className="modal-lg modal-danger"
         title="System Message"
@@ -128,7 +125,7 @@ const Main = (props) => {
           e.preventDefault()
         }}
       >
-        <div className="clearfix">
+        <div className="clearfix" style={disabled ? { pointerEvents: 'none', opacity: '0.4' } : {}}>
           <h4 className="pt-3">Retrieve SRA Data</h4>
           {workflow && (
             <>

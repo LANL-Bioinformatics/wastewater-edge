@@ -12,7 +12,7 @@ import { colors } from './util'
 export const ConfirmDialog = (props) => {
   return (
     <Modal isOpen={props.isOpen} centered>
-      <ModalHeader>{props.title}</ModalHeader>
+      <ModalHeader>{props.header}</ModalHeader>
       <ModalBody>{props.message}</ModalBody>
       <ModalFooter>
         <Button color="primary" onClick={props.handleClickYes}>

@@ -28,6 +28,9 @@ const UploadFiles = (props) => {
   const [allowedExtensions, setAllowedExtensions] = useState([])
   const [files, setFiles] = useState([])
   const [updateSize, setUpdateSize] = useState(0)
+  const [files2upload, setFiles2Upload] = useState(0)
+  const [filesUploaded, setFilesUploaded] = useState(0)
+  let uploaded = 0
 
   useEffect(() => {
     //get upload info
@@ -124,6 +127,8 @@ const UploadFiles = (props) => {
     }
 
     //upload files
+    setFiles2Upload(files.length)
+
     let promises = []
     for (var i = 0; i < files.length; i++) {
       let curr = files[i]
@@ -143,9 +148,13 @@ const UploadFiles = (props) => {
             },
           })
             .then((response) => {
+              uploaded += 1
+              setFilesUploaded(uploaded)
               resolve('Upload ' + curr.meta.name + ' successfully!')
             })
             .catch((error) => {
+              uploaded += 1
+              setFilesUploaded(uploaded)
               resolve('Upload ' + curr.meta.name + ' failed! ' + error)
             })
         }),
@@ -155,13 +164,19 @@ const UploadFiles = (props) => {
     Promise.all(promises)
       .then((response) => {
         allFiles.forEach((f) => f.remove())
+        let errors = 0
         response.forEach((e) => {
           if (e.includes('failed')) {
             notify('error', e)
+            errors += 1
           } else {
-            notify('success', e)
+            //notify('success', e)
           }
         })
+        if (errors === 0) {
+          notify('success', 'Files uploaded successfully!', 2000)
+          //setTimeout(() => props.history.push("/user/files"), 2000);
+        }
         setSubmitting(false)
         props.reloadTableData()
       })
@@ -173,7 +188,10 @@ const UploadFiles = (props) => {
 
   return (
     <>
-      <LoaderDialog loading={submitting} text="Uploading..." />
+      <LoaderDialog
+        loading={submitting}
+        text={'Uploading...' + Math.round((filesUploaded / files2upload) * 100) + '%'}
+      />
       <ToastContainer />
       <div className="clearfix">
         <h4 className="pt-3">Upload Files</h4>

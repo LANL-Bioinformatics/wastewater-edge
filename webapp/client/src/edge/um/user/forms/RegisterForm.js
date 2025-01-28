@@ -71,7 +71,7 @@ const RegisterForm = (props) => {
 
   return (
     <Form onSubmit={handleSubmit(props.onSubmit)}>
-      <h1>Register</h1>
+      <h1>Sign Up</h1>
       <p className="text-muted">Create your account</p>
       <InputGroup className="mb-3">
         <InputGroupText className="text-muted"> First Name </InputGroupText>

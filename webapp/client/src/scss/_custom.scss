@@ -77,6 +77,15 @@ button:hover {
 .modal-success .modal-header {
   background-color: $success;
 }
+.modal-warning .modal-header {
+  background-color: $warning;
+}
+.modal-danger .modal-header {
+  background-color: $danger;
+}
+.modal-info .modal-header {
+  background-color: $info;
+}
 
 // EDGE
 .edge-header {

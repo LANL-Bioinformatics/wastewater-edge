@@ -167,12 +167,16 @@ export const notify = (type, msg, timeout) => {
     toast.success(msg, {
       position: 'top-center',
       autoClose: timeout,
+      rtl: false,
+      hideProgressBar: false,
     })
   }
   if (type === 'error') {
     toast.error(msg, {
       position: 'top-center',
       autoClose: false,
+      rtl: false,
+      hideProgressBar: false,
     })
   }
 }
