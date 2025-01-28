@@ -7,7 +7,9 @@ function ORCIDOAuthCallback() {
     const parsed = queryString.parse(window.location.href)
     const decoded = jwtDecode(parsed.id_token)
     //pass user profile to SocialLogin
-    window.opener.postMessage(decoded)
+    if (window.opener) {
+      window.opener.postMessage(decoded)
+    }
     window.close()
   }, [])
 
