@@ -152,7 +152,7 @@ const Profile = (props) => {
         <>
           <b>Project Status Notification</b>
           <br></br>
-          <div className="d-none d-sm-inline-block">
+          <div className="d-sm-inline-block">
             <ButtonGroup className="mr-3" aria-label="First group" size="sm">
               <Button
                 color="outline-primary"
@@ -198,34 +198,36 @@ const Profile = (props) => {
           <br></br>
         </>
       )}
-      {!isORCiDUser && (<>
-        <b>Change Password</b>
-        <br></br>
-        <div className="d-none d-sm-inline-block">
-          <ButtonGroup className="mr-3" aria-label="First group" size="sm">
-            <Button
-              color="outline-primary"
-              onClick={() => {
-                setChangePw(true)
-              }}
-              active={changePw}
-            >
-              Yes
-            </Button>
-            <Button
-              color="outline-primary"
-              onClick={() => {
-                setChangePw(false)
-              }}
-              active={!changePw}
-            >
-              No
-            </Button>
-          </ButtonGroup>
-        </div>
-        <br />
-        <br />
-      </>)}
+      {!isORCiDUser && (
+        <>
+          <b>Change Password</b>
+          <br></br>
+          <div className="d-sm-inline-block">
+            <ButtonGroup className="mr-3" aria-label="First group" size="sm">
+              <Button
+                color="outline-primary"
+                onClick={() => {
+                  setChangePw(true)
+                }}
+                active={changePw}
+              >
+                Yes
+              </Button>
+              <Button
+                color="outline-primary"
+                onClick={() => {
+                  setChangePw(false)
+                }}
+                active={!changePw}
+              >
+                No
+              </Button>
+            </ButtonGroup>
+          </div>
+          <br />
+          <br />
+        </>
+      )}
       <Input type="hidden" name="changePw" value={changePw} />
       {changePw && (
         <div>
