@@ -28,7 +28,7 @@
     "helmet": "^7.0.0",
     "jsonwebtoken": "^9.0.0",
     "moment": "^2.29.4",
-    "mongoose": "^6.12.2",
+    "mongoose": "^6.13.6",
     "mongoose-to-swagger": "^1.4.0",
     "node-cron": "^3.0.2",
     "nodemailer": "^6.9.7",
