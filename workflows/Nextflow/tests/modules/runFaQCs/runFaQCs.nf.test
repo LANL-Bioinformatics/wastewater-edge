@@ -22,14 +22,22 @@ nextflow_workflow {
                 """
                 input[0] = params.faqcs.plus(params.shared)
                 input[1] = [file("${projectDir}/test_data/Ecoli_10x.1.fastq"),file("${projectDir}/test_data/Ecoli_10x.2.fastq")]
-                input[2] = channel.of("151")
+                input[2] = file("${projectDir}/nf_assets/NO_FILE2")
+                input[3] = channel.of("151")
                 """
             }
         }
 
         then {
-            assert workflow.success
-            assert snapshot(workflow.out).match()
+            assertAll (
+                {assert workflow.success},
+                {assert snapshot(
+                    workflow.out.qcStats,
+                    workflow.out.paired,
+                    workflow.out.unpaired
+                    ).match()},
+                {assert file(workflow.out.qcReport.find { file(it).name == "QC_qc_report.pdf" }).exists()}
+            )
         }
 
     }
@@ -51,15 +59,23 @@ nextflow_workflow {
             workflow {
                 """
                 input[0] = params.faqcs.plus(params.shared)
-                input[1] = file("${projectDir}/test_data/Ecoli_10x.1.fastq")
-                input[2] = channel.of("151")
+                input[1] = [file("${projectDir}/nf_assets/NO_FILE")]
+                input[2] = file("${projectDir}/test_data/Ecoli_10x.1.fastq")
+                input[3] = channel.of("151")
                 """
             }
         }
 
         then {
-            assert workflow.success
-            assert snapshot(workflow.out).match()
+            assertAll (
+                {assert workflow.success},
+                {assert snapshot(
+                    workflow.out.qcStats,
+                    workflow.out.paired,
+                    workflow.out.unpaired
+                    ).match()},
+                {assert file(workflow.out.qcReport.find { file(it).name == "QC_qc_report.pdf" }).exists()}
+            )
         }
 
     }
@@ -82,14 +98,22 @@ nextflow_workflow {
                 """
                 input[0] = params.faqcs.plus(params.shared)
                 input[1] = [file("${projectDir}/test_data/Ecoli_10x.1.fastq"),file("${projectDir}/test_data/Ecoli_10x.2.fastq")]
-                input[2] = channel.of("151")
+                input[2] = file("${projectDir}/nf_assets/NO_FILE2")
+                input[3] = channel.of("151")
                 """
             }
         }
 
         then {
-            assert workflow.success
-            assert snapshot(workflow.out).match()
+            assertAll (
+                {assert workflow.success},
+                {assert snapshot(
+                    workflow.out.qcStats,
+                    workflow.out.paired,
+                    workflow.out.unpaired
+                    ).match()},
+                {assert file(workflow.out.qcReport.find { file(it).name == "QC_qc_report.pdf" }).exists()}
+            )
         }
 
     }
@@ -111,15 +135,23 @@ nextflow_workflow {
             workflow {
                 """
                 input[0] = params.faqcs.plus(params.shared)
-                input[1] = file("${projectDir}/test_data/Ecoli_10x.1.fastq")
-                input[2] = channel.of("151")
+                input[1] = [file("${projectDir}/nf_assets/NO_FILE")]
+                input[2] = file("${projectDir}/test_data/Ecoli_10x.1.fastq")
+                input[3] = channel.of("151")
                 """
             }
         }
 
         then {
-            assert workflow.success
-            assert snapshot(workflow.out).match()
+            assertAll (
+                {assert workflow.success},
+                {assert snapshot(
+                    workflow.out.qcStats,
+                    workflow.out.paired,
+                    workflow.out.unpaired
+                    ).match()},
+                {assert file(workflow.out.qcReport.find { file(it).name == "QC_qc_report.pdf" }).exists()}
+            )
         }
 
     }
@@ -142,15 +174,22 @@ nextflow_workflow {
                 """
                 input[0] = params.faqcs.plus(params.shared)
                 input[1] = [file("${projectDir}/test_data/Ecoli_10x.1.fastq"),file("${projectDir}/test_data/Ecoli_10x.2.fastq")]
-                input[2] = channel.of("151")
+                input[2] = file("${projectDir}/nf_assets/NO_FILE2")
+                input[3] = channel.of("151")
                 """
             }
         }
 
         then {
-            assert workflow.success
-            assert snapshot(workflow.out).match()
+            assertAll (
+                {assert workflow.success},
+                {assert snapshot(
+                    workflow.out.qcStats,
+                    workflow.out.paired,
+                    workflow.out.unpaired
+                    ).match()},
+                {assert file(workflow.out.qcReport.find { file(it).name == "QC_qc_report.pdf" }).exists()}
+            )
         }
-
     }
 }

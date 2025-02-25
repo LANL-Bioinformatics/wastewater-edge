@@ -1,8 +1,8 @@
 #!/usr/bin/env nextflow
 
 //sets taxonomic kingdom for analysis if none provided
-process unsetKingdom {
-    container 'apwat/annotation:0.4'
+process autodetectKingdom {
+    label 'annotation'
     containerOptions '--compat --bind .:/venv/bin/ec_info'
     input:
     path contigs
@@ -22,7 +22,7 @@ process unsetKingdom {
 
 //process to invocate prokka
 process prokkaAnnotate {
-    container 'apwat/annotation:0.4'
+    label 'annotation'
     containerOptions '--compat --bind .:/venv/bin/ec_info'
     publishDir(
         path: "${settings["outDir"]}/AssemblyBasedAnalysis/Annotation",
@@ -44,7 +44,7 @@ process prokkaAnnotate {
     path "${settings["projName"]}.ffn"
     path "${settings["projName"]}.fna", emit:fna
     path "${settings["projName"]}.fsa"
-    path "${settings["projName"]}.gbk"
+    path "${settings["projName"]}.gbk", emit:gbk
     path "${settings["projName"]}.log"
     path "${settings["projName"]}.sqn"
     path "${settings["projName"]}.tbl"
@@ -85,7 +85,7 @@ process prokkaAnnotate {
 
 //process to invocate RATT
 process rattAnnotate {
-    container 'apwat/annotation:0.4'
+    label 'annotation'
     containerOptions '--compat --bind .:/venv/bin/ec_info'
     publishDir(
         path: "${settings["outDir"]}/AssemblyBasedAnalysis/Annotation",
@@ -102,7 +102,7 @@ process rattAnnotate {
     path "${settings["projName"]}.gff", emit: gff
     path "${settings["projName"]}.faa", emit: faa
     path "${settings["projName"]}.fna", emit: fna
-    path "${settings["projName"]}.gbk"
+    path "${settings["projName"]}.gbk", emit: gbk
 
     shell:
     //happens in work directory
@@ -123,7 +123,7 @@ process rattAnnotate {
 
 //plots feature count, protein size distribution, etc.
 process annPlot {
-    container 'apwat/annotation:0.4'
+    label 'annotation'
     containerOptions '--compat --bind .:/venv/bin/ec_info'
     publishDir(
         path: "${settings["outDir"]}/AssemblyBasedAnalysis/Annotation",
@@ -136,7 +136,7 @@ process annPlot {
 
     output:
     path "plot_gff3.log"
-    path "annotation_stats_plots.pdf"
+    path "annotation_stats_plots.pdf", emit: annStats
     path "${settings["projName"]}.txt", optional:true
 
     script:
@@ -149,7 +149,7 @@ process annPlot {
 
 //generates KEGG pathway plots
 process keggPlots {
-    container 'apwat/annotation:0.4'
+    label 'annotation'
     containerOptions '--compat --bind .:/venv/bin/ec_info'
     publishDir(
         path: "${settings["outDir"]}/AssemblyBasedAnalysis/Annotation",
@@ -165,7 +165,6 @@ process keggPlots {
     path "kegg_map.log"
     
     script:
-    //TODO: will eventually need UI integration.
     """
     check_server_up.pl --url "http://rest.kegg.jp" && \
     opaver_anno.pl -g $gff -o ./kegg_map -p ${settings["projName"]} > kegg_map.log 2>&1
@@ -179,10 +178,6 @@ workflow ANNOTATION {
     data
 
     main:
-    //optional file pattern setup
-    "mkdir nf_assets".execute().text
-    "touch nf_assets/NO_FILE".execute().text
-    "touch nf_assets/NO_FILE2".execute().text
 
     //inputs
     kingdom_ch = channel.of(settings["taxKingdom"])
@@ -193,20 +188,23 @@ workflow ANNOTATION {
     gff = channel.empty()
     faa = channel.empty()
     fna = channel.empty()
+    annStats = channel.empty()
 
     //workflow logic
     if (settings["annotateProgram"].equalsIgnoreCase("prokka")) {
         if (settings["taxKingdom"] == null) {
-        kingdom_ch = unsetKingdom(data)
+        kingdom_ch = autodetectKingdom(data)
         }
         prokkaAnnotate(data, prot_ch, hmm_ch, kingdom_ch, settings)
         annPlot(prokkaAnnotate.out.gff, settings)
         if(settings["keggView"] == true) {
             keggPlots(prokkaAnnotate.out.gff, settings)
         }
+        gbk = prokkaAnnotate.out.gbk
         gff = prokkaAnnotate.out.gff
         faa = prokkaAnnotate.out.faa
         fna = prokkaAnnotate.out.fna
+        annStats = annPlot.out.annStats
     }
     else if (settings["annotateProgram"].equalsIgnoreCase("ratt")) {
         gb_ch = channel.fromPath(settings["sourceGBK"], checkIfExists:true)
@@ -215,13 +213,17 @@ workflow ANNOTATION {
         if(settings["keggView"] == true) {
             keggPlots(rattAnnotate.out.gff, settings)
         }
+        gbk = rattAnnotate.out.gbk
         gff = rattAnnotate.out.gff
         faa = rattAnnotate.out.faa
         fna = rattAnnotate.out.fna
+        annStats = annPlot.out.annStats
     }
 
     emit:
+    gbk
     gff
     faa
     fna
+    annStats
 }

@@ -14,17 +14,19 @@ process validationAlignment {
 
     output:
     path "*.sort.bam", emit: sortedBam
-    path "*.alnstats.txt"
+    path "*.bai"
+    path "*.alnstats.txt", emit: alnStats
     path "*_coverage.table", emit: cov_table
-    path "*_plots.pdf"
-    path "Final_contigs.fasta", emit: contig_file
+    path "*_plots.pdf", emit: contigPlots
+    path "magnitudes.txt", emit: magnitudes
+    path "Final_contigs.fasta", emit: contig_file, optional:true //not present if using already-assembled contigs
     path "mapping.log", emit: logFile
 
     script:
     def outPrefix = "readsToContigs"
     def paired = paired.name != "NO_FILE" ? "-p \'${paired[0]} ${paired[1]}\' " : ""
     def unpaired = unpaired.name != "NO_FILE2" ? "-u $unpaired " : ""
-    def cutoff = settings["useAssembledContigs"] ? "-c 0 " : "-c 0.1 "
+    def cutoff = settings["assembledContigs"] != "${projectDir}/nf_assets/NO_FILE3" ? "-c 0 " : "-c 0.1 "
     def cpu = settings["cpus"] != null ? "-cpu ${settings["cpus"]} " : ""
     def max_clip = settings["r2g_max_clip"] != null ? "-max_clip ${settings["r2g_max_clip"]} " : ""
 
@@ -81,7 +83,7 @@ process validationAlignment {
 
 }
 
-process makeCoverageTable {
+process makeJSONcoverageTable {
     label 'r2c'
     publishDir(
         path: "${settings["outDir"]}/AssemblyBasedAnalysis/readsMappingToContig",
@@ -100,7 +102,7 @@ process makeCoverageTable {
 
     output:
     path "contigs_stats.txt"
-    path "contigs_stats.pdf"
+    path "contigs_stats.pdf", emit: contigStatsReport
     path "*_coverage.table.json"
 
     script:
@@ -147,14 +149,24 @@ workflow READSTOCONTIGS {
     contigs
 
     main:
-    "mkdir nf_assets".execute().text
-    "touch nf_assets/NO_FILE".execute().text
-    "touch nf_assets/NO_FILE2".execute().text
-
     validationAlignment(settings, paired, unpaired, contigs)
-    makeCoverageTable(settings, validationAlignment.out.cov_table, validationAlignment.out.contig_file)
+    alnStats = validationAlignment.out.alnStats
+    makeJSONcoverageTable(settings, validationAlignment.out.cov_table, validationAlignment.out.contig_file)
     if(settings["extractUnmapped"]) {
         extractUnmapped(settings, validationAlignment.out.sortedBam, validationAlignment.out.logFile)
     }
+
+    covTable = validationAlignment.out.cov_table
+    magnitudes = validationAlignment.out.magnitudes
+    contigPlots = validationAlignment.out.contigPlots
+    contigStatsReport = makeJSONcoverageTable.out.contigStatsReport
+
+    emit:
+    covTable
+    magnitudes
+    contigPlots
+    contigStatsReport
+    alnStats
+
 
 }
