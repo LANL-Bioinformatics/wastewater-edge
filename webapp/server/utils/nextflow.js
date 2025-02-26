@@ -19,6 +19,9 @@ const generateInputs = async (projHome, projectConf, proj) => {
     project: proj.name,
     report_config: `${config.NEXTFLOW.CONFIG_DIR}/${nextflowConfigs.report_config}`
   };
+  if (projectConf.workflow.name === 'sra2fastq') {
+    params.outdir = config.IO.SRA_BASE_DIR;
+  }
   // render input template and write to nextflow_params.json
   const inputs = ejs.render(template, params);
   await fs.promises.writeFile(`${projHome}/nextflow.config`, inputs);
