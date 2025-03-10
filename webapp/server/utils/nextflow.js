@@ -16,6 +16,7 @@ const generateInputs = async (projHome, projectConf, proj) => {
   const params = {
     ...projectConf.workflow.input,
     outdir: `${projHome}/${workflowSettings.outdir}`,
+    projOutdir: `${projHome}/${workflowSettings.outdir}`,
     project: proj.name,
     report_config: `${config.NEXTFLOW.CONFIG_DIR}/${nextflowConfigs.report_config}`
   };
