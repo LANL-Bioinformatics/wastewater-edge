@@ -8,7 +8,7 @@ process sraDownload {
     label "sra2fastq"
     tag "$accession"
     publishDir "${settings["outDir"]}/SRA_Download", mode: 'copy'
-    containerOptions "--home /"
+    containerOptions "--no-home"
 
     //retries download in case of transient failure, then completes any downloads that didn't fail
 
