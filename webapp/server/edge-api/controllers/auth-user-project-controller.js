@@ -64,8 +64,8 @@ const addOne = async (req, res) => {
     fs.writeFileSync(`${projHome}/conf.json`, JSON.stringify(data));
 
     // save uploaded file to project home
-    const { file } = req.files;
-    if (file) {
+    if (req.files) {
+      const { file } = req.files;
       const mvTo = `${projHome}/${file.name}`;
       file.mv(`${mvTo}`, err => {
         if (err) {
