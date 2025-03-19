@@ -7,7 +7,7 @@ const cromwellWorkflows = [];
 const nextflowWorkflows = ['runFaQCs', 'sra2fastq'];
 const nextflowConfigs = {
   report_config: 'report.config',
-  slurm_config: 'slum.config'
+  slurm_config: 'slurm.config'
 };
 
 const workflowList = {
