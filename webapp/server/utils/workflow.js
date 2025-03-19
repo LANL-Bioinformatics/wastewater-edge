@@ -36,7 +36,7 @@ const workflowList = {
 
 const linkUpload = async (fq, projHome) => {
   try {
-    if (fq.startsWith(config.FILE_UPLOADS.FILEUPLOAD_FILE_DIR)) {
+    if (fq.startsWith(config.IO.UPLOADED_FILES_DIR)) {
       // create input dir and link uploaded file with realname
       const inputDir = `${projHome}/input`;
       if (!fs.existsSync(inputDir)) {
