@@ -231,16 +231,6 @@ const updateJobStatusLocal = async (job, proj) => {
 const submitWorkflowSlurm = async (proj, projectConf, inputsize) => {
   const projHome = `${config.IO.PROJECT_BASE_DIR}/${proj.code}`;
   const log = `${projHome}/log.txt`;
-  // Create nextflow in <project home>
-  const workDir = `${projHome}/nextflow`;
-  fs.mkdirSync(workDir);
-  if (!fs.existsSync(workDir)) {
-    logger.error(`Error creating directory ${workDir}:`);
-    proj.status = 'failed';
-    proj.updated = Date.now();
-    proj.save();
-    return;
-  }
   // submit workflow
   const runName = `edge-${proj.code}`;
   const cmd = `${config.NEXTFLOW.PATH} -c ${projHome}/nextflow.config -bg -q run ${config.NEXTFLOW.WORKFLOW_DIR}/${workflowList[projectConf.workflow.name].nextflow_main} -name ${runName} &`;
@@ -299,23 +289,23 @@ const getJobMetadataSlurm = async (proj) => {
   // find related project
   const job = await Job.findOne({ 'project': proj.code });
   if (!job) {
-    return;
+    return [];
   }
   const cmd = `${config.NEXTFLOW.PATH} log ${job.id} -f status,name,start,complete,duration`;
   const ret = await execCmd(cmd);
 
-  let metadata = 'name\tstatus\tstart\tcomplete\tduration\n';
   if (!ret || ret.code !== 0) {
     // command failed
-    return;
-  } if (ret.message === '') {
-    // if empty, job is running
-  } else {
-    metadata += ret.message;
+    return [];
   }
-  // write to nextflow/trace.txt
-  const traceFile = `${config.IO.PROJECT_BASE_DIR}/${proj.code}/nextflow/trace.txt`;
-  fs.writeFileSync(traceFile, metadata);
+  // if empty, job is running
+  if (ret.message === '') {
+    return [];
+  }
+  // get job metadata and convert it to json
+  const header = 'name\tstatus\tstart\tcomplete\tduration\n';
+  const jobMetadata = Papa.parse(`${header}${ret.message}`, { delimiter: '\t', header: true, skipEmptyLines: true }).data;
+  return jobMetadata;
 };
 
 const updateJobStatusSlurm = async (job, proj) => {
@@ -424,12 +414,13 @@ const abortJob = async (proj) => {
 };
 
 const getJobMetadata = async (proj) => {
-  if (config.NEXTFLOW.EXECUTOR === 'slurm') {
-    // create nextflow/trace.txt file
+  if (config.NEXTFLOW.EXECUTOR === 'local') {
+    await getJobMetadataLocal(proj);
+  } else if (config.NEXTFLOW.EXECUTOR === 'slurm') {
     await getJobMetadataSlurm(proj);
+  } else {
+    throw Error(`Unsupported nextflow executor '${config.NEXTFLOW.EXECUTOR}'`);
   }
-  // get metadata from trace.txt
-  await getJobMetadataLocal(proj);
 };
 
 const updateJobStatus = async (job, proj) => {
