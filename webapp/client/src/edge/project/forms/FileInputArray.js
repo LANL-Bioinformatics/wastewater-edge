@@ -83,8 +83,8 @@ export const FileInputArray = (props) => {
             )}
           </Col>
         )}
-        <Col xs="12" md="9">
-          {(!props.maxInput || props.maxInput > 1) && (
+        {(!props.maxInput || props.maxInput > 1) && (
+          <Col xs="12" md="9">
             <Button
               size="sm"
               className="btn-pill"
@@ -100,8 +100,10 @@ export const FileInputArray = (props) => {
             >
               Add more {props.text} &nbsp; <i className="cui-file"></i>
             </Button>
-          )}
-        </Col>
+            <br></br>
+            <br></br>
+          </Col>
+        )}
       </Row>
       {fileInputFields.map((item, index) => (
         <div key={item.id}>

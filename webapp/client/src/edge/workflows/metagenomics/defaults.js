@@ -30,7 +30,7 @@ export const workflows = {
           viewFile: false,
           isOptional: false,
           cleanupInput: true,
-          maxInput: 1,
+          maxInput: 1000,
         },
       },
       trimQual: {
