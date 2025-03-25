@@ -21,7 +21,7 @@ export const workflows = {
         display: [],
         fastqInput: {
           tooltip:
-            'RunFaQCs requires data in FASTQ format as the input; the file can be compressed. <br/>Acceptable file formats: .fastq, .fq, .fastq.gz, .fq.gz',
+            'This workflow requires data in FASTQ format as the input; the file can be compressed. <br/>Acceptable file formats: .fastq, .fq, .fastq.gz, .fq.gz',
           enableInput: true,
           placeholder: 'Select a file or enter a file http(s) url',
           dataSources: ['upload', 'public', 'project'],
