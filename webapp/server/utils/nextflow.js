@@ -288,7 +288,7 @@ const abortJobSlurm = async (proj, job) => {
 const getJobMetadataSlurm = async (proj) => {
   // find related project
   const job = await Job.findOne({ 'project': proj.code });
-  if (!job) {
+  if (!job || job.status === 'Running' || job.status === 'Submitted') {
     return [];
   }
   const cmd = `${config.NEXTFLOW.PATH} log ${job.id} -f status,name,start,complete,duration`;
