@@ -47,10 +47,11 @@ const makeIntIfDefined = (val) => typeof val === 'string' ? parseInt(val, 10) : 
 
 // Determine several reusable directory paths based upon environment variables
 // and/or the path to the directory containing this `config.js` file.
-const CLIENT_BASE_DIR = path.join(__dirname, '../client');
-const NEXTFLOW_BASE_DIR = path.join(__dirname, '../../workflows/Nextflow');
-const CROMWELL_BASE_DIR = path.join(__dirname, '../../workflows/Cromwell');
-const IO_BASE_DIR = process.env.IO_BASE_DIR || path.join(__dirname, '../../io');
+const appServerDir = process.env.APP_SERVER_DIR ? process.env.APP_SERVER_DIR : __dirname;
+const CLIENT_BASE_DIR = path.join(appServerDir, '../client');
+const NEXTFLOW_BASE_DIR = path.join(appServerDir, '../../workflows/Nextflow');
+const CROMWELL_BASE_DIR = path.join(appServerDir, '../../workflows/Cromwell');
+const IO_BASE_DIR = process.env.IO_BASE_DIR || path.join(appServerDir, '../../io');
 
 const config = {
   // Name of environment in which application is running (either "production" or "development").
@@ -79,6 +80,7 @@ const config = {
   NEXTFLOW: {
     PATH: process.env.NEXTFLOW_PATH || 'nextflow',
     SLURM_DELETE: process.env.NEXTFLOW_SLURM_DELETE || 'scancel',
+    EXECUTOR: process.env.NEXTFLOW_EXECUTOR || 'local',
     // Max allowed number of jobs in nextflow.
     NUM_JOBS_MAX: makeIntIfDefined(process.env.NEXTFLOW_NUM_JOBS_MAX) || 100000,
     // Total size of the input files allowed per job.
