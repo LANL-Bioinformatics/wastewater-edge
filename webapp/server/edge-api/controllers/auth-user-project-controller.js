@@ -19,8 +19,8 @@ const addOne = async (req, res) => {
     if (typeof data.project === 'string') {
       data.project = JSON.parse(data.project);
     }
-    if (typeof data.workflows === 'string') {
-      data.workflows = JSON.parse(data.workflows);
+    if (typeof data.workflow === 'string') {
+      data.workflow = JSON.parse(data.workflow);
     }
     if (typeof data.inputDisplay === 'string') {
       data.inputDisplay = JSON.parse(data.inputDisplay);

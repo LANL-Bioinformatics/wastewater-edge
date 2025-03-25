@@ -1,14 +1,18 @@
 import React, { useState, useEffect } from 'react'
 import { MyTooltip } from '../../common/MyTooltip'
-import { defaults } from '../../common/util'
+import { defaults, capitalizeFirstLetter } from '../../common/util'
 import { Switcher } from './Switcher'
 import { FileInputArray } from './FileInputArray'
 import { PairedFileInputArray } from './PairedFileInputArray'
 import { components } from './defaults'
+import { SeqPlatform } from './SeqPlatform'
 
 export const FastqInput = (props) => {
   const componentName = 'fastqInput'
-  const [form, setState] = useState({ ...components[componentName].init })
+  const [form, setState] = useState({
+    ...components[componentName].init,
+    platform: props.seqPlatformDefaultValue,
+  })
   const [doValidation, setDoValidation] = useState(0)
 
   const setNewState2 = (name, value) => {
@@ -20,6 +24,12 @@ export const FastqInput = (props) => {
   }
   const setSwitcher = (inForm, name) => {
     setNewState2(name, inForm.isTrue)
+  }
+  const setPlatform = (inForm, name) => {
+    if (inForm.platform !== 'illumina') {
+      form.interleaved = true
+    }
+    setNewState2(name, inForm.platform)
   }
   const setFileInput = (inForm, name) => {
     form.validForm = inForm.validForm
@@ -64,7 +74,19 @@ export const FastqInput = (props) => {
           showTooltip={props.showTooltip ? props.showTooltip : defaults.showTooltip}
         />
       )}
-      {!props.disableSwitcher && (
+      {props.platformOptions && (
+        <>
+          <SeqPlatform
+            id={'platform'}
+            name={'platform'}
+            setParams={setPlatform}
+            text={props.seqPlatformText}
+            defaultValue={props.seqPlatformDefaultValue}
+          />
+          <br></br>
+        </>
+      )}
+      {!props.disableSwitcher && form.platform === 'illumina' && (
         <>
           <Switcher
             id={'interleaved'}
@@ -84,7 +106,7 @@ export const FastqInput = (props) => {
           <FileInputArray
             setParams={setFileInput}
             name={'fastq'}
-            text={components[componentName].params['fastq'].text}
+            text={`${capitalizeFirstLetter(form.platform)} ${components[componentName].params['fastq'].text}`}
             enableInput={props.enableInput}
             placeholder={props.placeholder}
             isValidFileInput={props.isValidFileInput}
@@ -103,7 +125,7 @@ export const FastqInput = (props) => {
           <PairedFileInputArray
             setParams={setFileInput}
             name={'fastq'}
-            text={components[componentName].params['pairedFastq'].text}
+            text={`${capitalizeFirstLetter(form.platform)} ${components[componentName].params['fastq'].text}`}
             enableInput={props.enableInput}
             placeholder={props.placeholder}
             isValidFileInput={props.isValidFileInput}

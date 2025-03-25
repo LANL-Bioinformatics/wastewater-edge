@@ -54,6 +54,10 @@ export const components = {
     fileInput_display: [],
     fileInput_isValid: [],
   },
+  seqPlatform: {
+    validForm: true,
+    platform: 'illumina',
+  },
   fastqInput: {
     params: {
       interleaved: {
@@ -73,6 +77,7 @@ export const components = {
       validForm: false,
       errMessage: '',
       interleaved: true,
+      platform: 'illumina',
       fileInput: [],
       fileInput_display: [],
     },

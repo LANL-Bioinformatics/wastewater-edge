@@ -75,12 +75,14 @@ export const FileInputArray = (props) => {
   return (
     <>
       <Row>
-        <Col md="3">
-          {props.text}
-          {!props.isOptional && fileInputFields.length === 0 && (
-            <WarningTooltip id={props.name} tooltip={'Required at least one input.'} />
-          )}
-        </Col>
+        {(!props.maxInput || props.maxInput > 1) && (
+          <Col md="3">
+            {props.text}
+            {!props.isOptional && fileInputFields.length === 0 && (
+              <WarningTooltip id={props.name} tooltip={'Required at least one input.'} />
+            )}
+          </Col>
+        )}
         <Col xs="12" md="9">
           {(!props.maxInput || props.maxInput > 1) && (
             <Button
@@ -101,14 +103,17 @@ export const FileInputArray = (props) => {
           )}
         </Col>
       </Row>
-      <br></br>
       {fileInputFields.map((item, index) => (
         <div key={item.id}>
           <Row>
-            <Col md="3" className="edge-sub-field">
-              {' '}
-              {props.text} #{index + 1}
-            </Col>
+            {!props.maxInput || props.maxInput > 1 ? (
+              <Col md="3" className="edge-sub-field">
+                {' '}
+                {props.text} #{index + 1}
+              </Col>
+            ) : (
+              <Col md="3"> {props.text}</Col>
+            )}
             <Col xs="12" md="9">
               <Controller
                 render={({ field: { ref, ...rest }, fieldState }) => (

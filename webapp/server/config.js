@@ -78,6 +78,7 @@ const config = {
   },
   NEXTFLOW: {
     PATH: process.env.NEXTFLOW_PATH || 'nextflow',
+    SLURM_DELETE: process.env.NEXTFLOW_SLURM_DELETE || 'scancel',
     // Max allowed number of jobs in nextflow.
     NUM_JOBS_MAX: makeIntIfDefined(process.env.NEXTFLOW_NUM_JOBS_MAX) || 100000,
     // Total size of the input files allowed per job.

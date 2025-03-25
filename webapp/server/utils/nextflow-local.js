@@ -1,3 +1,4 @@
+/* eslint-disable no-unreachable */
 const fs = require('fs');
 const ejs = require('ejs');
 const Papa = require('papaparse');
@@ -33,9 +34,19 @@ const generateInputs = async (projHome, projectConf, proj) => {
 const submitWorkflow = async (proj, projectConf, inputsize) => {
   const projHome = `${config.IO.PROJECT_BASE_DIR}/${proj.code}`;
   const log = `${projHome}/log.txt`;
+  // Run nextflow in <project home>/nextflow
+  const workDir = `${projHome}/nextflow`;
+  fs.mkdirSync(workDir);
+  if (!fs.existsSync(workDir)) {
+    logger.error(`Error creating directory ${workDir}:`);
+    proj.status = 'failed';
+    proj.updated = Date.now();
+    proj.save();
+    return;
+  }
   // submit workflow
   const runName = `edge-${proj.code}`;
-  const cmd = `${config.NEXTFLOW.PATH} -c ${projHome}/nextflow.config -bg -q run ${config.NEXTFLOW.WORKFLOW_DIR}/${workflowList[projectConf.workflow.name].nextflow_main} -name ${runName} &`;
+  const cmd = `cd ${workDir}; ${config.NEXTFLOW.PATH} -c ${projHome}/nextflow.config -bg -q run ${config.NEXTFLOW.WORKFLOW_DIR}/${workflowList[projectConf.workflow.name].nextflow_main} -name ${runName}`;
   write2log(log, 'Run pipeline');
   // Don't need to wait for the command to complete. It may take long time to finish and cause an error.
   // The updateJobStatus will catch the error if this command failed.
@@ -55,31 +66,43 @@ const submitWorkflow = async (proj, projectConf, inputsize) => {
   proj.save();
 };
 
-const abortJob = async (proj, job) => {
+const getPid = async (proj) => {
   // To stop the running pipeline depends on the executor.
   // If is local, find pid in .nextflow.pid and kill process and all descendant processes: pkill -TERM -P <pid>
   // If is slurm, delete slurm job?
-  // get slurm jobId
-  const cmd = `${config.NEXTFLOW.PATH} log ${job.id} -f status,native_id`;
-  const ret = await execCmd(cmd);
-
-  if (!ret || ret.code !== 0) {
-    // command failed
-  }
-  // delet slurm job by id
-  // scancel <jobid>
-  // parse output from 'nextflow log <run name> -f status, native_id
-  const lines = ret.message.split(/\n/);
-  let i = 0;
-  for (i = 0; i < lines.length; i += 1) {
-    const [status, jobId] = lines[i].trim().split(/\s+/);
-    if (status === '' || status === 'RUNNING') {
-      // don't need to wait for the command to complete
-      execCmd(`${config.NEXTFLOW.SLURM_DELETE} ${jobId}`);
+  const pidFile = `${config.IO.PROJECT_BASE_DIR}/${proj.code}/nextflow/.nextflow.pid`;
+  if (fs.existsSync(pidFile)) {
+    let all = fs.readFileSync(pidFile, 'utf8');
+    all = all.trim();  // final crlf in file
+    const lines = all.split('\n');
+    if (lines[0]) {
+      return parseInt(lines[0], 10);
     }
   }
+  return null;
+};
+// check pid
+const pidIsRunning = (pid) => {
+  try {
+    // a signal of 0 can be used to test for the existence of a process.
+    process.kill(pid, 0);
+    return true;
+  } catch (e) {
+    return false;
+  }
+};
 
-  // delete edge job
+const abortJob = async (proj) => {
+  // To stop the running pipeline depends on the executor.
+  // If is local, find pid in .nextflow.pid and kill process and all descendant processes: pkill -TERM -P <pid>
+  // If is slurm, delete slurm job?
+  const pid = await getPid(proj);
+  if (pid && pidIsRunning(pid)) {
+    const cmd = `pkill -TERM -P ${pid}`;
+    // Don't need to wait for the deletion, the process may already complete
+    execCmd(cmd);
+  }
+  // delete job
   Job.deleteOne({ project: proj.code }, (err) => {
     if (err) {
       logger.error(`Failed to delete job from DB ${proj.code}:${err}`);
@@ -88,24 +111,12 @@ const abortJob = async (proj, job) => {
 };
 
 const getJobMetadata = async (proj) => {
-  // find related project
-  const job = await Job.findOne({ 'project': proj.code });
-  if (!job) {
+  const traceFile = `${config.IO.PROJECT_BASE_DIR}/${proj.code}/nextflow/trace.txt`;
+  if (!fs.existsSync(traceFile)) {
     return [];
   }
-  const cmd = `${config.NEXTFLOW.PATH} log ${job.id} -f status,name,start,complete,duration`;
-  const ret = await execCmd(cmd);
-
-  if (!ret || ret.code !== 0) {
-    // command failed
-    return [];
-  }
-  // if empty, job is running
-  if (ret.message === '') {
-    return [];
-  }
-  // get job metadata and convert it to json
-  const jobMetadata = Papa.parse(ret.message, { delimiter: '\t', header: true, skipEmptyLines: true }).data;
+  // get job metadata in trace.txt, convert tab delimiter file to json
+  const jobMetadata = Papa.parse(fs.readFileSync(traceFile).toString(), { delimiter: '\t', header: true, skipEmptyLines: true }).data;
   return jobMetadata;
 };
 
@@ -137,25 +148,38 @@ const getJobStatus = (statusStr) => {
 
 const updateJobStatus = async (job, proj) => {
   // get job status
-  const projHome = `${config.IO.PROJECT_BASE_DIR} /${proj.code}`;
+  const projHome = `${config.IO.PROJECT_BASE_DIR}/${proj.code}`;
   // Pipeline status. Possible values are: OK, ERR and empty
-  let cmd = `${config.NEXTFLOW.PATH} log|awk '/${job.id}/ &&(/OK/||/ERR/)'|awk '{split($0,array,/\t/); print array[4]}'`;
+  let cmd = `cd ${projHome}/nextflow; ${config.NEXTFLOW.PATH} log|awk '/${job.id}/ &&(/OK/||/ERR/)'|awk '{split($0,array,/\t/); print array[4]}'`;
   let ret = await execCmd(cmd);
 
   if (!ret || ret.code !== 0) {
     // command failed
     return;
   }
-  // if empty, job is running
+  // if empty, check pid
   if (ret.message === '') {
-    // workflow is still running, update job updated datetime to move job to the end of job queue
-    job.updated = Date.now();
-    job.save();
+    const pid = await getPid(proj);
+    if (pid && pidIsRunning(pid)) {
+      // workflow is still running, update job updated datetime to move job to the end of job queue
+      job.updated = Date.now();
+      job.save();
+    } else {
+      // workflow failed
+      job.status = 'Failed';
+      job.updated = Date.now();
+      job.save();
+      // result not as expected
+      proj.status = 'failed';
+      proj.updated = Date.now();
+      proj.save();
+      write2log(`${projHome}/log.txt`, 'Nextflow job status: Failed');
+    }
     return;
   }
 
   // Task status. Possible values are: COMPLETED, FAILED, and ABORTED.
-  cmd = `${config.NEXTFLOW.PATH} log ${job.id} -f status`;
+  cmd = `cd ${projHome}/nextflow; ${config.NEXTFLOW.PATH} log ${job.id} -f status`;
   ret = await execCmd(cmd);
   if (!ret || ret.code !== 0) {
     // command failed

@@ -7,6 +7,10 @@ export const workflows = {
     validForm: false,
     errMessage: 'input error',
     inputs: {
+      seqPlatform: {
+        text: 'Sequencing Platform',
+        value: 'illumina',
+      },
       interleaved: {
         text: 'Is interleaved',
         value: true,
@@ -17,7 +21,7 @@ export const workflows = {
         display: [],
         fastqInput: {
           tooltip:
-            'RunFaQCs requires paired-end Illumina data in FASTQ format as the input; the file can be interleaved and can becompressed. <br/>Acceptable file formats: .fastq, .fq, .fastq.gz, .fq.gz',
+            'RunFaQCs requires data in FASTQ format as the input; the file can be compressed. <br/>Acceptable file formats: .fastq, .fq, .fastq.gz, .fq.gz',
           enableInput: true,
           placeholder: 'Select a file or enter a file http(s) url',
           dataSources: ['upload', 'public', 'project'],

@@ -110,12 +110,14 @@ export const PairedFileInputArray = (props) => {
   return (
     <>
       <Row>
-        <Col md="3">
-          {props.text}
-          {!props.isOptional && pairedFileInputFields.length === 0 && (
-            <WarningTooltip id={props.name} tooltip={'Required at lease one paired input.'} />
-          )}
-        </Col>
+        {(!props.maxInput || props.maxInput > 1) && (
+          <Col md="3">
+            {props.text}
+            {!props.isOptional && pairedFileInputFields.length === 0 && (
+              <WarningTooltip id={props.name} tooltip={'Required at lease one paired input.'} />
+            )}
+          </Col>
+        )}
         <Col xs="12" md="9">
           {(!props.maxInput || props.maxInput > 1) && (
             <Button
@@ -136,15 +138,18 @@ export const PairedFileInputArray = (props) => {
           )}
         </Col>
       </Row>
-      <br></br>
 
       {pairedFileInputFields.map((item, index) => (
         <div key={item.id}>
           <Row>
-            <Col md="3" className="edge-sub-field">
-              {' '}
-              Pair-1 {props.text} #{index + 1}
-            </Col>
+            {!props.maxInput || props.maxInput > 1 ? (
+              <Col md="3" className="edge-sub-field">
+                {' '}
+                Pair-1 {props.text} #{index + 1}
+              </Col>
+            ) : (
+              <Col md="3"> Pair-1 {props.text}</Col>
+            )}
             <Col xs="12" md="9">
               <Controller
                 render={({ field: { ref, ...rest }, fieldState }) => (
@@ -173,10 +178,14 @@ export const PairedFileInputArray = (props) => {
           </Row>
           <br></br>
           <Row>
-            <Col md="3" className="edge-sub-field">
-              {' '}
-              Pair-2 {props.text} #{index + 1}
-            </Col>
+            {!props.maxInput || props.maxInput > 1 ? (
+              <Col md="3" className="edge-sub-field">
+                {' '}
+                Pair-2 {props.text} #{index + 1}
+              </Col>
+            ) : (
+              <Col md="3"> Pair-2 {props.text}</Col>
+            )}
             <Col xs="12" md="9">
               <Controller
                 render={({ field: { ref, ...rest }, fieldState }) => (

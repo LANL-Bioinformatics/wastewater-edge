@@ -65,6 +65,7 @@ export const RunFaQCs = (props) => {
 
   const setFastqInput = (inForm, name) => {
     if (inForm.validForm) {
+      form.inputs['seqPlatform'].value = inForm.platform
       form.inputs['interleaved'].value = inForm.interleaved
       if (inForm.interleaved) {
         form.inputs[name].value = inForm.fileInput
@@ -79,6 +80,7 @@ export const RunFaQCs = (props) => {
     } else {
       // reset values
       form.inputs['interleaved'].value = true
+      form.inputs['seqPlatform'].value = workflows[workflowName].inputs['seqPlatform'].value
       form.inputs[name].value = []
       form.inputs[name].display = []
       if (validInputs[name]) {
@@ -138,6 +140,9 @@ export const RunFaQCs = (props) => {
             isOptional={workflows[workflowName].inputs['inputFastq']['fastqInput'].isOptional}
             cleanupInput={workflows[workflowName].inputs['inputFastq']['fastqInput'].cleanupInput}
             maxInput={workflows[workflowName].inputs['inputFastq']['fastqInput'].maxInput}
+            platformOptions={true}
+            seqPlatformText={workflows[workflowName].inputs['seqPlatform'].text}
+            seqPlatformDefaultValue={workflows[workflowName].inputs['seqPlatform'].value}
           />
           <RangeInput
             name={'trimQual'}
