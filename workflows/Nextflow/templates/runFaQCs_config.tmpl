@@ -1,4 +1,5 @@
 
+workDir="<%= nextflowOutDir %>/work"
 params {
 
     //which modules are run
@@ -242,5 +243,23 @@ executor {
     submitRateLimit = '1/5sec'
 }
 
-includeConfig "<%= report_config %>"
-includeConfig "<%= slurm_config %>"
+report {
+    enabled = true
+    file = '<%= nextflowOutDir %>/report.html'
+    overwrite = true
+}
+
+timeline {
+    enabled = true
+    file = '<%= nextflowOutDir %>/timeline.html'
+    overwrite = true
+}
+
+trace {
+    enabled = true
+    file = '<%= nextflowOutDir %>/trace.txt'
+    fields = 'name,status,start,complete,duration'
+    overwrite = true
+}
+
+includeConfig "<%= executor_config %>"

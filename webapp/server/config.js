@@ -78,7 +78,7 @@ const config = {
     BUILD_DIR: process.env.CLIENT_BASE_DIR || path.join(CLIENT_BASE_DIR, 'build'),
   },
   NEXTFLOW: {
-    PATH: process.env.NEXTFLOW_PATH || 'nextflow',
+    SLURM_SSH: process.env.NEXTFLOW_SSH || '',
     SLURM_DELETE: process.env.NEXTFLOW_SLURM_DELETE || 'scancel',
     EXECUTOR: process.env.NEXTFLOW_EXECUTOR || 'local',
     // Max allowed number of jobs in nextflow.

@@ -143,6 +143,7 @@ export const RunFaQCs = (props) => {
             platformOptions={true}
             seqPlatformText={workflows[workflowName].inputs['seqPlatform'].text}
             seqPlatformDefaultValue={workflows[workflowName].inputs['seqPlatform'].value}
+            interleavedText={workflows[workflowName].inputs['interleaved'].text}
           />
           <RangeInput
             name={'trimQual'}
