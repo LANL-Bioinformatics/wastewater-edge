@@ -125,6 +125,17 @@ const updateJobStatus = async (job, proj) => {
     return;
   }
 
+  if (ret.message.trim() === 'ERR') {
+    job.status = 'Failed';
+    job.updated = Date.now();
+    job.save();
+    proj.status = 'failed';
+    proj.updated = Date.now();
+    proj.save();
+    write2log(`${projHome}/log.txt`, 'Nextflow job status: failed');
+    return;
+  }
+
   // Task status. Possible values are: COMPLETED, FAILED, and ABORTED.
   cmd = `NXF_CACHE_DIR=${projHome}/nextflow/work nextflow log ${job.id} -f status`;
   ret = await execCmd(cmd);
