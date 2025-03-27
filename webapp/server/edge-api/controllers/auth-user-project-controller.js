@@ -318,7 +318,12 @@ const getFiles = async (req, res) => {
     if (req.body.projectStatuses) {
       projStatuses = req.body.projectStatuses;
     }
-    const query = { 'status': { $in: projStatuses }, $or: [{ 'owner': { $eq: req.user.email } }, { 'sharedTo': req.user.email }, { 'public': true }] };
+    let query = { 'status': { $in: projStatuses }, $or: [{ 'owner': req.user.email }, { 'sharedto': req.user.email }, { 'public': true }] };
+    if (req.body.projectScope === 'self') {
+      query = { 'status': { $in: projStatuses }, $or: [{ 'owner': req.user.email }] };
+    } else if (req.body.projectScope === 'self+shared') {
+      query = { 'status': { $in: projStatuses }, $or: [{ 'owner': req.user.email }, { 'sharedto': req.user.email }] };
+    }
     if (req.body.projectTypes) {
       query.type = { $in: req.body.projectTypes };
     }

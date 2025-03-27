@@ -167,6 +167,7 @@ export const PairedFileInputArray = (props) => {
                     dataSources={props.dataSources}
                     fileTypes={props.fileTypes}
                     projectTypes={props.projectTypes}
+                    projectScope={props.projectScope}
                     viewFile={props.viewFile}
                     fieldname={'pairedFileInput1'}
                     index={index}

@@ -136,6 +136,8 @@ export const RunFaQCs = (props) => {
             placeholder={workflows[workflowName].inputs['inputFastq']['fastqInput'].placeholder}
             dataSources={workflows[workflowName].inputs['inputFastq']['fastqInput'].dataSources}
             fileTypes={workflows[workflowName].inputs['inputFastq']['fastqInput'].fileTypes}
+            projectTypes={workflows[workflowName].inputs['inputFastq']['fastqInput'].projectTypes}
+            projectScope={workflows[workflowName].inputs['inputFastq']['fastqInput'].projectScope}
             viewFile={workflows[workflowName].inputs['inputFastq']['fastqInput'].viewFile}
             isOptional={workflows[workflowName].inputs['inputFastq']['fastqInput'].isOptional}
             cleanupInput={workflows[workflowName].inputs['inputFastq']['fastqInput'].cleanupInput}

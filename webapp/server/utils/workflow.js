@@ -31,7 +31,7 @@ const workflowList = {
   runFaQCs: {
     // workflow will create 'ReadsQC' directory in the output/.
     outdir: 'output/ReadsQC',
-    nextflow_main: 'testmain.nf',
+    nextflow_main: 'main.nf',
     config_tmpl: 'runFaQCs_config.tmpl',
   },
 };

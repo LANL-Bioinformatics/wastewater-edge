@@ -117,6 +117,7 @@ export const FastqInput = (props) => {
             dataSources={props.dataSources}
             fileTypes={props.fileTypes}
             projectTypes={props.projectTypes}
+            projectScope={props.projectScope}
             viewFile={props.viewFile}
             isOptional={props.isOptional}
             cleanupInput={props.cleanupInput}
@@ -136,6 +137,7 @@ export const FastqInput = (props) => {
             dataSources={props.dataSources}
             fileTypes={props.fileTypes}
             projectTypes={props.projectTypes}
+            projectScope={props.projectScope}
             viewFile={props.viewFile}
             isOptional={props.isOptional}
             cleanupInput={props.cleanupInput}

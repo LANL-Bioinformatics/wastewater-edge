@@ -12,7 +12,7 @@ export const workflows = {
         value: 'illumina',
       },
       interleaved: {
-        text: 'Single-end FASTQ File',
+        text: 'Single-end FASTQ?',
         value: true,
       },
       inputFastq: {
@@ -27,6 +27,7 @@ export const workflows = {
           dataSources: ['upload', 'public', 'project'],
           fileTypes: ['fastq', 'fq', 'fastq.gz', 'fq.gz'],
           projectTypes: ['sra2fastq'],
+          projectScope: ['self+shared'],
           viewFile: false,
           isOptional: false,
           cleanupInput: true,
