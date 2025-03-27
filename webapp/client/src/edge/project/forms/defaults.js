@@ -61,10 +61,10 @@ export const components = {
   fastqInput: {
     params: {
       interleaved: {
-        trueText: 'Yes',
-        falseText: 'No',
+        trueText: 'Single-End',
+        falseText: 'Paired-End',
         defaultValue: true,
-        text: 'Is interleaved?',
+        text: 'Mode',
       },
       fastq: {
         text: 'Fastq',
