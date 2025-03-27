@@ -92,7 +92,11 @@ export const FastqInput = (props) => {
             id={'interleaved'}
             name={'interleaved'}
             setParams={setSwitcher}
-            text={components[componentName].params['interleaved'].text}
+            text={
+              props.interleavedText
+                ? props.interleavedText
+                : components[componentName].params['interleaved'].text
+            }
             defaultValue={components[componentName].params['interleaved'].defaultValue}
             trueText={components[componentName].params['interleaved'].trueText}
             falseText={components[componentName].params['interleaved'].falseText}

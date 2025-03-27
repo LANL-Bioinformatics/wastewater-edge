@@ -6,8 +6,10 @@ const config = require('../config');
 const cromwellWorkflows = [];
 const nextflowWorkflows = ['runFaQCs', 'sra2fastq'];
 const nextflowConfigs = {
-  report_config: 'report.config',
-  slurm_config: 'slurm.config'
+  executor_config: {
+    slurm: 'slurm.config',
+    local: 'local.config',
+  }
 };
 
 const workflowList = {
@@ -29,7 +31,7 @@ const workflowList = {
   runFaQCs: {
     // workflow will create 'ReadsQC' directory in the output/.
     outdir: 'output/ReadsQC',
-    nextflow_main: 'main.nf',
+    nextflow_main: 'testmain.nf',
     config_tmpl: 'runFaQCs_config.tmpl',
   },
 };

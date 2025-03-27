@@ -12,7 +12,7 @@ export const workflows = {
         value: 'illumina',
       },
       interleaved: {
-        text: 'Is interleaved',
+        text: 'Single-end FASTQ File',
         value: true,
       },
       inputFastq: {
