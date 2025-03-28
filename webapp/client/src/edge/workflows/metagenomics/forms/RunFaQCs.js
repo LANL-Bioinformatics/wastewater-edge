@@ -66,20 +66,15 @@ export const RunFaQCs = (props) => {
   const setFastqInput = (inForm, name) => {
     if (inForm.validForm) {
       form.inputs['seqPlatform'].value = inForm.platform
-      form.inputs['interleaved'].value = inForm.interleaved
-      if (inForm.interleaved) {
-        form.inputs[name].value = inForm.fileInput
-        form.inputs[name].display = inForm.fileInput_display
-      } else {
-        form.inputs[name].value = [inForm.fileInput[0].f1, inForm.fileInput[0].f2]
-        form.inputs[name].display = [inForm.fileInput_display[0].f1, inForm.fileInput_display[0].f2]
-      }
+      form.inputs['paired'].value = inForm.paired
+      form.inputs[name].value = inForm.fileInput
+      form.inputs[name].display = inForm.fileInput_display
       if (validInputs[name]) {
         validInputs[name].isValid = true
       }
     } else {
       // reset values
-      form.inputs['interleaved'].value = true
+      form.inputs['paired'].value = true
       form.inputs['seqPlatform'].value = workflows[workflowName].inputs['seqPlatform'].value
       form.inputs[name].value = []
       form.inputs[name].display = []
@@ -102,7 +97,19 @@ export const RunFaQCs = (props) => {
 
     if (errors === '') {
       //files for server to caculate total input size
-      form.files = [...form.inputs['inputFastq'].value, form.inputs['artifactFile'].value]
+      let inputFiles = []
+      if (form.inputs['paired'].value) {
+        form.inputs['inputFastq'].value.forEach((item) => {
+          inputFiles.push(item.f1)
+          inputFiles.push(item.f2)
+        })
+      } else {
+        inputFiles = form.inputs['inputFastq'].value
+      }
+      if (form.inputs['artifactFile'].value) {
+        inputFiles.push(form.inputs['artifactFile'].value)
+      }
+      form.files = inputFiles
       form.errMessage = null
       form.validForm = true
     } else {
@@ -142,10 +149,10 @@ export const RunFaQCs = (props) => {
             isOptional={workflows[workflowName].inputs['inputFastq']['fastqInput'].isOptional}
             cleanupInput={workflows[workflowName].inputs['inputFastq']['fastqInput'].cleanupInput}
             maxInput={workflows[workflowName].inputs['inputFastq']['fastqInput'].maxInput}
-            platformOptions={true}
+            seqPlatformOptions={workflows[workflowName].inputs['seqPlatform'].options}
             seqPlatformText={workflows[workflowName].inputs['seqPlatform'].text}
             seqPlatformDefaultValue={workflows[workflowName].inputs['seqPlatform'].value}
-            interleavedText={workflows[workflowName].inputs['interleaved'].text}
+            pairedText={workflows[workflowName].inputs['paired'].text}
           />
           <RangeInput
             name={'trimQual'}

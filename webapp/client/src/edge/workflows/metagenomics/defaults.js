@@ -9,10 +9,15 @@ export const workflows = {
     inputs: {
       seqPlatform: {
         text: 'Sequencing Platform',
-        value: 'illumina',
+        value: 'Illumina',
+        options: [
+          { text: 'Nanopore', value: 'Nanopore' },
+          { text: 'Illumina', value: 'Illumina' },
+          { text: 'PacBio', value: 'Packbio' },
+        ],
       },
-      interleaved: {
-        text: 'Mode',
+      paired: {
+        text: 'Paired-End?',
         value: true,
       },
       inputFastq: {

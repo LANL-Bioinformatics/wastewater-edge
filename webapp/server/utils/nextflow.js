@@ -95,7 +95,7 @@ const submitWorkflow = async (proj, projectConf, inputsize) => {
     id: runName,
     project: proj.code,
     type: proj.type,
-    inputsize,
+    inputSize: inputsize,
     queue: 'nextflow',
     status: 'Running'
   });
@@ -114,6 +114,15 @@ const updateJobStatus = async (job, proj) => {
   let ret = await execCmd(cmd);
 
   if (!ret || ret.code !== 0) {
+    if (ret.message.includes('execution history is empty')) {
+      job.status = 'Failed';
+      job.updated = Date.now();
+      job.save();
+      proj.status = 'failed';
+      proj.updated = Date.now();
+      proj.save();
+      write2log(`${projHome}/log.txt`, 'Nextflow job status: failed');
+    }
     // command failed
     return;
   }
@@ -124,7 +133,6 @@ const updateJobStatus = async (job, proj) => {
     job.save();
     return;
   }
-
   if (ret.message.trim() === 'ERR') {
     job.status = 'Failed';
     job.updated = Date.now();

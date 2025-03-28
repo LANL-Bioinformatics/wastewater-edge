@@ -57,14 +57,15 @@ const Main = (props) => {
     Object.keys(selectedWorkflows[workflow].inputs).forEach((key) => {
       myWorkflow.input[key] = selectedWorkflows[workflow].inputs[key].value
       if (selectedWorkflows[workflow].inputs[key].display) {
-        inputDisplay.input[key] = selectedWorkflows[workflow].inputs[key].display
+        inputDisplay.input[selectedWorkflows[workflow].inputs[key].text] =
+          selectedWorkflows[workflow].inputs[key].display
       } else {
         inputDisplay.input[selectedWorkflows[workflow].inputs[key].text] =
           selectedWorkflows[workflow].inputs[key].value
       }
     })
     // set pairedFile flag
-    myWorkflow.input['pairedFile'] = !myWorkflow.input['interleaved']
+    myWorkflow.input['pairedFile'] = myWorkflow.input['paired']
 
     //update input for nextflow
     if (!myWorkflow.input['artifactFile']) {

@@ -4,9 +4,9 @@ import { MyTooltip } from '../../common/MyTooltip'
 import { defaults } from '../../common/util'
 import { components } from './defaults'
 
-export const SeqPlatform = (props) => {
-  const componentName = 'seqPlatform'
-  const [form, setState] = useState({ ...components[componentName], platform: props.defaultValue })
+export const OptionSelector = (props) => {
+  const componentName = 'optionSelector'
+  const [form, setState] = useState({ ...components[componentName], option: props.defaultValue })
   const [doValidation, setDoValidation] = useState(0)
 
   const setNewState2 = (name, value) => {
@@ -18,7 +18,7 @@ export const SeqPlatform = (props) => {
   }
 
   useEffect(() => {
-    setState({ ...components[componentName], platform: props.defaultValue })
+    setState({ ...components[componentName], option: props.defaultValue })
   }, [props.reset]) // eslint-disable-line react-hooks/exhaustive-deps
 
   useEffect(() => {
@@ -32,7 +32,7 @@ export const SeqPlatform = (props) => {
         <Col md="3">
           {props.tooltip ? (
             <MyTooltip
-              id={`platformTooltip-${props.name}`}
+              id={`optionSelectorTooltip-${props.name}`}
               tooltip={props.tooltip}
               text={props.text}
               place={props.tooltipPlace ? props.tooltipPlace : defaults.tooltipPlace}
@@ -45,33 +45,18 @@ export const SeqPlatform = (props) => {
         </Col>
         <Col xs="12" md="9">
           <ButtonGroup className="mr-3" aria-label="First group" size="sm">
-            <Button
-              color="outline-primary"
-              onClick={() => {
-                setNewState2('platform', 'nanopore')
-              }}
-              active={form.platform === 'nanopore'}
-            >
-              Nanopore
-            </Button>
-            <Button
-              color="outline-primary"
-              onClick={() => {
-                setNewState2('platform', 'illumina')
-              }}
-              active={form.platform === 'illumina'}
-            >
-              Illumina
-            </Button>
-            <Button
-              color="outline-primary"
-              onClick={() => {
-                setNewState2('platform', 'pacbio')
-              }}
-              active={form.platform === 'pacbio'}
-            >
-              PacBio
-            </Button>
+            {props.options.map((item, index) => (
+              <Button
+                key={`optionSelector-${index}`}
+                color="outline-primary"
+                onClick={() => {
+                  setNewState2('option', item.value)
+                }}
+                active={form.option === item.value}
+              >
+                {item.text}
+              </Button>
+            ))}
           </ButtonGroup>
         </Col>
       </Row>

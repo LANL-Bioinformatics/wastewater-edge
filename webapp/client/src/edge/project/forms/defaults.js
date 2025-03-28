@@ -54,17 +54,17 @@ export const components = {
     fileInput_display: [],
     fileInput_isValid: [],
   },
-  seqPlatform: {
+  optionSelector: {
     validForm: true,
-    platform: 'illumina',
+    option: '',
   },
   fastqInput: {
     params: {
-      interleaved: {
-        trueText: 'Single-End',
-        falseText: 'Paired-End',
+      paired: {
+        trueText: 'Yes',
+        falseText: 'No',
         defaultValue: true,
-        text: 'Mode',
+        text: 'Paired-End',
       },
       fastq: {
         text: 'Fastq',
@@ -76,7 +76,7 @@ export const components = {
     init: {
       validForm: false,
       errMessage: '',
-      interleaved: true,
+      paired: true,
       platform: 'illumina',
       fileInput: [],
       fileInput_display: [],
