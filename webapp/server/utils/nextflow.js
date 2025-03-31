@@ -15,6 +15,7 @@ const generateInputs = async (projHome, projectConf, proj) => {
   const executorConfig = nextflowConfigs.executor_config[config.NEXTFLOW.EXECUTOR];
   const params = {
     ...projectConf.workflow.input,
+    nputFastq2: [],
     outdir: `${projHome}/${workflowSettings.outdir}`,
     projOutdir: `${projHome}/${workflowSettings.outdir}`,
     project: proj.name,
