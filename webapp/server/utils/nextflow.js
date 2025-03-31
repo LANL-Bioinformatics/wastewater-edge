@@ -122,7 +122,7 @@ const updateJobStatus = async (job, proj) => {
   const projHome = `${config.IO.PROJECT_BASE_DIR}/${proj.code}`;
   // Pipeline status. Possible values are: OK, ERR and empty
   // set env NXF_CACHE_DIR
-  let cmd = `NXF_CACHE_DIR=${projHome}/nextflow/work nextflow log|awk '/${job.id}/ &&(/OK/||/ERR/)'|awk '{split($0,array,/\t/); print array[4]}'`;
+  let cmd = `${config.NEXTFLOW.SLURM_SSH} NXF_CACHE_DIR=${projHome}/nextflow/work nextflow log|awk '/${job.id}/ &&(/OK/||/ERR/)'|awk '{split($0,array,/\t/); print array[4]}'`;
   let ret = await execCmd(cmd);
 
   if (!ret || ret.code !== 0) {
@@ -157,7 +157,7 @@ const updateJobStatus = async (job, proj) => {
   }
 
   // Task status. Possible values are: COMPLETED, FAILED, and ABORTED.
-  cmd = `NXF_CACHE_DIR=${projHome}/nextflow/work nextflow log ${job.id} -f status`;
+  cmd = `${config.NEXTFLOW.SLURM_SSH} NXF_CACHE_DIR=${projHome}/nextflow/work nextflow log ${job.id} -f status`;
   ret = await execCmd(cmd);
   if (!ret || ret.code !== 0) {
     // command failed
