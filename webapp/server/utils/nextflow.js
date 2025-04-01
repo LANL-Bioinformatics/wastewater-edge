@@ -258,8 +258,8 @@ const abortJobSlurm = async (proj) => {
   // If is local, find pid in .nextflow.pid and kill process and all descendant processes: pkill -TERM -P <pid>
   // If is slurm, delete slurm job?
   // get slurm jobId from .nextflow.log
-  const pidFile = `${config.IO.PROJECT_BASE_DIR}/${proj.code}/nextflow/.nextflow.pid`;
-  const cmd = `grep 'Task submitter' ${pidFile}|grep jobId|sed 's/.*jobId: //g'`;
+  const logFile = `${config.IO.PROJECT_BASE_DIR}/${proj.code}/nextflow/.nextflow.log`;
+  const cmd = `grep 'Task submitter' ${logFile}|grep jobId|sed 's/.*jobId: //g'|sed 's/;.*//g'`;
   const ret = await execCmd(cmd);
 
   if (!ret || ret.code !== 0) {
