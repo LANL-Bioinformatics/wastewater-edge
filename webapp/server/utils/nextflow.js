@@ -81,6 +81,10 @@ const generateRunStats = async (project) => {
 // submit workflow - launch nextflow run
 const submitWorkflow = async (proj, projectConf, inputsize) => {
   const projHome = `${config.IO.PROJECT_BASE_DIR}/${proj.code}`;
+  let slurmProjHome = projHome;
+  if (config.NEXTFLOW.SLURM_PROJECT_DIR) {
+    slurmProjHome = `${config.NEXTFLOW.SLURM_PROJECT_DIR}/${proj.code}`;
+  }
   const log = `${projHome}/log.txt`;
   // Run nextflow in <project home>/nextflow
   const workDir = `${projHome}/nextflow/work`;
@@ -97,7 +101,7 @@ const submitWorkflow = async (proj, projectConf, inputsize) => {
   }
   // submit workflow
   const runName = `edge-${proj.code}`;
-  const cmd = `${config.NEXTFLOW.SLURM_SSH} NXF_CACHE_DIR=${workDir} NXF_PID_FILE=${projHome}/nextflow/.nextflow.pid NXF_LOG_FILE=${projHome}/nextflow/.nextflow.log nextflow -c ${projHome}/nextflow.config -bg -q run ${config.NEXTFLOW.WORKFLOW_DIR}/${workflowList[projectConf.workflow.name].nextflow_main} -name ${runName}`;
+  const cmd = `${config.NEXTFLOW.SLURM_SSH} NXF_CACHE_DIR=${slurmProjHome}/nextflow/work NXF_PID_FILE=${slurmProjHome}/nextflow/.nextflow.pid NXF_LOG_FILE=${slurmProjHome}/nextflow/.nextflow.log nextflow -C ${slurmProjHome}/nextflow.config -bg -q run ${config.NEXTFLOW.WORKFLOW_DIR}/${workflowList[projectConf.workflow.name].nextflow_main} -name ${runName}`;
   write2log(log, 'Run pipeline');
   // Don't need to wait for the command to complete. It may take long time to finish and cause an error.
   // The updateJobStatus will catch the error if this command failed.
@@ -120,9 +124,13 @@ const submitWorkflow = async (proj, projectConf, inputsize) => {
 const updateJobStatus = async (job, proj) => {
   // get job status
   const projHome = `${config.IO.PROJECT_BASE_DIR}/${proj.code}`;
+  let slurmProjHome = projHome;
+  if (config.NEXTFLOW.SLURM_PROJECT_DIR) {
+    slurmProjHome = `${config.NEXTFLOW.SLURM_PROJECT_DIR}/${proj.code}`;
+  }
   // Pipeline status. Possible values are: OK, ERR and empty
   // set env NXF_CACHE_DIR
-  let cmd = `${config.NEXTFLOW.SLURM_SSH} NXF_CACHE_DIR=${projHome}/nextflow/work nextflow log|awk '/${job.id}/ &&(/OK/||/ERR/)'|awk '{split($0,array,/\t/); print array[4]}'`;
+  let cmd = `${config.NEXTFLOW.SLURM_SSH} NXF_CACHE_DIR=${slurmProjHome}/nextflow/work nextflow log|awk '/${job.id}/ &&(/OK/||/ERR/)'|awk '{split($0,array,/\t/); print array[4]}'`;
   let ret = await execCmd(cmd);
 
   if (!ret || ret.code !== 0) {
@@ -157,7 +165,7 @@ const updateJobStatus = async (job, proj) => {
   }
 
   // Task status. Possible values are: COMPLETED, FAILED, and ABORTED.
-  cmd = `${config.NEXTFLOW.SLURM_SSH} NXF_CACHE_DIR=${projHome}/nextflow/work nextflow log ${job.id} -f status`;
+  cmd = `${config.NEXTFLOW.SLURM_SSH} NXF_CACHE_DIR=${slurmProjHome}/nextflow/work nextflow log ${job.id} -f status`;
   ret = await execCmd(cmd);
   if (!ret || ret.code !== 0) {
     // command failed
