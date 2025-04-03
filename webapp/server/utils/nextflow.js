@@ -10,6 +10,10 @@ const config = require('../config');
 const generateInputs = async (projHome, projectConf, proj) => {
   // projectConf: project conf.js
   // workflowList in utils/workflow
+  let slurmProjHome = projHome;
+  if (config.NEXTFLOW.SLURM_PROJECT_DIR) {
+    slurmProjHome = `${config.NEXTFLOW.SLURM_PROJECT_DIR}/${proj.code}`;
+  }
   const workflowSettings = workflowList[projectConf.workflow.name];
   const template = String(fs.readFileSync(`${config.NEXTFLOW.TEMPLATE_DIR}/${workflowSettings.config_tmpl}`));
   const executorConfig = nextflowConfigs.executor_config[config.NEXTFLOW.EXECUTOR];
@@ -20,7 +24,7 @@ const generateInputs = async (projHome, projectConf, proj) => {
     projOutdir: `${projHome}/${workflowSettings.outdir}`,
     project: proj.name,
     executor_config: `${config.NEXTFLOW.CONFIG_DIR}/${executorConfig}`,
-    nextflowOutDir: `${projHome}/nextflow`,
+    nextflowOutDir: `${slurmProjHome}/nextflow`,
   };
   // if fastq input is paired-end
   if (projectConf.workflow.input.paired) {
