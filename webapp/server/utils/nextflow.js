@@ -10,21 +10,17 @@ const config = require('../config');
 const generateInputs = async (projHome, projectConf, proj) => {
   // projectConf: project conf.js
   // workflowList in utils/workflow
-  let slurmProjHome = projHome;
-  if (config.NEXTFLOW.SLURM_PROJECT_DIR) {
-    slurmProjHome = `${config.NEXTFLOW.SLURM_PROJECT_DIR}/${proj.code}`;
-  }
   const workflowSettings = workflowList[projectConf.workflow.name];
   const template = String(fs.readFileSync(`${config.NEXTFLOW.TEMPLATE_DIR}/${workflowSettings.config_tmpl}`));
   const executorConfig = nextflowConfigs.executor_config[config.NEXTFLOW.EXECUTOR];
   const params = {
     ...projectConf.workflow.input,
     inputFastq2: [],
-    outdir: `${slurmProjHome}/${workflowSettings.outdir}`,
-    projOutdir: `${slurmProjHome}/${workflowSettings.outdir}`,
+    outdir: `${projHome}/${workflowSettings.outdir}`,
+    projOutdir: `${projHome}/${workflowSettings.outdir}`,
     project: proj.name,
     executor_config: `${config.NEXTFLOW.CONFIG_DIR}/${executorConfig}`,
-    nextflowOutDir: `${slurmProjHome}/nextflow`,
+    nextflowOutDir: `${projHome}/nextflow`,
   };
   // if fastq input is paired-end
   if (projectConf.workflow.input.paired) {
@@ -41,7 +37,10 @@ const generateInputs = async (projHome, projectConf, proj) => {
     params.outdir = config.IO.SRA_BASE_DIR;
   }
   // render input template and write to nextflow_params.json
-  const inputs = ejs.render(template, params);
+  let inputs = ejs.render(template, params);
+  if (config.NEXTFLOW.SLURM_EDGE_ROOT && config.NEXTFLOW.EDGE_ROOT) {
+    inputs = inputs.replaceAll(config.NEXTFLOW.EDGE_ROOT, config.NEXTFLOW.SLURM_EDGE_ROOT);
+  }
   await fs.promises.writeFile(`${projHome}/nextflow.config`, inputs);
   return true;
 };
@@ -86,8 +85,8 @@ const generateRunStats = async (project) => {
 const submitWorkflow = async (proj, projectConf, inputsize) => {
   const projHome = `${config.IO.PROJECT_BASE_DIR}/${proj.code}`;
   let slurmProjHome = projHome;
-  if (config.NEXTFLOW.SLURM_PROJECT_DIR) {
-    slurmProjHome = `${config.NEXTFLOW.SLURM_PROJECT_DIR}/${proj.code}`;
+  if (config.NEXTFLOW.SLURM_EDGE_ROOT && config.NEXTFLOW.EDGE_ROOT) {
+    slurmProjHome = slurmProjHome.replaceAll(config.NEXTFLOW.EDGE_ROOT, config.NEXTFLOW.SLURM_EDGE_ROOT);
   }
   const log = `${projHome}/log.txt`;
   // Run nextflow in <project home>/nextflow
@@ -129,8 +128,8 @@ const updateJobStatus = async (job, proj) => {
   // get job status
   const projHome = `${config.IO.PROJECT_BASE_DIR}/${proj.code}`;
   let slurmProjHome = projHome;
-  if (config.NEXTFLOW.SLURM_PROJECT_DIR) {
-    slurmProjHome = `${config.NEXTFLOW.SLURM_PROJECT_DIR}/${proj.code}`;
+  if (config.NEXTFLOW.SLURM_EDGE_ROOT && config.NEXTFLOW.EDGE_ROOT) {
+    slurmProjHome = slurmProjHome.replaceAll(config.NEXTFLOW.EDGE_ROOT, config.NEXTFLOW.SLURM_EDGE_ROOT);
   }
   // Pipeline status. Possible values are: OK, ERR and empty
   // set env NXF_CACHE_DIR
