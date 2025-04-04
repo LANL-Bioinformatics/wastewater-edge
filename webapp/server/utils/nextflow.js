@@ -20,8 +20,8 @@ const generateInputs = async (projHome, projectConf, proj) => {
   const params = {
     ...projectConf.workflow.input,
     inputFastq2: [],
-    outdir: `${projHome}/${workflowSettings.outdir}`,
-    projOutdir: `${projHome}/${workflowSettings.outdir}`,
+    outdir: `${slurmProjHome}/${workflowSettings.outdir}`,
+    projOutdir: `${slurmProjHome}/${workflowSettings.outdir}`,
     project: proj.name,
     executor_config: `${config.NEXTFLOW.CONFIG_DIR}/${executorConfig}`,
     nextflowOutDir: `${slurmProjHome}/nextflow`,
