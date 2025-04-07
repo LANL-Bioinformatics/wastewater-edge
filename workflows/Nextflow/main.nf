@@ -145,7 +145,7 @@ workflow {
     }
 
     //binning
-    if(params.modules.contigBinning) {
+    if(params.modules.binning) {
         BINNING(params.shared.plus(params.binning).plus(params.outputLocations), contigs, abundances)
     }
 
