@@ -176,6 +176,7 @@ process keggPlots {
     }
 
 
+//main workflow
 workflow ANNOTATION {
     take:
     settings

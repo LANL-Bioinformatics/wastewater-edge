@@ -24,7 +24,7 @@ params {
         assemblyOutDir = ""
         contigsTaxonomyOutDir = ""
         phageFinderOutDir = ""
-        readBinningOutDir = ""
+        binningOutDir = ""
         readsTaxonomyOutDir = ""
         annotationOutDir = ""
         smaOutDir = ""
@@ -37,12 +37,11 @@ params {
     //these are the default values
     shared {
         inputFastq = []
+        inputFastq2 = []
         pairedFile = false
         inputContigs = "${projectDir}/nf_assets/NO_FILE3" //contigs provided as input to entire pipeline
         assembledContigs = "${projectDir}/nf_assets/NO_FILE3" //contigs provided to bypass assembly
-        outDir = "<%= outdir %>"
         projName = "<%= project %>"
-        cpus = 8
         fastqSource = null
     }
 
@@ -74,7 +73,6 @@ params {
         //assemblers: IDBA_UD, SPAdes, Unicycler, Megahit, LRASM
         assembler = "IDBA_UD"
         minContigSize = 200
-        memLimit = null
         idba{
             maxK = null
             minK = 31

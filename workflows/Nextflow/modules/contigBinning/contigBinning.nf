@@ -2,7 +2,7 @@ process runBinning {
     label 'binning'
     label 'small'
     publishDir(
-        path: "${settings["readBinningOutDir"]}",
+        path: "${settings["binningOutDir"]}",
         mode: 'copy'
     )
 
@@ -46,7 +46,7 @@ process checkM {
     -e 1e-10 \
     -l 0.7 \
     -f $summary \
-    -t ${settings["cpus"]} \
+    -t ${task.cpus} \
     -x fasta $binDir . 1>CheckM_log.txt 2>&1
     """
 }

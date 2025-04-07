@@ -12,7 +12,7 @@ include {CONTIGSTAXONOMYASSIGNMENT} from './modules/contigsTaxonomyAssignment/co
 include {ANNOTATION} from './modules/runAnnotation/runAnnotation.nf'
 include {PHAGEFINDER} from './modules/phageFinder/phageFinder.nf'
 include {ANTISMASH} from './modules/runAntiSmash/runAntiSmash.nf'
-include {BINNING} from './modules/readsBinning/readsBinning.nf'
+include {BINNING} from './modules/contigBinning/contigBinning.nf'
 include {REPORT} from './modules/report/report.nf'
 
 workflow {
@@ -145,7 +145,7 @@ workflow {
     }
 
     //binning
-    if(params.modules.readsBinning) {
+    if(params.modules.contigBinning) {
         BINNING(params.shared.plus(params.binning).plus(params.outputLocations), contigs, abundances)
     }
 

@@ -1,13 +1,12 @@
-
-workDir="<%= nextflowOutDir %>/work"
+workDir = "<%= nextflowOutDir %>/work"
 params {
 
     //which modules are run
     modules {
         sra2fastq = false
-        faqcs = true
+        faqcs = false
         hostRemoval = false
-        runAssembly = false
+        runAssembly = true
         annotation = false
         readsBinning = false
         phageFinder = true //true by default -- will run if non-viral reads are annotated
@@ -16,22 +15,23 @@ params {
         secondaryMetaboliteAnalysis = false
     }
 
-    outputLocations {
+        outputLocations {
         //everything in its separate output for the moment
         sra2fastqOutDir = ""
         processProvidedContigsOutDir = ""
-        qcOutDir = "<%= outdir %>"
+        qcOutDir = ""
         hostRemovalOutDir = ""
-        assemblyOutDir = ""
+        assemblyOutDir = "<%= outdir %>"
         contigsTaxonomyOutDir = ""
         phageFinderOutDir = ""
         binningOutDir = ""
         readsTaxonomyOutDir = ""
         annotationOutDir = ""
         smaOutDir = ""
-        reportOutDir = "<%= outdir %>"
+        reportOutDir = "<%= projOutdir %>"
 
     }
+
 
     //module parameters -- passed directly into subworkflows according to best practices
     //these are the default values
@@ -40,9 +40,9 @@ params {
         inputFastq2 = <%- JSON.stringify(inputFastq2) %>
         pairedFile = <%= pairedFile %>
         inputContigs = "${projectDir}/nf_assets/NO_FILE3" //contigs provided as input to entire pipeline
-        assembledContigs = "${projectDir}/nf_assets/NO_FILE3" //contigs provided to bypass assembly
+        assembledContigs = "${projectDir}/nf_assets/NO_FILE3" //contigs provided to bypass assembly //ask in Wed. meeting
         projName = "<%= project %>"
-        fastqSource = null
+        fastqSource = "<%= platform %>"
     }
 
     sra2fastq {
@@ -50,17 +50,17 @@ params {
     }
 
     faqcs{
-        trimQual = <%= trimQual %>
-        trim5end = <%= trim5end %>
-        trim3end = <%= trim3end %>
-        trimAdapter = <%= trimAdapter %>
-        trimPolyA = <%= trimPolyA %>
-        artifactFile = "<%= artifactFile %>"
-        minLen = <%= minLen %>
-        avgQual = <%= avgQual %>
-        numN = <%= numN %>
-        filtLC = <%= filtLC %>
-        filtPhiX = <%= filtPhiX %>
+        trimQual = 20
+        trim5end = 0
+        trim3end = 0
+        trimAdapter = false
+        trimPolyA = false
+        artifactFile = "${projectDir}/nf_assets/NO_FILE3"
+        minLen = 50
+        avgQual = 0
+        numN = 2
+        filtLC = 0.85
+        filtPhiX = false
     }
 
     hostRemoval {
@@ -68,45 +68,46 @@ params {
         similarity = 90
         bwaMemOptions = null
     }
+
     assembly {
         //assemblers: IDBA_UD, SPAdes, Unicycler, Megahit, LRASM
-        assembler = "IDBA_UD"
-        minContigSize = 200
+        assembler = "<%= assembler %>"
+        minContigSize = <%= minContigSize %>
         idba{
-            maxK = null
-            minK = 31
-            step = 20
+            maxK = <%= idba_maxK %>
+            minK = <%= idba_minK %>
+            step = <%= idba_step %>
         }
         spades {
-            pacbio = "${projectDir}/nf_assets/NO_FILE3"
-            nanopore = "${projectDir}/nf_assets/NO_FILE4"
-            algorithm = null
+            pacbio = "<%= spades_pacbio %>"
+            nanopore = "<%= spades_nanopore %>"
+            algorithm = "<%= spades_algorithm %>"
         }
         megahit {
-            preset = null
+            preset = "<%= megahit_preset %>"
         }
         unicycler {
-            longreads = "${projectDir}/nf_assets/NO_FILE3"
-            minLongReads = 2000
-            bridgingMode = "normal"
+            longreads = "<%= unicycler_longReads %>"
+            minLongReads = <%= unicycler_minLongReads %>
+            bridgingMode = "<%= unicycler_bridgingMode %>"
         }
         lrasm {
-            minLength = 400
-            preset = null
-            algorithm = null
-            ec = null
-            numConsensus = null
+            minLength = 400 //ask in Wed. meeting
+            preset = "<%= lrasm_preset %>"
+            algorithm = "<%= lrasm_preset %>"
+            ec = <%= lrasm_ec %>
+            numConsensus = <%= lrasm_numConsensus %>
         }
 
     }
 
     
     r2c {
-        r2c_aligner = "bwa"
-        r2c_aligner_options = ""
+        r2c_aligner = "<%= aligner %>"
+        r2c_aligner_options = "" //ask in Wed. meeting for this & below
         r2g_max_clip = null
         extractUnmapped = false
-        rowLimit = null
+        rowLimit = 3000 //or set by EDGE UI in original pipeline
     }
     
     annotation {
@@ -131,6 +132,7 @@ params {
         binningAbundFile = "${projectDir}/nf_assets/NO_FILE3"
         doCheckM = false
     }
+
 
     readsTaxonomy {
         splitTrimMinQ = 20
@@ -178,6 +180,7 @@ params {
 
 
 
+
 }
 
 //container settings
@@ -189,7 +192,6 @@ apptainer {
 
 //discover and auto-bind subworkflow bin folders
 nextflow.enable.moduleBinaries = true
-
 
 //which containers to use for which processes
 process {
