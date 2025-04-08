@@ -75,28 +75,28 @@ params {
         aligner = "<%= aligner %>"
         
         idba{
-            maxK = <% if(idba_maxK) { %><%= idba_maxK %><% } else { %>null<%} %>
-            minK = <% if(idba_minK) { %><%= idba_minK %><% } else { %>31<%} %>
-            step = <% if(idba_step) { %><%= idba_step %><% } else { %>20<%} %>
+            maxK = <% if(typeof idba_maxK != "undefined") { %><%= idba_maxK %><% } else { %>null<%} %>
+            minK = <% if(typeof idba_minK != "undefined") { %><%= idba_minK %><% } else { %>31<%} %>
+            step = <% if(typeof idba_step != "undefined") { %><%= idba_step %><% } else { %>20<%} %>
         }
         spades {
-            pacbio = <% if(spades_pacbio) { %>"<%= spades_pacbio %>"<% } else { %>"${projectDir}/nf_assets/NO_FILE3"<%} %>
-            nanopore = <% if(spades_nanopore) { %>"<%= spades_nanopore %>"<% } else { %>"${projectDir}/nf_assets/NO_FILE4"<%} %>
-            algorithm = <% if(spades_algorithm) { %>"<%= spades_algorithm %>"<% } else { %>null<%} %>
+            pacbio = <% if(typeof spades_pacbio != "undefined") { %>"<%= spades_pacbio %>"<% } else { %>"${projectDir}/nf_assets/NO_FILE3"<%} %>
+            nanopore = <% if(typeof spades_nanopore != "undefined") { %>"<%= spades_nanopore %>"<% } else { %>"${projectDir}/nf_assets/NO_FILE4"<%} %>
+            algorithm = <% if(typeof spades_algorithm != "undefined") { %>"<%= spades_algorithm %>"<% } else { %>null<%} %>
         }
         megahit {
-            preset = <% if(megahit_preset) { %>"<%= megahit_preset %>"<% } else { %>null<%} %>
+            preset = <% if(typeof megahit_preset != "undefined") { %>"<%= megahit_preset %>"<% } else { %>null<%} %>
         }
         unicycler {
-            longreads = <% if(Unicycler_longreads) { %>"<%= Unicycler_longreads %>"<% } else { %>"${projectDir}/nf_assets/NO_FILE3"<%} %>
-            minLongReads = <% if(Unicycler_minLongReads) { %><%= Unicycler_minLongReads %><% } else { %>2000<%} %>
-            bridgingMode = <% if(Unicycler_bridgingMode) { %>"<%= Unicycler_bridgingMode %>"<% } else { %>"normal"<%} %>
+            longreads = <% if(typeof Unicycler_longreads != "undefined") { %>"<%= Unicycler_longreads %>"<% } else { %>"${projectDir}/nf_assets/NO_FILE3"<%} %>
+            minLongReads = <% if(typeof Unicycler_minLongReads != "undefined") { %><%= Unicycler_minLongReads %><% } else { %>2000<%} %>
+            bridgingMode = <% if(typeof Unicycler_bridgingMode != "undefined") { %>"<%= Unicycler_bridgingMode %>"<% } else { %>"normal"<%} %>
         }
         lrasm {
-            preset = <% if(Lrasm_preset) { %>"<%= Lrasm_preset %>"<% } else { %>null<%} %>
-            algorithm = <% if(Lrasm_algorithm) { %>"<%= Lrasm_algorithm %>"<% } else { %>null<%} %>
-            ec = <% if(Lrasm_ec) { %>true<% } else { %>false<%} %>
-            numConsensus = <% if(Lrasm_numConsensus) { %><%= Lrasm_numConsensus %><% } else { %>null<%} %>
+            preset = <% if(typeof Lrasm_preset != "undefined") { %>"<%= Lrasm_preset %>"<% } else { %>null<%} %>
+            algorithm = <% if(typeof Lrasm_algorithm != "undefined") { %>"<%= Lrasm_algorithm %>"<% } else { %>null<%} %>
+            ec = <% if(typeof Lrasm_ec != "undefined") { %><%= Lrasm_ec %><% } else { %>false<%} %>
+            numConsensus = <% if(typeof Lrasm_numConsensus != "undefined") { %><%= Lrasm_numConsensus %><% } else { %>null<%} %>
         }
 
     }
