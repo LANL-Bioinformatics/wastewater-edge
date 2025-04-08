@@ -19,6 +19,10 @@ export const OptionSelector = (props) => {
 
   useEffect(() => {
     setState({ ...components[componentName], option: props.defaultValue })
+  }, [props.defaultValue]) // eslint-disable-line react-hooks/exhaustive-deps
+
+  useEffect(() => {
+    setState({ ...components[componentName], option: props.defaultValue })
   }, [props.reset]) // eslint-disable-line react-hooks/exhaustive-deps
 
   useEffect(() => {

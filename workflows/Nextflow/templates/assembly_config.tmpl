@@ -4,9 +4,9 @@ params {
     //which modules are run
     modules {
         sra2fastq = false
-        faqcs = true
+        faqcs = false
         hostRemoval = false
-        runAssembly = false
+        runAssembly = true
         annotation = false
         readsBinning = false
         phageFinder = true //true by default -- will run if non-viral reads are annotated
@@ -19,9 +19,9 @@ params {
         //everything in its separate output for the moment
         sra2fastqOutDir = ""
         processProvidedContigsOutDir = ""
-        qcOutDir = "<%= outdir %>"
+        qcOutDir = ""
         hostRemovalOutDir = ""
-        assemblyOutDir = ""
+        assemblyOutDir = "<%= outdir %>"
         contigsTaxonomyOutDir = ""
         phageFinderOutDir = ""
         readBinningOutDir = ""
@@ -50,17 +50,17 @@ params {
     }
 
     faqcs{
-        trimQual = <%= trimQual %>
-        trim5end = <%= trim5end %>
-        trim3end = <%= trim3end %>
-        trimAdapter = <%= trimAdapter %>
-        trimPolyA = <%= trimPolyA %>
-        artifactFile = <% if(artifactFile) { %>"<%= artifactFile %>"<% } else { %>"${projectDir}/nf_assets/NO_FILE3"<%} %>
-        minLen = <%= minLen %>
-        avgQual = <%= avgQual %>
-        numN = <%= numN %>
-        filtLC = <%= filtLC %>
-        filtPhiX = <%= filtPhiX %>
+        trimQual = 20
+        trim5end = 0
+        trim3end = 0
+        trimAdapter = false
+        trimPolyA = false
+        artifactFile = "${projectDir}/nf_assets/NO_FILE3"
+        minLen = 50
+        avgQual = 0
+        numN = 2
+        filtLC = 0.85
+        filtPhiX = false
     }
 
     hostRemoval {
@@ -70,33 +70,33 @@ params {
     }
     assembly {
         //assemblers: IDBA_UD, SPAdes, Unicycler, Megahit, LRASM
-        assembler = "IDBA_UD"
-        minContigSize = 200
-        memLimit = null
+        assembler = "<%= assembler %>"
+        minContigSize = <%= minContigSize %>
+        aligner = "<%= aligner %>"
+        
         idba{
-            maxK = null
-            minK = 31
-            step = 20
+            maxK = <% if(idba_maxK) { %><%= idba_maxK %><% } else { %>null<%} %>
+            minK = <% if(idba_minK) { %><%= idba_minK %><% } else { %>31<%} %>
+            step = <% if(idba_step) { %><%= idba_step %><% } else { %>20<%} %>
         }
         spades {
-            pacbio = "${projectDir}/nf_assets/NO_FILE3"
-            nanopore = "${projectDir}/nf_assets/NO_FILE4"
-            algorithm = null
+            pacbio = <% if(spades_pacbio) { %>"<%= spades_pacbio %>"<% } else { %>"${projectDir}/nf_assets/NO_FILE3"<%} %>
+            nanopore = <% if(spades_nanopore) { %>"<%= spades_nanopore %>"<% } else { %>"${projectDir}/nf_assets/NO_FILE4"<%} %>
+            algorithm = <% if(spades_algorithm) { %>"<%= spades_algorithm %>"<% } else { %>null<%} %>
         }
         megahit {
-            preset = null
+            preset = <% if(megahit_preset) { %>"<%= megahit_preset %>"<% } else { %>null<%} %>
         }
         unicycler {
-            longreads = "${projectDir}/nf_assets/NO_FILE3"
-            minLongReads = 2000
-            bridgingMode = "normal"
+            longreads = <% if(Unicycler_longreads) { %>"<%= Unicycler_longreads %>"<% } else { %>"${projectDir}/nf_assets/NO_FILE3"<%} %>
+            minLongReads = <% if(Unicycler_minLongReads) { %><%= Unicycler_minLongReads %><% } else { %>2000<%} %>
+            bridgingMode = <% if(Unicycler_bridgingMode) { %>"<%= Unicycler_bridgingMode %>"<% } else { %>"normal"<%} %>
         }
         lrasm {
-            minLength = 400
-            preset = null
-            algorithm = null
-            ec = null
-            numConsensus = null
+            preset = <% if(Lrasm_preset) { %>"<%= Lrasm_preset %>"<% } else { %>null<%} %>
+            algorithm = <% if(Lrasm_algorithm) { %>"<%= Lrasm_algorithm %>"<% } else { %>null<%} %>
+            ec = <% if(Lrasm_ec) { %>true<% } else { %>false<%} %>
+            numConsensus = <% if(Lrasm_numConsensus) { %><%= Lrasm_numConsensus %><% } else { %>null<%} %>
         }
 
     }

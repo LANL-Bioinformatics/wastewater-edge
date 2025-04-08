@@ -50,6 +50,7 @@ export const defaults = {
   inputStyleWarning: {
     borderRadius: '5px',
     borderLeftColor: colors.danger,
+    borderLeftWidth: '2px',
   },
 }
 

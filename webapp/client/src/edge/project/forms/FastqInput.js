@@ -83,6 +83,7 @@ export const FastqInput = (props) => {
             text={props.seqPlatformText}
             options={props.seqPlatformOptions}
             defaultValue={props.seqPlatformDefaultValue}
+            tooltip={props.seqPlatformTooltip}
           />
           <br></br>
         </>

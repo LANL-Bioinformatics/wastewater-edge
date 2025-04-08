@@ -11,13 +11,11 @@ export const workflowList = {
   runFaQCs: {
     label: 'Reads QC',
     category: 'metagenomics',
-    img: '/docs/images/runFaQCs.png',
-    thumbnail: '/docs/images/runFaQCs-thumbnail.png',
-    video: '/docs/videos/runFaQCs.mp4',
-    pdf: '/docs/help/runFaQCs.pdf',
-    link: 'https://github.com/microbiomedata/runFaQCs',
-    doclink:
-      'https://nmdc-workflow-documentation.readthedocs.io/en/latest/chapters/1_RQC_index.html',
-    info: 'This workflow is a replicate of the QA protocol implemented at JGI for Illumina reads and use the program “rqcfilter2” from BBTools(38:44) which implements them as a pipeline.',
+    info: 'ReadsQC workflow ...',
+  },
+  assembly: {
+    label: 'Assembly',
+    category: 'metagenomics',
+    info: 'Assembly workflow ...',
   },
 }

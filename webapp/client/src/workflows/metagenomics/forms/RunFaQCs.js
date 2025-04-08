@@ -1,12 +1,11 @@
 import React, { useState, useEffect } from 'react'
 import { Card, CardBody, Collapse } from 'reactstrap'
-import { isValidFileInput } from '../../../common/util'
-import { Header } from '../../../project/forms/SectionHeader'
-import { FastqInput } from '../../../project/forms/FastqInput'
-import { RangeInput } from '../../../project/forms/RangeInput'
-import { Switcher } from '../../../project/forms/Switcher'
-import { FileInput } from '../../../project/forms/FileInput'
-import { IntegerInput } from '../../../project/forms/IntegerInput'
+import { isValidFileInput } from 'src/edge/common/util'
+import { Header } from 'src/edge/project/forms/SectionHeader'
+import { RangeInput } from 'src/edge/project/forms/RangeInput'
+import { Switcher } from 'src/edge/project/forms/Switcher'
+import { FileInput } from 'src/edge/project/forms/FileInput'
+import { IntegerInput } from 'src/edge/project/forms/IntegerInput'
 import { workflows } from '../defaults'
 
 export const RunFaQCs = (props) => {
@@ -18,6 +17,16 @@ export const RunFaQCs = (props) => {
 
   const toggleParms = () => {
     setCollapseParms(!collapseParms)
+  }
+
+  const setOnoff = (onoff) => {
+    if (onoff) {
+      setCollapseParms(false)
+    } else {
+      setCollapseParms(true)
+    }
+    form.paramsOn = onoff
+    setDoValidation(doValidation + 1)
   }
 
   const setRangeInput = (inForm, name) => {
@@ -63,27 +72,9 @@ export const RunFaQCs = (props) => {
     setDoValidation(doValidation + 1)
   }
 
-  const setFastqInput = (inForm, name) => {
-    if (inForm.validForm) {
-      form.inputs['seqPlatform'].value = inForm.platform
-      form.inputs['paired'].value = inForm.paired
-      form.inputs[name].value = inForm.fileInput
-      form.inputs[name].display = inForm.fileInput_display
-      if (validInputs[name]) {
-        validInputs[name].isValid = true
-      }
-    } else {
-      // reset values
-      form.inputs['paired'].value = true
-      form.inputs['seqPlatform'].value = workflows[workflowName].inputs['seqPlatform'].value
-      form.inputs[name].value = []
-      form.inputs[name].display = []
-      if (validInputs[name]) {
-        validInputs[name].isValid = false
-      }
-    }
-    setDoValidation(doValidation + 1)
-  }
+  useEffect(() => {
+    form.paramsOn = props.paramsOn ? props.paramsOn : true
+  }, [props.paramsOn]) // eslint-disable-line react-hooks/exhaustive-deps
 
   //trigger validation method when input changes
   useEffect(() => {
@@ -98,14 +89,6 @@ export const RunFaQCs = (props) => {
     if (errors === '') {
       //files for server to caculate total input size
       let inputFiles = []
-      if (form.inputs['paired'].value) {
-        form.inputs['inputFastq'].value.forEach((item) => {
-          inputFiles.push(item.f1)
-          inputFiles.push(item.f2)
-        })
-      } else {
-        inputFiles = form.inputs['inputFastq'].value
-      }
       if (form.inputs['artifactFile'].value) {
         inputFiles.push(form.inputs['artifactFile'].value)
       }
@@ -125,35 +108,17 @@ export const RunFaQCs = (props) => {
       <Header
         toggle={true}
         toggleParms={toggleParms}
-        title={'Input'}
+        title={'ReadsQC Parameters'}
         collapseParms={collapseParms}
         id={workflowName + 'input'}
         isValid={props.isValid}
         errMessage={props.errMessage}
+        onoff={props.onoff}
+        paramsOn={form.paramsOn}
+        setOnoff={setOnoff}
       />
-      <Collapse isOpen={!collapseParms} id={'collapseParameters-' + props.name}>
-        <CardBody>
-          <FastqInput
-            name={'inputFastq'}
-            setParams={setFastqInput}
-            isValidFileInput={isValidFileInput}
-            text={workflows[workflowName].inputs['inputFastq'].text}
-            tooltip={workflows[workflowName].inputs['inputFastq']['fastqInput'].tooltip}
-            enableInput={workflows[workflowName].inputs['inputFastq']['fastqInput'].enableInput}
-            placeholder={workflows[workflowName].inputs['inputFastq']['fastqInput'].placeholder}
-            dataSources={workflows[workflowName].inputs['inputFastq']['fastqInput'].dataSources}
-            fileTypes={workflows[workflowName].inputs['inputFastq']['fastqInput'].fileTypes}
-            projectTypes={workflows[workflowName].inputs['inputFastq']['fastqInput'].projectTypes}
-            projectScope={workflows[workflowName].inputs['inputFastq']['fastqInput'].projectScope}
-            viewFile={workflows[workflowName].inputs['inputFastq']['fastqInput'].viewFile}
-            isOptional={workflows[workflowName].inputs['inputFastq']['fastqInput'].isOptional}
-            cleanupInput={workflows[workflowName].inputs['inputFastq']['fastqInput'].cleanupInput}
-            maxInput={workflows[workflowName].inputs['inputFastq']['fastqInput'].maxInput}
-            seqPlatformOptions={workflows[workflowName].inputs['seqPlatform'].options}
-            seqPlatformText={workflows[workflowName].inputs['seqPlatform'].text}
-            seqPlatformDefaultValue={workflows[workflowName].inputs['seqPlatform'].value}
-            pairedText={workflows[workflowName].inputs['paired'].text}
-          />
+      <Collapse isOpen={!collapseParms && form.paramsOn} id={'collapseParameters-' + props.name}>
+        <CardBody style={props.disabled ? { pointerEvents: 'none', opacity: '0.4' } : {}}>
           <RangeInput
             name={'trimQual'}
             setParams={setRangeInput}

@@ -4,7 +4,7 @@ const Upload = require('../edge-api/models/upload');
 const config = require('../config');
 
 const cromwellWorkflows = [];
-const nextflowWorkflows = ['runFaQCs', 'sra2fastq'];
+const nextflowWorkflows = ['sra2fastq', 'runFaQCs', 'assembly'];
 const nextflowConfigs = {
   executor_config: {
     slurm: 'slurm.config',
@@ -33,6 +33,12 @@ const workflowList = {
     outdir: 'output/ReadsQC',
     nextflow_main: 'main.nf',
     config_tmpl: 'runFaQCs_config.tmpl',
+  },
+  assembly: {
+    // workflow will create 'ReadsQC' directory in the output/.
+    outdir: 'output/Assembly',
+    nextflow_main: 'main.nf',
+    config_tmpl: 'assembly_config.tmpl',
   },
 };
 
