@@ -51,6 +51,7 @@ export const OptionSelector = (props) => {
           <ButtonGroup className="mr-3" aria-label="First group" size="sm">
             {props.options.map((item, index) => (
               <Button
+                disabled={item.disabled ? true : false}
                 key={`optionSelector-${index}`}
                 color="outline-primary"
                 onClick={() => {

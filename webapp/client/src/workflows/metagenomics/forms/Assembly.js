@@ -129,12 +129,15 @@ export const Assembly = (props) => {
     if (props.seqPlatform === 'Illumina') {
       form.inputs['assembler'].value = 'IDBA_UD'
       form.inputs['aligner'].value = 'bwa'
+      form.inputs['aligner']['options'][0]['disabled'] = false
     } else if (props.seqPlatform === 'Nanopore') {
       form.inputs['assembler'].value = 'LRASM'
       form.assemblerInputs[form.inputs['assembler'].value]['Lrasm_preset'].value = 'nanopore'
+      form.inputs['aligner']['options'][0]['disabled'] = true
     } else if (props.seqPlatform === 'PacBio') {
       form.inputs['assembler'].value = 'LRASM'
       form.assemblerInputs[form.inputs['assembler'].value]['Lrasm_preset'].value = 'pacbio'
+      form.inputs['aligner']['options'][0]['disabled'] = true
     }
     setDoValidation(doValidation + 1)
   }, [props.seqPlatform]) // eslint-disable-line react-hooks/exhaustive-deps
