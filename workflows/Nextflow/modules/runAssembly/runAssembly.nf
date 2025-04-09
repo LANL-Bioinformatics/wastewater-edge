@@ -416,10 +416,10 @@ process lrasm {
     def algorithm = settings["lrasm"]["algorithm"] != null ? "-a ${settings["lrasm"]["algorithm"]} " : ""
     def minLenOpt = ""
     if (settings["lrasm"]["algorithm"] == "miniasm") {
-        minLenOpt = "--ao \'-s ${settings["lrasm"]["minLength"]}\' "
+        minLenOpt = "--ao \'-s 400\' "
     }
     else if (settings["lrasm"]["algorithm"] == "wtdbg2") {
-        minLenOpt = "--wo \'-L ${settings["lrasm"]["minLength"]}\' "
+        minLenOpt = "--wo \'-L 400\' "
     }
     def flyeOpt = settings["lrasm"]["algorithm"] == "metaflye" ? "--fo '--meta' ": ""
 
