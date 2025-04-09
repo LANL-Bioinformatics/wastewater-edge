@@ -184,19 +184,19 @@ process spades {
     def unpaired = unpaired.name != "NO_FILE2" ? "--s1 $unpaired " : ""
     def pacbio_file = pacbio.name != "NO_FILE3" ? "--pacbio $pacbio " : ""
     def nanopore_file = nanopore.name != "NO_FILE4" ? "--nanopore $nanopore " : ""
-    if settings["spades"]["algorithm"] == null {
+    if(settings["spades"]["algorithm"] == null){
         settings["spades"]["algorithm"] = ""
     }
-    def meta_flag = (paired != "" && settings["spades"]["algorithm"].startsWith("meta")) ? "--meta " : ""
-    def sc_flag = settings["spades"]["algorithm"].startsWith("MDA") ? "--sc " : ""
-    def rna_flag = settings["spades"]["algorithm"].startsWith("rnaSPAdes") ? "--rna " : ""
-    def plasmid_flag = settings["spades"]["algorithm"].startsWith("plasmid") ? "--plasmid " : ""
-    def bio_flag = settings["spades"]["algorithm"].startsWith("biosynthetic") ? "--bio " : ""
-    def corona_flag = settings["spades"]["algorithm"].startsWith("corona") ? "--corona " : ""
-    def metaviral_flag = settings["spades"]["algorithm"].startsWith("metaviral") ? "--metaviral " : ""
-    def metaplasmid_flag = settings["spades"]["algorithm"].startsWith("metaplasmid") ? "--metaplasmid " : ""
-    def rnaviral_flag = settings["spades"]["algorithm"].startsWith("rnaviral") ? "--rnaviral " : ""
-    def memLimit = settings["memLimit"] != null ? "-m ${settings["memLimit"]}" : ""
+    meta_flag = (paired != "" && settings["spades"]["algorithm"].startsWith("meta")) ? "--meta " : ""
+    sc_flag = settings["spades"]["algorithm"].startsWith("MDA") ? "--sc " : ""
+    rna_flag = settings["spades"]["algorithm"].startsWith("rnaSPAdes") ? "--rna " : ""
+    plasmid_flag = settings["spades"]["algorithm"].startsWith("plasmid") ? "--plasmid " : ""
+    bio_flag = settings["spades"]["algorithm"].startsWith("biosynthetic") ? "--bio " : ""
+    corona_flag = settings["spades"]["algorithm"].startsWith("corona") ? "--corona " : ""
+    metaviral_flag = settings["spades"]["algorithm"].startsWith("metaviral") ? "--metaviral " : ""
+    metaplasmid_flag = settings["spades"]["algorithm"].startsWith("metaplasmid") ? "--metaplasmid " : ""
+    rnaviral_flag = settings["spades"]["algorithm"].startsWith("rnaviral") ? "--rnaviral " : ""
+    memLimit = settings["memLimit"] != null ? "-m ${settings["memLimit"]}" : ""
 
     """
     spades.py -o . -t ${task.cpus}\
