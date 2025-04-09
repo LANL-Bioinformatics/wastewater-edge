@@ -184,6 +184,9 @@ process spades {
     def unpaired = unpaired.name != "NO_FILE2" ? "--s1 $unpaired " : ""
     def pacbio_file = pacbio.name != "NO_FILE3" ? "--pacbio $pacbio " : ""
     def nanopore_file = nanopore.name != "NO_FILE4" ? "--nanopore $nanopore " : ""
+    if settings["spades"]["algorithm"] == null {
+        settings["spades"]["algorithm"] = ""
+    }
     def meta_flag = (paired != "" && settings["spades"]["algorithm"].startsWith("meta")) ? "--meta " : ""
     def sc_flag = settings["spades"]["algorithm"].startsWith("MDA") ? "--sc " : ""
     def rna_flag = settings["spades"]["algorithm"].startsWith("rnaSPAdes") ? "--rna " : ""
