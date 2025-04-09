@@ -28,7 +28,7 @@ params {
         readsTaxonomyOutDir = ""
         annotationOutDir = ""
         smaOutDir = ""
-        reportOutDir = "<%= projOutdir %>"
+        reportOutDir = "<%= outdir %>"
 
     }
 
@@ -92,7 +92,6 @@ params {
             bridgingMode = "normal"
         }
         lrasm {
-            minLength = 400
             preset = null
             algorithm = null
             ec = null
@@ -124,11 +123,11 @@ params {
     }
 
     binning {
-        binningMinLength = <%= binningMinLength %>
-        binningMaxItr = <%= binningMaxItr %>
-        binningProb = <%= binningProb %>
+        binningMinLength = <% if(typeof binningMinLength != "undefined") { %><%= binningMinLength %><% } else { %>1000<%} %>
+        binningMaxItr = <% if(typeof binningMaxItr != "undefined") { %><%= binningMaxItr %><% } else { %>50<%} %>
+        binningProb = <% if(typeof binningProb != "undefined") { %><%= binningProb %><% } else { %>0.9<%} %>
         //107 or 40
-        binningMarkerSet = <%= binningMarkerSet %>
+        binningMarkerSet = <% if(typeof binningMarkerSet != "undefined") { %><%= binningMarkerSet %><% } else { %>107<%} %>
         binningAbundFile = "<%= binningAbundFile %>"
         doCheckM = <%= doCheckM %> //double-check if allowing option in Wed. meeting
     }

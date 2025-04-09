@@ -28,7 +28,7 @@ params {
         readsTaxonomyOutDir = ""
         annotationOutDir = "<%= outdir %>"
         smaOutDir = ""
-        reportOutDir = "<%= projOutdir %>"
+        reportOutDir = "<%= outdir %>"
 
     }
 
@@ -92,7 +92,6 @@ params {
             bridgingMode = "normal"
         }
         lrasm {
-            minLength = 400
             preset = null
             algorithm = null
             ec = null
@@ -111,15 +110,15 @@ params {
     }
     
     annotation {
-        contigSizeForAnnotation = <%= minContigSize %>
-        taxKingdom = "<%= taxKingdom %>"
+        contigSizeForAnnotation = <% if(typeof minContigSize != "undefined") { %><%= minContigSize %><% } else { %>700<%} %>
+        taxKingdom = <% if(typeof taxKingdom != "undefined") { %>"<%= taxKingdom %>"<% } else { %>"bacteria"<%} %>
         //annotaters: prokka, ratt
-        annotateProgram = "<%= annotateProgram %>" //default
-        customProtein = "<%= customProtein %>" //setup for optional file pattern
-        customHMM = "<%= customHMM %>"
+        annotateProgram = <% if(typeof annotateProgram != "undefined") { %>"<%= annotateProgram %>"<% } else { %>"prokka"<%} %> //default
+        customProtein = <% if(typeof customProtein != "undefined") { %>"<%= customProtein %>"<% } else { %>"${projectDir}/nf_assets/NO_FILE"<%} %> //setup for optional file pattern
+        customHMM = <% if(typeof customHMM != "undefined") { %>"<%= customHMM %>"<% } else { %>"${projectDir}/nf_assets/NO_FILE2"<%} %>
         sourceGBK = "<%= sourceGBK %>"
-        evalue = <%= evalue %>
-        gcode = <%= gcode %>
+        evalue = <% if(typeof evalue != "undefined") { %><%= evalue %><% } else { %>0.000000001<%} %>
+        gcode = <% if(typeof gcode != "undefined") { %><%= gcode %><% } else { %>11<%} %>
         keggView = <%= keggView %>
     }
 
