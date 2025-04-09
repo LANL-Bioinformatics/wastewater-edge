@@ -27,6 +27,10 @@ const Main = (props) => {
   const [openDialog, setOpenDialog] = useState(false)
   const [disabled, setDisabled] = useState(false)
   const [sysMsg, setSysMsg] = useState()
+  const [allExpand, setAllExpand] = useState(0)
+  const [allClosed, setAllClosed] = useState(0)
+  //disable the expand | close
+  const disableExpandClose = false
 
   //callback function for child component
   const setProject = (params) => {
@@ -197,6 +201,8 @@ const Main = (props) => {
             options={workflowOptions}
             value={workflowOptions[0]}
             onChange={(e) => {
+              setAllExpand(0)
+              setAllClosed(0)
               if (e) {
                 setWorkflow(e.value)
               } else {
@@ -213,6 +219,34 @@ const Main = (props) => {
             </div>
           )}
           <br></br>
+          {!disableExpandClose && (
+            <>
+              <div className="float-end edge-text-size-small">
+                <Button
+                  style={{ fontSize: 12, paddingBottom: '5px' }}
+                  size="sm"
+                  className="btn-pill"
+                  color="ghost-primary"
+                  onClick={() => setAllExpand(allExpand + 1)}
+                >
+                  expand
+                </Button>
+                &nbsp; | &nbsp;
+                <Button
+                  style={{ fontSize: 12, paddingBottom: '5px' }}
+                  size="sm"
+                  className="btn-pill"
+                  color="ghost-primary"
+                  onClick={() => setAllClosed(allClosed + 1)}
+                >
+                  close
+                </Button>
+                &nbsp; all sections &nbsp;
+              </div>
+              <br></br>
+              <br></br>
+            </>
+          )}
           {workflow === 'runFaQCs' && (
             <>
               <InputRawReads
@@ -233,6 +267,8 @@ const Main = (props) => {
                 maxInput={workflows[workflow]['fastqInput'].maxInput}
                 isValid={rawDataParams ? rawDataParams.validForm : false}
                 errMessage={rawDataParams ? rawDataParams.errMessage : null}
+                allExpand={allExpand}
+                allClosed={allClosed}
               />
               <RunFaQCs
                 name={workflow}
@@ -244,6 +280,8 @@ const Main = (props) => {
                 errMessage={
                   selectedWorkflows[workflow] ? selectedWorkflows[workflow].errMessage : null
                 }
+                allExpand={allExpand}
+                allClosed={allClosed}
               />
             </>
           )}
@@ -267,6 +305,8 @@ const Main = (props) => {
                 maxInput={workflows[workflow]['fastqInput'].maxInput}
                 isValid={rawDataParams ? rawDataParams.validForm : false}
                 errMessage={rawDataParams ? rawDataParams.errMessage : null}
+                allExpand={allExpand}
+                allClosed={allClosed}
               />
               <Assembly
                 name={workflow}
@@ -279,6 +319,8 @@ const Main = (props) => {
                   selectedWorkflows[workflow] ? selectedWorkflows[workflow].errMessage : null
                 }
                 seqPlatform={rawDataParams.inputs.seqPlatform.value}
+                allExpand={allExpand}
+                allClosed={allClosed}
               />
             </>
           )}

@@ -76,6 +76,18 @@ export const RunFaQCs = (props) => {
     form.paramsOn = props.paramsOn ? props.paramsOn : true
   }, [props.paramsOn]) // eslint-disable-line react-hooks/exhaustive-deps
 
+  useEffect(() => {
+    if (props.allExpand > 0) {
+      setCollapseParms(false)
+    }
+  }, [props.allExpand])
+
+  useEffect(() => {
+    if (props.allClosed > 0) {
+      setCollapseParms(true)
+    }
+  }, [props.allClosed])
+
   //trigger validation method when input changes
   useEffect(() => {
     // check input errors

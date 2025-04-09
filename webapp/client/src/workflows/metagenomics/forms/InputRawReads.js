@@ -56,6 +56,18 @@ export const InputRawReads = (props) => {
     }
   }, [props.source]) // eslint-disable-line react-hooks/exhaustive-deps
 
+  useEffect(() => {
+    if (props.allExpand > 0) {
+      setCollapseParms(false)
+    }
+  }, [props.allExpand])
+
+  useEffect(() => {
+    if (props.allClosed > 0) {
+      setCollapseParms(true)
+    }
+  }, [props.allClosed])
+
   //trigger validation method when input changes
   useEffect(() => {
     // check input errors
