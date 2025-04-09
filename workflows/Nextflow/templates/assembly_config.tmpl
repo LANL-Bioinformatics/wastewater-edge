@@ -71,7 +71,6 @@ params {
         //assemblers: IDBA_UD, SPAdes, Unicycler, Megahit, LRASM
         assembler = "<%= assembler %>"
         minContigSize = <%= minContigSize %>
-        aligner = "<%= aligner %>"
         
         idba{
             maxK = <% if(typeof idba_maxK != "undefined") { %><%= idba_maxK %><% } else { %>null<%} %>
@@ -102,7 +101,7 @@ params {
 
     
     r2c {
-        r2c_aligner = "bwa"
+        r2c_aligner = "<%= aligner %>"
         r2c_aligner_options = ""
         r2g_max_clip = null
         extractUnmapped = false
