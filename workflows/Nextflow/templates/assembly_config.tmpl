@@ -1,12 +1,12 @@
-workDir = "<%= nextflowOutDir %>/work"
+workDir="<%= nextflowOutDir %>/work"
 params {
 
     //which modules are run
     modules {
-        sra2fastq = true
+        sra2fastq = false
         faqcs = false
         hostRemoval = false
-        runAssembly = false
+        runAssembly = true
         annotation = false
         readsBinning = false
         phageFinder = true //true by default -- will run if non-viral reads are annotated
@@ -15,38 +15,37 @@ params {
         secondaryMetaboliteAnalysis = false
     }
 
-        outputLocations {
+    outputLocations {
         //everything in its separate output for the moment
-        sra2fastqOutDir = "<%= outdir %>"
+        sra2fastqOutDir = ""
         processProvidedContigsOutDir = ""
         qcOutDir = ""
         hostRemovalOutDir = ""
-        assemblyOutDir = ""
+        assemblyOutDir = "<%= outdir %>"
         contigsTaxonomyOutDir = ""
         phageFinderOutDir = ""
         readBinningOutDir = ""
         readsTaxonomyOutDir = ""
         annotationOutDir = ""
         smaOutDir = ""
-        reportOutDir = "<%= projOutdir %>"
+        reportOutDir = "<%= outdir %>"
 
     }
-
 
     //module parameters -- passed directly into subworkflows according to best practices
     //these are the default values
     shared {
-        inputFastq = []
-        pairedFile = false
+        inputFastq = <%- JSON.stringify(inputFastq) %>
+        inputFastq2 = <%- JSON.stringify(inputFastq2) %>
+        pairedFile = <%= paired %>
         inputContigs = "${projectDir}/nf_assets/NO_FILE3" //contigs provided as input to entire pipeline
         assembledContigs = "${projectDir}/nf_assets/NO_FILE3" //contigs provided to bypass assembly
-        outDir = "<%= outdir %>"
         projName = "<%= project %>"
-        fastqSource = null
+        fastqSource = "<%= seqPlatform %>"
     }
 
     sra2fastq {
-        accessions = <%- JSON.stringify(accessions) %>
+        accessions = []
     }
 
     faqcs{
@@ -68,43 +67,41 @@ params {
         similarity = 90
         bwaMemOptions = null
     }
-
     assembly {
         //assemblers: IDBA_UD, SPAdes, Unicycler, Megahit, LRASM
-        assembler = "IDBA_UD"
-        minContigSize = 200
-        memLimit = null
+        assembler = "<%= assembler %>"
+        minContigSize = <%= minContigSize %>
+        
         idba{
-            maxK = null
-            minK = 31
-            step = 20
+            maxK = <% if(typeof idba_maxK != "undefined") { %><%= idba_maxK %><% } else { %>null<%} %>
+            minK = <% if(typeof idba_minK != "undefined") { %><%= idba_minK %><% } else { %>31<%} %>
+            step = <% if(typeof idba_step != "undefined") { %><%= idba_step %><% } else { %>20<%} %>
         }
         spades {
-            pacbio = "${projectDir}/nf_assets/NO_FILE3"
-            nanopore = "${projectDir}/nf_assets/NO_FILE4"
-            algorithm = null
+            pacbio = <% if(typeof spades_pacbio != "undefined") { %>"<%= spades_pacbio %>"<% } else { %>"${projectDir}/nf_assets/NO_FILE3"<%} %>
+            nanopore = <% if(typeof spades_nanopore != "undefined") { %>"<%= spades_nanopore %>"<% } else { %>"${projectDir}/nf_assets/NO_FILE4"<%} %>
+            algorithm = <% if(typeof spades_algorithm != "undefined") { %>"<%= spades_algorithm %>"<% } else { %>null<%} %>
         }
         megahit {
-            preset = null
+            preset = <% if(typeof megahit_preset != "undefined") { %>"<%= megahit_preset %>"<% } else { %>null<%} %>
         }
         unicycler {
-            longreads = "${projectDir}/nf_assets/NO_FILE3"
-            minLongReads = 2000
-            bridgingMode = "normal"
+            longreads = <% if(typeof Unicycler_longreads != "undefined") { %>"<%= Unicycler_longreads %>"<% } else { %>"${projectDir}/nf_assets/NO_FILE3"<%} %>
+            minLongReads = <% if(typeof Unicycler_minLongReads != "undefined") { %><%= Unicycler_minLongReads %><% } else { %>2000<%} %>
+            bridgingMode = <% if(typeof Unicycler_bridgingMode != "undefined") { %>"<%= Unicycler_bridgingMode %>"<% } else { %>"normal"<%} %>
         }
         lrasm {
-            minLength = 400
-            preset = null
-            algorithm = null
-            ec = null
-            numConsensus = null
+            preset = <% if(typeof Lrasm_preset != "undefined") { %>"<%= Lrasm_preset %>"<% } else { %>null<%} %>
+            algorithm = <% if(typeof Lrasm_algorithm != "undefined") { %>"<%= Lrasm_algorithm %>"<% } else { %>null<%} %>
+            ec = <% if(typeof Lrasm_ec != "undefined") { %><%= Lrasm_ec %><% } else { %>false<%} %>
+            numConsensus = <% if(typeof Lrasm_numConsensus != "undefined") { %><%= Lrasm_numConsensus %><% } else { %>null<%} %>
         }
 
     }
 
     
     r2c {
-        r2c_aligner = "bwa"
+        r2c_aligner = "<%= aligner %>"
         r2c_aligner_options = ""
         r2g_max_clip = null
         extractUnmapped = false
@@ -133,7 +130,6 @@ params {
         binningAbundFile = "${projectDir}/nf_assets/NO_FILE3"
         doCheckM = false
     }
-
 
     readsTaxonomy {
         splitTrimMinQ = 20
@@ -181,7 +177,6 @@ params {
 
 
 
-
 }
 
 //container settings
@@ -193,6 +188,7 @@ apptainer {
 
 //discover and auto-bind subworkflow bin folders
 nextflow.enable.moduleBinaries = true
+
 
 //which containers to use for which processes
 process {

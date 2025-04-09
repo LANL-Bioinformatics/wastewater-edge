@@ -1,4 +1,3 @@
-
 workDir="<%= nextflowOutDir %>/work"
 params {
 
@@ -38,11 +37,11 @@ params {
     shared {
         inputFastq = <%- JSON.stringify(inputFastq) %>
         inputFastq2 = <%- JSON.stringify(inputFastq2) %>
-        pairedFile = <%= pairedFile %>
+        pairedFile = <%= paired %>
         inputContigs = "${projectDir}/nf_assets/NO_FILE3" //contigs provided as input to entire pipeline
         assembledContigs = "${projectDir}/nf_assets/NO_FILE3" //contigs provided to bypass assembly
         projName = "<%= project %>"
-        fastqSource = null
+        fastqSource = "<%= seqPlatform %>"
     }
 
     sra2fastq {
@@ -55,7 +54,7 @@ params {
         trim3end = <%= trim3end %>
         trimAdapter = <%= trimAdapter %>
         trimPolyA = <%= trimPolyA %>
-        artifactFile = "<%= artifactFile %>"
+        artifactFile = <% if(artifactFile) { %>"<%= artifactFile %>"<% } else { %>"${projectDir}/nf_assets/NO_FILE3"<%} %>
         minLen = <%= minLen %>
         avgQual = <%= avgQual %>
         numN = <%= numN %>

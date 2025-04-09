@@ -19,6 +19,10 @@ export const OptionSelector = (props) => {
 
   useEffect(() => {
     setState({ ...components[componentName], option: props.defaultValue })
+  }, [props.defaultValue]) // eslint-disable-line react-hooks/exhaustive-deps
+
+  useEffect(() => {
+    setState({ ...components[componentName], option: props.defaultValue })
   }, [props.reset]) // eslint-disable-line react-hooks/exhaustive-deps
 
   useEffect(() => {
@@ -47,6 +51,7 @@ export const OptionSelector = (props) => {
           <ButtonGroup className="mr-3" aria-label="First group" size="sm">
             {props.options.map((item, index) => (
               <Button
+                disabled={item.disabled ? true : false}
                 key={`optionSelector-${index}`}
                 color="outline-primary"
                 onClick={() => {

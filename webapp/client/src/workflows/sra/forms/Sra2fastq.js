@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from 'react'
 import { Card, CardBody, Collapse } from 'reactstrap'
-import { Header } from '../../../project/forms/SectionHeader'
-import { TextInput } from '../../../project/forms/TextInput'
+import { Header } from 'src/edge/project/forms/SectionHeader'
+import { TextInput } from 'src/edge/project/forms/TextInput'
 import { workflows } from '../defaults'
 
 export const Sra2fastq = (props) => {

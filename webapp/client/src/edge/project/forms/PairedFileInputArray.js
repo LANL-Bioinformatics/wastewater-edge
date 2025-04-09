@@ -114,7 +114,7 @@ export const PairedFileInputArray = (props) => {
           <Col md="3">
             {props.text}
             {!props.isOptional && pairedFileInputFields.length === 0 && (
-              <WarningTooltip id={props.name} tooltip={'Required at lease one paired input.'} />
+              <WarningTooltip id={props.name} tooltip={'Required at least one paired input.'} />
             )}
           </Col>
         )}
