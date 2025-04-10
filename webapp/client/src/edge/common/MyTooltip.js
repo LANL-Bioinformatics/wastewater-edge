@@ -22,14 +22,23 @@ export const MyTooltip = (props) => {
         </span>
       </a>
       <Tooltip
-        style={{ zIndex: 99 }}
+        style={{ zIndex: 9999 }}
         id={props.id}
         type={props.type}
         place={props.place ? props.place : 'right'}
         openOnClick={props.openOnClick ? props.openOnClick : false}
         offset={10}
       >
-        <HtmlText text={props.tooltip} />
+        <div
+          style={{
+            display: 'flex',
+            flexDirection: 'column',
+            wordWrap: 'break-word',
+            maxWidth: '600px',
+          }}
+        >
+          <HtmlText text={props.tooltip} />
+        </div>
       </Tooltip>
     </>
   )

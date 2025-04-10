@@ -180,15 +180,18 @@ process spades {
     def unpaired = unpaired.name != "NO_FILE2" ? "--s1 $unpaired " : ""
     def pacbio_file = pacbio.name != "NO_FILE3" ? "--pacbio $pacbio " : ""
     def nanopore_file = nanopore.name != "NO_FILE4" ? "--nanopore $nanopore " : ""
-    def meta_flag = (paired != "" && settings["spades"]["algorithm"] == "metagenome") ? "--meta " : ""
-    def sc_flag = settings["spades"]["algorithm"] == "singlecell" ? "--sc " : ""
-    def rna_flag = settings["spades"]["algorithm"] == "rna" ? "--rna " : ""
-    def plasmid_flag = settings["spades"]["algorithm"] == "plasmid" ? "--plasmid " : ""
-    def bio_flag = settings["spades"]["algorithm"] == "bio" ? "--bio " : ""
-    def corona_flag = settings["spades"]["algorithm"] == "corona" ? "--corona " : ""
-    def metaviral_flag = settings["spades"]["algorithm"] == "metaviral" ? "--metaviral " : ""
-    def metaplasmid_flag = settings["spades"]["algorithm"] == "metaplasmid" ? "--metaplasmid " : ""
-    def rnaviral_flag = settings["spades"]["algorithm"] == "rnaviral" ? "--rnaviral " : ""
+    if(settings["spades"]["algorithm"] == null){
+        settings["spades"]["algorithm"] = ""
+    }
+    meta_flag = (paired != "" && settings["spades"]["algorithm"].startsWith("meta")) ? "--meta " : ""
+    sc_flag = settings["spades"]["algorithm"].startsWith("MDA") ? "--sc " : ""
+    rna_flag = settings["spades"]["algorithm"].startsWith("rnaSPAdes") ? "--rna " : ""
+    plasmid_flag = settings["spades"]["algorithm"].startsWith("plasmid") ? "--plasmid " : ""
+    bio_flag = settings["spades"]["algorithm"].startsWith("biosynthetic") ? "--bio " : ""
+    corona_flag = settings["spades"]["algorithm"].startsWith("corona") ? "--corona " : ""
+    metaviral_flag = settings["spades"]["algorithm"].startsWith("metaviral") ? "--metaviral " : ""
+    metaplasmid_flag = settings["spades"]["algorithm"].startsWith("metaplasmid") ? "--metaplasmid " : ""
+    rnaviral_flag = settings["spades"]["algorithm"].startsWith("rnaviral") ? "--rnaviral " : ""
 
     """
     spades.py -o . -t ${task.cpus}\
@@ -410,10 +413,10 @@ process lrasm {
     def algorithm = settings["lrasm"]["algorithm"] != null ? "-a ${settings["lrasm"]["algorithm"]} " : ""
     def minLenOpt = ""
     if (settings["lrasm"]["algorithm"] == "miniasm") {
-        minLenOpt = "--ao \'-s ${settings["lrasm"]["minLength"]}\' "
+        minLenOpt = "--ao \'-s 400\' "
     }
     else if (settings["lrasm"]["algorithm"] == "wtdbg2") {
-        minLenOpt = "--wo \'-L ${settings["lrasm"]["minLength"]}\' "
+        minLenOpt = "--wo \'-L 400\' "
     }
     def flyeOpt = settings["lrasm"]["algorithm"] == "metaflye" ? "--fo '--meta' ": ""
 

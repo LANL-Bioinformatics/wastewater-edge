@@ -4,11 +4,11 @@ params {
     //which modules are run
     modules {
         sra2fastq = false
-        faqcs = true
+        faqcs = false
         hostRemoval = false
-        runAssembly = false
+        runAssembly = true
         annotation = false
-        binning = false
+        readsBinning = false
         phageFinder = true //true by default -- will run if non-viral reads are annotated
         readsTaxonomyAssignment = false
         contigsTaxonomyAssignment = false
@@ -19,12 +19,12 @@ params {
         //everything in its separate output for the moment
         sra2fastqOutDir = ""
         processProvidedContigsOutDir = ""
-        qcOutDir = "<%= outdir %>"
+        qcOutDir = ""
         hostRemovalOutDir = ""
-        assemblyOutDir = ""
+        assemblyOutDir = "<%= outdir %>"
         contigsTaxonomyOutDir = ""
         phageFinderOutDir = ""
-        binningOutDir = ""
+        readBinningOutDir = ""
         readsTaxonomyOutDir = ""
         annotationOutDir = ""
         smaOutDir = ""
@@ -49,17 +49,17 @@ params {
     }
 
     faqcs{
-        trimQual = <%= trimQual %>
-        trim5end = <%= trim5end %>
-        trim3end = <%= trim3end %>
-        trimAdapter = <%= trimAdapter %>
-        trimPolyA = <%= trimPolyA %>
-        artifactFile = <% if(artifactFile) { %>"<%= artifactFile %>"<% } else { %>"${projectDir}/nf_assets/NO_FILE3"<%} %>
-        minLen = <%= minLen %>
-        avgQual = <%= avgQual %>
-        numN = <%= numN %>
-        filtLC = <%= filtLC %>
-        filtPhiX = <%= filtPhiX %>
+        trimQual = 20
+        trim5end = 0
+        trim3end = 0
+        trimAdapter = false
+        trimPolyA = false
+        artifactFile = "${projectDir}/nf_assets/NO_FILE3"
+        minLen = 50
+        avgQual = 0
+        numN = 2
+        filtLC = 0.85
+        filtPhiX = false
     }
 
     hostRemoval {
@@ -69,39 +69,39 @@ params {
     }
     assembly {
         //assemblers: IDBA_UD, SPAdes, Unicycler, Megahit, LRASM
-        assembler = "IDBA_UD"
-        minContigSize = 200
+        assembler = "<%= assembler %>"
+        minContigSize = <%= minContigSize %>
+        
         idba{
-            maxK = null
-            minK = 31
-            step = 20
+            maxK = <% if(typeof idba_maxK != "undefined") { %><%= idba_maxK %><% } else { %>null<%} %>
+            minK = <% if(typeof idba_minK != "undefined") { %><%= idba_minK %><% } else { %>31<%} %>
+            step = <% if(typeof idba_step != "undefined") { %><%= idba_step %><% } else { %>20<%} %>
         }
         spades {
-            pacbio = "${projectDir}/nf_assets/NO_FILE3"
-            nanopore = "${projectDir}/nf_assets/NO_FILE4"
-            algorithm = null
+            pacbio = <% if(typeof spades_pacbio != "undefined") { %>"<%= spades_pacbio %>"<% } else { %>"${projectDir}/nf_assets/NO_FILE3"<%} %>
+            nanopore = <% if(typeof spades_nanopore != "undefined") { %>"<%= spades_nanopore %>"<% } else { %>"${projectDir}/nf_assets/NO_FILE4"<%} %>
+            algorithm = <% if(typeof spades_algorithm != "undefined") { %>"<%= spades_algorithm %>"<% } else { %>null<%} %>
         }
         megahit {
-            preset = null
+            preset = <% if(typeof megahit_preset != "undefined") { %>"<%= megahit_preset %>"<% } else { %>null<%} %>
         }
         unicycler {
-            longreads = "${projectDir}/nf_assets/NO_FILE3"
-            minLongReads = 2000
-            bridgingMode = "normal"
+            longreads = <% if(typeof Unicycler_longreads != "undefined") { %>"<%= Unicycler_longreads %>"<% } else { %>"${projectDir}/nf_assets/NO_FILE3"<%} %>
+            minLongReads = <% if(typeof Unicycler_minLongReads != "undefined") { %><%= Unicycler_minLongReads %><% } else { %>2000<%} %>
+            bridgingMode = <% if(typeof Unicycler_bridgingMode != "undefined") { %>"<%= Unicycler_bridgingMode %>"<% } else { %>"normal"<%} %>
         }
         lrasm {
-            minLength = 400
-            preset = null
-            algorithm = null
-            ec = null
-            numConsensus = null
+            preset = <% if(typeof Lrasm_preset != "undefined") { %>"<%= Lrasm_preset %>"<% } else { %>null<%} %>
+            algorithm = <% if(typeof Lrasm_algorithm != "undefined") { %>"<%= Lrasm_algorithm %>"<% } else { %>null<%} %>
+            ec = <% if(typeof Lrasm_ec != "undefined") { %><%= Lrasm_ec %><% } else { %>false<%} %>
+            numConsensus = <% if(typeof Lrasm_numConsensus != "undefined") { %><%= Lrasm_numConsensus %><% } else { %>null<%} %>
         }
 
     }
 
     
     r2c {
-        r2c_aligner = "bwa"
+        r2c_aligner = "<%= aligner %>"
         r2c_aligner_options = ""
         r2g_max_clip = null
         extractUnmapped = false

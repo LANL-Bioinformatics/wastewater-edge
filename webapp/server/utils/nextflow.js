@@ -15,6 +15,7 @@ const generateInputs = async (projHome, projectConf, proj) => {
   const executorConfig = nextflowConfigs.executor_config[config.NEXTFLOW.EXECUTOR];
   const params = {
     ...projectConf.workflow.input,
+    ...projectConf.rawReads,
     inputFastq2: [],
     outdir: `${projHome}/${workflowSettings.outdir}`,
     projOutdir: `${projHome}/${workflowSettings.outdir}`,
@@ -22,17 +23,24 @@ const generateInputs = async (projHome, projectConf, proj) => {
     executor_config: `${config.NEXTFLOW.CONFIG_DIR}/${executorConfig}`,
     nextflowOutDir: `${projHome}/nextflow`,
   };
-  // if fastq input is paired-end
-  if (projectConf.workflow.input.paired) {
-    const inputFastq = [];
-    const inputFastq2 = [];
-    projectConf.workflow.input.inputFastq.forEach((item) => {
-      inputFastq.push(item.f1);
-      inputFastq2.push(item.f2);
-    });
-    params.inputFastq = inputFastq;
-    params.inputFastq2 = inputFastq2;
+
+  if (projectConf.rawReads) {
+    if (projectConf.rawReads.paired) {
+      // if fastq input is paired-end
+      const inputFastq = [];
+      const inputFastq2 = [];
+      projectConf.rawReads.inputFiles.forEach((item) => {
+        inputFastq.push(item.f1);
+        inputFastq2.push(item.f2);
+      });
+      params.inputFastq = inputFastq;
+      params.inputFastq2 = inputFastq2;
+    } else {
+      params.inputFastq = projectConf.rawReads.inputFiles;
+    }
   }
+
+  // download sra data to shared directory
   if (projectConf.workflow.name === 'sra2fastq') {
     params.outdir = config.IO.SRA_BASE_DIR;
   }
