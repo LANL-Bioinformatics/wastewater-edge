@@ -36,7 +36,7 @@ process idbaUD {
     path "{contig-*,*contigs.fa,K*/final_contigs.fasta}", emit: intContigs
 
     script:
-    def avg_len = avg_len as Float
+    def avg_len = (avg_len as Float).trunc() as Integer
     def runFlag = ""
     if(short_paired.name != "NO_FILE" && short_single.name != "NO_FILE2") {
         runFlag = "-r $short_single --read_level_2 $short_paired "
