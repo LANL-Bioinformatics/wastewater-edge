@@ -3,11 +3,11 @@ params {
 
     //which modules are run
     modules {
-        sra2fastq = true
+        sra2fastq = false
         faqcs = false
         hostRemoval = false
         runAssembly = false
-        annotation = false
+        annotation = true
         binning = false
         phageFinder = true //true by default -- will run if non-viral reads are annotated
         readsTaxonomyAssignment = false
@@ -17,7 +17,7 @@ params {
 
         outputLocations {
         //everything in its separate output for the moment
-        sra2fastqOutDir = "<%= outdir %>"
+        sra2fastqOutDir = ""
         processProvidedContigsOutDir = ""
         qcOutDir = ""
         hostRemovalOutDir = ""
@@ -26,9 +26,9 @@ params {
         phageFinderOutDir = ""
         binningOutDir = ""
         readsTaxonomyOutDir = ""
-        annotationOutDir = ""
+        annotationOutDir = "<%= outdir %>"
         smaOutDir = ""
-        reportOutDir = "<%= projOutdir %>"
+        reportOutDir = "<%= outdir %>"
 
     }
 
@@ -39,14 +39,14 @@ params {
         inputFastq = []
         inputFastq2 = []
         pairedFile = false
-        inputContigs = "${projectDir}/nf_assets/NO_FILE3" //contigs provided as input to entire pipeline
+        inputContigs = "<%= inputFasta %>" //contigs provided as input to entire pipeline
         assembledContigs = "${projectDir}/nf_assets/NO_FILE3" //contigs provided to bypass assembly
         projName = "<%= project %>"
         fastqSource = null
     }
 
     sra2fastq {
-        accessions = <%- JSON.stringify(accessions) %>
+        accessions = []
     }
 
     faqcs{
@@ -92,7 +92,6 @@ params {
             bridgingMode = "normal"
         }
         lrasm {
-            minLength = 400
             preset = null
             algorithm = null
             ec = null
@@ -111,16 +110,16 @@ params {
     }
     
     annotation {
-        contigSizeForAnnotation = 700
-        taxKingdom = null
+        contigSizeForAnnotation = <% if(typeof minContigSize != "undefined") { %><%= minContigSize %><% } else { %>700<%} %>
+        taxKingdom = <% if(typeof taxKingdom != "undefined") { %>"<%= taxKingdom %>"<% } else { %>"bacteria"<%} %>
         //annotaters: prokka, ratt
-        annotateProgram = "prokka" //default
-        customProtein = "${projectDir}/nf_assets/NO_FILE" //setup for optional file pattern
-        customHMM = "${projectDir}/nf_assets/NO_FILE2"
-        sourceGBK = null
-        evalue = null
-        gcode = null
-        keggView = false
+        annotateProgram = <% if(typeof annotateProgram != "undefined") { %>"<%= annotateProgram %>"<% } else { %>"prokka"<%} %> //default
+        customProtein = <% if(typeof customProtein != "undefined") { %>"<%= customProtein %>"<% } else { %>"${projectDir}/nf_assets/NO_FILE"<%} %> //setup for optional file pattern
+        customHMM = <% if(typeof customHMM != "undefined") { %>"<%= customHMM %>"<% } else { %>"${projectDir}/nf_assets/NO_FILE2"<%} %>
+        sourceGBK = "<%= sourceGBK %>"
+        evalue = <% if(typeof evalue != "undefined") { %><%= evalue %><% } else { %>0.000000001<%} %>
+        gcode = <% if(typeof gcode != "undefined") { %><%= gcode %><% } else { %>11<%} %>
+        keggView = <%= keggView %>
     }
 
     binning {

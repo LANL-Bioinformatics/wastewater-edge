@@ -8,7 +8,7 @@ params {
         hostRemoval = false
         runAssembly = false
         annotation = false
-        readsBinning = false
+        binning = false
         phageFinder = true //true by default -- will run if non-viral reads are annotated
         readsTaxonomyAssignment = false
         contigsTaxonomyAssignment = false
@@ -24,7 +24,7 @@ params {
         assemblyOutDir = ""
         contigsTaxonomyOutDir = ""
         phageFinderOutDir = ""
-        readBinningOutDir = ""
+        binningOutDir = ""
         readsTaxonomyOutDir = ""
         annotationOutDir = ""
         smaOutDir = ""
@@ -71,7 +71,6 @@ params {
         //assemblers: IDBA_UD, SPAdes, Unicycler, Megahit, LRASM
         assembler = "IDBA_UD"
         minContigSize = 200
-        memLimit = null
         idba{
             maxK = null
             minK = 31

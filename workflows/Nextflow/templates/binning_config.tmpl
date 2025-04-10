@@ -3,12 +3,12 @@ params {
 
     //which modules are run
     modules {
-        sra2fastq = true
+        sra2fastq = false
         faqcs = false
         hostRemoval = false
         runAssembly = false
         annotation = false
-        binning = false
+        binning = true
         phageFinder = true //true by default -- will run if non-viral reads are annotated
         readsTaxonomyAssignment = false
         contigsTaxonomyAssignment = false
@@ -17,18 +17,18 @@ params {
 
         outputLocations {
         //everything in its separate output for the moment
-        sra2fastqOutDir = "<%= outdir %>"
+        sra2fastqOutDir = ""
         processProvidedContigsOutDir = ""
         qcOutDir = ""
         hostRemovalOutDir = ""
         assemblyOutDir = ""
         contigsTaxonomyOutDir = ""
         phageFinderOutDir = ""
-        binningOutDir = ""
+        binningOutDir = "<%= outdir %>"
         readsTaxonomyOutDir = ""
         annotationOutDir = ""
         smaOutDir = ""
-        reportOutDir = "<%= projOutdir %>"
+        reportOutDir = "<%= outdir %>"
 
     }
 
@@ -39,14 +39,14 @@ params {
         inputFastq = []
         inputFastq2 = []
         pairedFile = false
-        inputContigs = "${projectDir}/nf_assets/NO_FILE3" //contigs provided as input to entire pipeline
+        inputContigs =  "<%= inputFasta %>" //contigs provided as input to entire pipeline
         assembledContigs = "${projectDir}/nf_assets/NO_FILE3" //contigs provided to bypass assembly
         projName = "<%= project %>"
         fastqSource = null
     }
 
     sra2fastq {
-        accessions = <%- JSON.stringify(accessions) %>
+        accessions = []
     }
 
     faqcs{
@@ -92,7 +92,6 @@ params {
             bridgingMode = "normal"
         }
         lrasm {
-            minLength = 400
             preset = null
             algorithm = null
             ec = null
@@ -124,13 +123,13 @@ params {
     }
 
     binning {
-        binningMinLength = 1000
-        binningMaxItr = 50
-        binningProb = 0.9
+        binningMinLength = <% if(typeof binningMinLength != "undefined") { %><%= binningMinLength %><% } else { %>1000<%} %>
+        binningMaxItr = <% if(typeof binningMaxItr != "undefined") { %><%= binningMaxItr %><% } else { %>50<%} %>
+        binningProb = <% if(typeof binningProb != "undefined") { %><%= binningProb %><% } else { %>0.9<%} %>
         //107 or 40
-        binningMarkerSet =107
-        binningAbundFile = "${projectDir}/nf_assets/NO_FILE3"
-        doCheckM = false
+        binningMarkerSet = <% if(typeof binningMarkerSet != "undefined") { %><%= binningMarkerSet %><% } else { %>107<%} %>
+        binningAbundFile = "<%= binningAbundFile %>"
+        doCheckM = <%= doCheckM %> //double-check if allowing option in Wed. meeting
     }
 
 

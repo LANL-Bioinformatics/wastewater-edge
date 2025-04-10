@@ -12,7 +12,7 @@ include {CONTIGSTAXONOMYASSIGNMENT} from './modules/contigsTaxonomyAssignment/co
 include {ANNOTATION} from './modules/runAnnotation/runAnnotation.nf'
 include {PHAGEFINDER} from './modules/phageFinder/phageFinder.nf'
 include {ANTISMASH} from './modules/runAntiSmash/runAntiSmash.nf'
-include {BINNING} from './modules/readsBinning/readsBinning.nf'
+include {BINNING} from './modules/contigBinning/contigBinning.nf'
 include {REPORT} from './modules/report/report.nf'
 
 workflow {
@@ -22,13 +22,16 @@ workflow {
     //allows multiple unpaired read files, or multiple paired read files, but not both
     paired = channel.empty()
     unpaired = channel.empty()
-    if(params.shared.pairedFile) {
-        paired = channel.fromPath([params.shared.inputFastq, params.shared.inputFastq2].transpose().flatten(), checkIfExists:true).collect()
+    //check if params input is empty or not
+    if(params.shared.inputFastq.size() > 0) {
+        if(params.shared.pairedFile) {
+            paired = channel.fromPath([params.shared.inputFastq, params.shared.inputFastq2].transpose().flatten(), checkIfExists:true).collect()
+        }
+        else {
+            unpaired = channel.fromPath(params.shared.inputFastq, checkIfExists:true).collect()
+        }
     }
-    else {
-        unpaired = channel.fromPath(params.shared.inputFastq, checkIfExists:true).collect()
-    }
-    
+
     //contigs as input or pre-assembled from reads
     contigs = channel.empty()
     annContigs = channel.empty()
@@ -43,20 +46,24 @@ workflow {
         annContigs = PROCESSCONTIGS.out.annotationContigs
     }
 
-    //reads processing
-    COUNTFASTQ(paired.ifEmpty("${projectDir}/nf_assets/NO_FILE"), unpaired.ifEmpty("${projectDir}/nf_assets/NO_FILE2"))
-    avgLen = COUNTFASTQ.out.avgReadLen
-    counts = COUNTFASTQ.out.counts
-    paired = COUNTFASTQ.out.paired.ifEmpty(["${projectDir}/nf_assets/NO_FILE"])
-    unpaired = COUNTFASTQ.out.unpaired.ifEmpty("${projectDir}/nf_assets/NO_FILE2")
+
 
     //SRA download and processing
     if(params.modules.sra2fastq) {
         SRA2FASTQ(params.sra2fastq.plus(params.shared).plus(params.outputLocations))
         COUNTFASTQ(SRA2FASTQ.out.paired.ifEmpty(["${projectDir}/nf_assets/NO_FILE"]), SRA2FASTQ.out.unpaired.ifEmpty("${projectDir}/nf_assets/NO_FILE2"))
-        avgLen = COUNTFASTQ_SRA.out.avgReadLen
-        paired = COUNTFASTQ_SRA.out.paired.ifEmpty(["${projectDir}/nf_assets/NO_FILE"])
-        unpaired = COUNTFASTQ_SRA.out.unpaired.ifEmpty("${projectDir}/nf_assets/NO_FILE2")
+        avgLen = COUNTFASTQ.out.avgReadLen
+        counts = COUNTFASTQ.out.counts
+        paired = COUNTFASTQ.out.paired.ifEmpty(["${projectDir}/nf_assets/NO_FILE"])
+        unpaired = COUNTFASTQ.out.unpaired.ifEmpty("${projectDir}/nf_assets/NO_FILE2")
+    }
+    else {
+        //reads processing
+        COUNTFASTQ(paired.ifEmpty("${projectDir}/nf_assets/NO_FILE"), unpaired.ifEmpty("${projectDir}/nf_assets/NO_FILE2"))
+        avgLen = COUNTFASTQ.out.avgReadLen
+        counts = COUNTFASTQ.out.counts
+        paired = COUNTFASTQ.out.paired.ifEmpty(["${projectDir}/nf_assets/NO_FILE"])
+        unpaired = COUNTFASTQ.out.unpaired.ifEmpty("${projectDir}/nf_assets/NO_FILE2")
     }
 
     //QC
@@ -145,7 +152,7 @@ workflow {
     }
 
     //binning
-    if(params.modules.readsBinning) {
+    if(params.modules.binning) {
         BINNING(params.shared.plus(params.binning).plus(params.outputLocations), contigs, abundances)
     }
 
