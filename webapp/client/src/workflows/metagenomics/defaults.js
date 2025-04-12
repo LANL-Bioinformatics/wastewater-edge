@@ -3,6 +3,7 @@ import { workflowList } from 'src/util'
 export const workflowOptions = [
   { value: 'runFaQCs', label: workflowList['runFaQCs'].label },
   { value: 'assembly', label: workflowList['assembly'].label },
+  { value: 'annotation', label: workflowList['annotation'].label },
 ]
 
 export const inputRawReads = {
@@ -13,14 +14,16 @@ export const inputRawReads = {
     source: {
       text: 'Input Source',
       value: 'fastq',
+      display: 'READS/FASTQ',
       options: [
-        { text: 'Reads/Fastq', value: 'fastq' },
-        { text: 'Contigs/Fasta', value: 'fasta' },
+        { text: 'READS/FASTQ', value: 'fastq' },
+        { text: 'CONTIGS/FASTA', value: 'fasta' },
       ],
     },
     seqPlatform: {
       text: 'Sequencing Platform',
       value: 'Illumina',
+      display: 'Illumina',
       tooltip:
         'Illumina: high-throughput, short-read sequencing with high accuracy. Nanopore and Pacbio: long reads sequencing technologies.',
       options: [
@@ -34,7 +37,7 @@ export const inputRawReads = {
       value: true,
     },
     inputFiles: {
-      text: 'Fastq Files',
+      text: ' Files',
       value: [],
       display: [],
     },
@@ -61,7 +64,7 @@ export const inputRawReads = {
     enableInput: true,
     placeholder: 'Select a file or enter a file http(s) url',
     dataSources: ['upload', 'public'],
-    fileTypes: ['fasta', 'fa', 'contigs', 'fasta.gz', 'fa.gz'],
+    fileTypes: ['fasta', 'fa', 'fna', 'contigs', 'fasta.gz', 'fa.gz', 'fna.gz', 'contigs.gz'],
     projectTypes: [],
     projectScope: ['self+shared'],
     viewFile: false,
@@ -171,7 +174,7 @@ export const workflows = {
           enableInput: true,
           placeholder: '(Optional) Select a file or enter a file http(s) url',
           dataSources: ['upload', 'public'],
-          fileTypes: ['fasta', 'fa', 'fna', 'contigs'],
+          fileTypes: ['fasta', 'fa', 'fna', 'contigs', 'fasta.gz', 'fa.gz', 'fna.gz', 'contigs.gz'],
           viewFile: false,
           isOptional: true,
           cleanupInput: true,
@@ -264,6 +267,7 @@ export const workflows = {
       assembler: {
         text: 'Assembler',
         value: 'IDBA_UD',
+        display: 'IDBA_UD',
         tooltip:
           'IDBA_UD performs well on isolates as well as metagenomes but it may not work well on very large genomes; SPAdes performs well on isolates as well as single cell data but it may not work on larger genomes, and it takes more computational resource. PacBio CLR and Oxford Nanopore reads are used for gap closure and repeat resolution.; MEGAHIT is an ultra-fast single-node solution for large and complex metagenomics assembly via succinct de Bruijn graph which achieves low memory assembly.; Unicycler is an assembly pipeline for bacterial genomes. It can assemble Illumina-only read sets where it functions as a SPAdes-optimise. For the best possible assemblies, give it both Illumina reads and long reads, and it will conduct a hybrid assembly.; LRASM is designed for long noise reads such as reads from Nanopore and it assemble fastq/fasta formatted reads using miniasm/wtdbg2/flye and use racon to perform consensus.',
         options: [
@@ -292,10 +296,10 @@ export const workflows = {
       },
       minContigSize: {
         text: 'Minimum Contig Length',
-        value: 50,
+        value: 200,
         integerInput: {
           tooltip:
-            'Trimmed read should have to be at least this minimum length (default:50, range: 0 - 1000)',
+            'Trimmed read should have to be at least this minimum length (default:200, range: 0 - 1000)',
           defaultValue: 200,
           min: 0,
           max: 1000,
@@ -304,6 +308,7 @@ export const workflows = {
       aligner: {
         text: 'Validation Aligner',
         value: 'bwa',
+        display: 'Bowtie 2',
         tooltip:
           'After assembly, the reads will use the aligner mapped to assembled contigs for validation.',
         options: [
@@ -311,6 +316,32 @@ export const workflows = {
           { text: 'BWA mem', value: 'bwa' },
           { text: 'Minimap2', value: 'minimap2' },
         ],
+      },
+      aligner_options: {
+        text: 'Aligner Options',
+        value: null,
+        textInput: {
+          placeholder: '(optional)',
+          tooltip:
+            'Click &nbsp;<a href="http://bowtie-bio.sourceforge.net/bowtie2/manual.shtml#usage" target="_blank" rel="noopener noreferrer">' +
+            '<span style="color:yellow;">Bowtie2</span></a> &nbsp;|&nbsp; ' +
+            '&nbsp;<a href="http://bio-bwa.sourceforge.net/bwa.shtml#3" target="_blank" rel="noopener noreferrer"><span style="color:yellow;">BWA mem</span></a> &nbsp;|&nbsp; ' +
+            '&nbsp;<a href="https://lh3.github.io/minimap2/minimap2.html" target="_blank" rel="noopener noreferrer"><span style="color:yellow;">Minimap2</span></a>&nbsp; for detail.',
+
+          showError: false,
+          isOptional: true,
+          showErrorTooltip: true,
+          defaultValue: null,
+        },
+      },
+      extractUnmapped: {
+        text: 'Extract Unmapped/Unassembled Reads',
+        value: false,
+        switcher: {
+          trueText: 'Yes',
+          falseText: 'No',
+          defaultValue: false,
+        },
       },
     },
     assemblerInputs: {
@@ -350,6 +381,7 @@ export const workflows = {
         spades_algorithm: {
           text: 'Algorithm',
           value: 'default',
+          display: 'Default',
           tooltip:
             '<table border="1"><tbody>' +
             '<tr><th>Algorithm</th><th>Targeting applications</th></tr>' +
@@ -385,7 +417,20 @@ export const workflows = {
             enableInput: true,
             placeholder: '(Optional) Select a file or enter a file http(s) url',
             dataSources: ['upload', 'public'],
-            fileTypes: ['fasta', 'fa', 'fna', 'contigs', 'fq', 'fastq'],
+            fileTypes: [
+              'fasta',
+              'fa',
+              'fna',
+              'contigs',
+              'fasta.gz',
+              'fa.gz',
+              'fna.gz',
+              'contigs.gz',
+              'fastq',
+              'fq',
+              'fastq.gz',
+              'fq.gz',
+            ],
             viewFile: false,
             isOptional: true,
             cleanupInput: true,
@@ -399,7 +444,20 @@ export const workflows = {
             enableInput: true,
             placeholder: '(Optional) Select a file or enter a file http(s) url',
             dataSources: ['upload', 'public'],
-            fileTypes: ['fasta', 'fa', 'fna', 'contigs', 'fq', 'fastq'],
+            fileTypes: [
+              'fasta',
+              'fa',
+              'fna',
+              'contigs',
+              'fasta.gz',
+              'fa.gz',
+              'fna.gz',
+              'contigs.gz',
+              'fastq',
+              'fq',
+              'fastq.gz',
+              'fq.gz',
+            ],
             viewFile: false,
             isOptional: true,
             cleanupInput: true,
@@ -410,6 +468,7 @@ export const workflows = {
         megahit_preset: {
           text: 'Preset',
           value: 'meta',
+          display: 'meta',
           tooltip:
             '<table border="1"><tbody>' +
             '<tr><th>Presets</th><th>Targeting applications</th></tr>' +
@@ -428,6 +487,7 @@ export const workflows = {
         Unicycler_bridgingMode: {
           text: 'Bridging Mode',
           value: 'normal',
+          display: 'Normal',
           tooltip:
             'Normal = moderate contig size and misassembly rate; Conservative = smaller contigs, lowest misassembly rate; Bold = longest contigs, higher misassembly rate.',
           options: [
@@ -444,7 +504,20 @@ export const workflows = {
             enableInput: true,
             placeholder: '(Optional) Select a file or enter a file http(s) url',
             dataSources: ['upload', 'public'],
-            fileTypes: ['fasta', 'fa', 'fna', 'contigs', 'fq', 'fastq'],
+            fileTypes: [
+              'fasta',
+              'fa',
+              'fna',
+              'contigs',
+              'fasta.gz',
+              'fa.gz',
+              'fna.gz',
+              'contigs.gz',
+              'fastq',
+              'fq',
+              'fastq.gz',
+              'fq.gz',
+            ],
             viewFile: false,
             isOptional: true,
             cleanupInput: true,
@@ -465,13 +538,18 @@ export const workflows = {
         Lrasm_algorithm: {
           text: 'Algorithm',
           value: 'flye',
+          display: 'flye',
           tooltip:
             '<a href="https://www.ncbi.nlm.nih.gov/pubmed/27153593" target="_blank" rel="noopener noreferrer"><span style="color:yellow;">miniasm</span></a> ' +
             'is a fast OLC-based de novo assembler for noisy long reads. It takes all-vs-all read self-mappings ' +
             '(<a href="https://github.com/lh3/minimap2" target="_blank" rel="noopener noreferrer"><span style="color:yellow;">minimap2</span></a>) as input and outputs an assembly graph ' +
             'in the GFA format. <a href="https://github.com/ruanjue/wtdbg2" target="_blank" rel="noopener noreferrer"><span style="color:yellow;">wtdbg2</span></a> uses fuzzy Bruijn graph approach to ' +
             'do long noisy reads assembly. It is able to assemble large/deep/complex genome at a speed tens of times faster than OLC-based assembler ' +
-            'with comparable base accuracy.',
+            'with comparable base accuracy. ' +
+            '<a href="https://github.com/mikolmogorov/Flye" target="_blank" rel="noopener noreferrer"><span style="color:yellow;">Flye</span></a> is ' +
+            'a de novo assembler for single molecule sequencing reads, such as those produced by PacBio and Oxford Nanopore Technologies. ' +
+            'It is designed for a wide range of datasets, from small bacterial projects to large mammalian-scale assemblies. metaFlye is a special mode of Flye for metagenome assembly.',
+
           options: [
             { text: 'minasm', value: 'minasm' },
             { text: 'wtdbg2', value: 'wtdbg2' },
@@ -493,6 +571,7 @@ export const workflows = {
         Lrasm_preset: {
           text: 'Preset',
           value: 'nanopore',
+          display: 'Nanopore',
           options: [
             { text: 'Nanopore', value: 'nanopore' },
             { text: 'Nanopore HQ', value: 'nanopore-hq' },
@@ -535,6 +614,206 @@ export const workflows = {
       },
       LRASM: {
         minContigSize: { isValid: true, error: 'Minimum Read Length error. Range: 0 - 1000' },
+      },
+    },
+  },
+  annotation: {
+    validForm: false,
+    errMessage: 'input error',
+    paramsOn: true,
+    files: [],
+    fastaInput: {
+      text: 'CONTIGS/FASTA',
+      enableInput: true,
+      placeholder: 'Select a file or enter a file http(s) url',
+      dataSources: ['upload', 'public', 'project'],
+      fileTypes: ['fasta', 'fa', 'fna', 'contigs', 'fasta.gz', 'fa.gz', 'fna.gz', 'contigs.gz'],
+      projectTypes: ['assembly'],
+      projectScope: ['self+shared'],
+      viewFile: false,
+      isOptional: false,
+      cleanupInput: true,
+      maxInput: 1,
+    },
+    inputs: {
+      minContigSize: {
+        text: 'Minimum Contig Length',
+        value: 700,
+        integerInput: {
+          tooltip: 'Default:700, range: 1 - 10000',
+          defaultValue: 700,
+          min: 1,
+          max: 10000,
+        },
+      },
+      annotateProgram: {
+        text: 'Annotation Tool',
+        value: 'prokka',
+        display: 'Prokka',
+        tooltip:
+          'Prokka is ab initio annotation tool. RATT will transfer the annotation from the provided closest relatvie genome annotation.',
+        options: [
+          { text: 'Prokka', value: 'prokka' },
+          { text: 'RATT', value: 'ratt' },
+        ],
+      },
+    },
+    annotateProgramInputs: {
+      prokka: {
+        taxKingdom: {
+          text: 'Specify Kingdom',
+          value: 'bacteria',
+          display: 'Bacteria',
+          tooltip:
+            'Please choose the genome type you would like to annotate for Prokka to do genome annotation.',
+          options: [
+            { text: 'Archaea', value: 'archaea' },
+            { text: 'Bacteria', value: 'bacteria' },
+            { text: 'Mitochondria', value: 'mitochondria' },
+            { text: 'Viruses', value: 'viruses' },
+            { text: 'Metagenome', value: 'metagenome' },
+          ],
+          gcodes: {
+            archaea: 11,
+            bacteria: 11,
+            mitochondria: 5,
+            viruses: 1,
+            metagenome: 11,
+          },
+        },
+        gcode: {
+          text: 'Genetic Code',
+          value: 11,
+          rangeInput: {
+            tooltip:
+              'The genetic code will change according to the kingdom selected. Default is 11. 1 for viruses, 5 fro mitochondria. Or you can specify it here.',
+            defaultValue: 11,
+            min: 1,
+            max: 33,
+            step: 1,
+          },
+        },
+        customProtein: {
+          text: 'Protein FASTA/GenBank for Prokka',
+          value: null,
+          display: null,
+          fileInput: {
+            tooltip: 'Protein FASTA or GBK file to use as 1st priority annoation sources',
+            enableInput: true,
+            placeholder: '(Optional) Select a file or enter a file http(s) url',
+            dataSources: ['upload', 'public'],
+            fileTypes: [
+              'fasta',
+              'fa',
+              'fna',
+              'contigs',
+              'fasta.gz',
+              'fa.gz',
+              'fna.gz',
+              'contigs.gz',
+              '.gb',
+              '.gbk',
+              '.genbank',
+            ],
+            viewFile: false,
+            isOptional: true,
+            cleanupInput: true,
+          },
+        },
+        customHMM: {
+          text: 'Trusted HMM for Prokka',
+          value: null,
+          display: null,
+          fileInput: {
+            tooltip: 'Trusted HMM to first annotate from',
+            enableInput: true,
+            placeholder: '(Optional) Select a file or enter a file http(s) url',
+            dataSources: ['upload', 'public'],
+            fileTypes: ['hmm'],
+            viewFile: false,
+            isOptional: true,
+            cleanupInput: true,
+          },
+        },
+        evalue: {
+          text: 'Similarity e-value cut-off1',
+          value: '1e-09',
+          textInput: {
+            placeholder: '(required)',
+            tooltip: null,
+            showError: false,
+            isOptional: false,
+            showErrorTooltip: true,
+            errMessage: 'Required.',
+            defaultValue: '1e-09',
+          },
+        },
+        keggView: {
+          text: 'KEGG Pathway View',
+          value: true,
+          switcher: {
+            tooltip: 'Visualize Prokka annotation in KEGG map. Need Internet Connection',
+            trueText: 'Yes',
+            falseText: 'No',
+            defaultValue: true,
+          },
+        },
+      },
+      ratt: {
+        sourceGBK: {
+          text: 'Annotation Source Genbank',
+          value: null,
+          display: null,
+          fileInput: {
+            tooltip:
+              'Please provide the reference/source annotation (Genbank file), EDGE will use RATT to transfer the annotation from the reference genome. The reference genome must be close relative to the sample.',
+            enableInput: true,
+            placeholder: '(Required) Select a file or enter a file http(s) url',
+            dataSources: ['upload', 'public'],
+            fileTypes: [
+              'fasta',
+              'fa',
+              'fna',
+              'contigs',
+              'fasta.gz',
+              'fa.gz',
+              'fna.gz',
+              'contigs.gz',
+              '.gb',
+              '.gbk',
+              '.genbank',
+            ],
+            viewFile: false,
+            isOptional: false,
+            cleanupInput: true,
+          },
+        },
+      },
+    },
+
+    // only for input with validation method
+    validInputs: {
+      prokka: {
+        minContigSize: {
+          isValid: true,
+          error: 'Minimum Contig Length error. Default: 700, range: 1 - 10000',
+        },
+        evalue: { isValid: true, error: 'Similarity e-value cut-off error. Invalid evalue' },
+        customProtein: {
+          isValid: true,
+          error: 'Protein FASTA/GenBank for Prokka error. Invalid url',
+        },
+        customHMM: {
+          isValid: true,
+          error: 'Trusted HMM for Prokkas error. Invalid url',
+        },
+      },
+      ratt: {
+        minContigSize: { isValid: true, error: 'Minimum Contig Length error. Range: 1 - 10000' },
+        sourceGBK: {
+          isValid: false,
+          error: 'Annotation Source Genbank error. Invalid file input',
+        },
       },
     },
   },

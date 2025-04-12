@@ -6,23 +6,27 @@ import { components } from './defaults'
 
 export const OptionSelector = (props) => {
   const componentName = 'optionSelector'
-  const [form, setState] = useState({ ...components[componentName], option: props.defaultValue })
+  const [form, setState] = useState({
+    ...components[componentName],
+    option: props.defaultValue,
+    display: props.display ? props.display : props.defaultValue,
+  })
   const [doValidation, setDoValidation] = useState(0)
 
-  const setNewState2 = (name, value) => {
-    setState({
-      ...form,
-      [name]: value,
-    })
-    setDoValidation(doValidation + 1)
-  }
-
   useEffect(() => {
-    setState({ ...components[componentName], option: props.defaultValue })
+    setState({
+      ...components[componentName],
+      option: props.defaultValue,
+      display: props.display ? props.display : props.defaultValue,
+    })
   }, [props.defaultValue]) // eslint-disable-line react-hooks/exhaustive-deps
 
   useEffect(() => {
-    setState({ ...components[componentName], option: props.defaultValue })
+    setState({
+      ...components[componentName],
+      option: props.defaultValue,
+      display: props.display ? props.display : props.defaultValue,
+    })
   }, [props.reset]) // eslint-disable-line react-hooks/exhaustive-deps
 
   useEffect(() => {
@@ -42,6 +46,7 @@ export const OptionSelector = (props) => {
               place={props.tooltipPlace ? props.tooltipPlace : defaults.tooltipPlace}
               color={props.tooltipColor ? props.tooltipColor : defaults.tooltipColor}
               showTooltip={props.showTooltip ? props.showTooltip : defaults.showTooltip}
+              clickable={props.tooltipClickable ? props.tooltipClickable : false}
             />
           ) : (
             <>{props.text}</>
@@ -55,7 +60,9 @@ export const OptionSelector = (props) => {
                 key={`optionSelector-${index}`}
                 color="outline-primary"
                 onClick={() => {
-                  setNewState2('option', item.value)
+                  form.display = item.text
+                  form.option = item.value
+                  setDoValidation(doValidation + 1)
                 }}
                 active={form.option === item.value}
               >

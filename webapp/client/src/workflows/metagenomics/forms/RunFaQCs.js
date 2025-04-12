@@ -35,17 +35,9 @@ export const RunFaQCs = (props) => {
   }
 
   const setIntegerInput = (inForm, name) => {
-    //console.log(inForm, name)
-    if (inForm.validForm) {
-      form.inputs[name].value = inForm.integerInput
-      if (validInputs[name]) {
-        validInputs[name].isValid = true
-      }
-    } else {
-      form.inputs[name].value = 0
-      if (validInputs[name]) {
-        validInputs[name].isValid = false
-      }
+    form.inputs[name].value = inForm.integerInput
+    if (validInputs[name]) {
+      validInputs[name].isValid = inForm.validForm
     }
     setDoValidation(doValidation + 1)
   }
@@ -56,18 +48,10 @@ export const RunFaQCs = (props) => {
   }
 
   const setFileInput = (inForm, name) => {
-    if (inForm.validForm) {
-      form.inputs[name].value = inForm.fileInput
-      form.inputs[name].display = inForm.fileInput_display
-      if (validInputs[name]) {
-        validInputs[name].isValid = true
-      }
-    } else {
-      form.inputs[name].value = null
-      form.inputs[name].display = null
-      if (validInputs[name]) {
-        validInputs[name].isValid = false
-      }
+    form.inputs[name].value = inForm.fileInput
+    form.inputs[name].display = inForm.fileInput_display
+    if (validInputs[name]) {
+      validInputs[name].isValid = inForm.validForm
     }
     setDoValidation(doValidation + 1)
   }

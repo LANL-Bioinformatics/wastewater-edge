@@ -96,15 +96,13 @@ params {
             ec = <% if(typeof Lrasm_ec != "undefined") { %><%= Lrasm_ec %><% } else { %>false<%} %>
             numConsensus = <% if(typeof Lrasm_numConsensus != "undefined") { %><%= Lrasm_numConsensus %><% } else { %>null<%} %>
         }
-
     }
-
     
     r2c {
         r2c_aligner = "<%= aligner %>"
-        r2c_aligner_options = ""
+        r2c_aligner_options = "<%= aligner_options %>"
         r2g_max_clip = null
-        extractUnmapped = false
+        extractUnmapped = <%= extractUnmapped %>
         rowLimit = null
     }
     
@@ -174,9 +172,6 @@ params {
         tigrfam = false
         cassis = false //only with fungi
     }
-
-
-
 }
 
 //container settings
@@ -188,7 +183,6 @@ apptainer {
 
 //discover and auto-bind subworkflow bin folders
 nextflow.enable.moduleBinaries = true
-
 
 //which containers to use for which processes
 process {

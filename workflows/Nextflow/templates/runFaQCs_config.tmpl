@@ -29,7 +29,6 @@ params {
         annotationOutDir = ""
         smaOutDir = ""
         reportOutDir = "<%= outdir %>"
-
     }
 
     //module parameters -- passed directly into subworkflows according to best practices
@@ -67,6 +66,7 @@ params {
         similarity = 90
         bwaMemOptions = null
     }
+
     assembly {
         //assemblers: IDBA_UD, SPAdes, Unicycler, Megahit, LRASM
         assembler = "IDBA_UD"
@@ -96,9 +96,7 @@ params {
             ec = null
             numConsensus = null
         }
-
     }
-
     
     r2c {
         r2c_aligner = "bwa"
@@ -151,7 +149,6 @@ params {
         custom_pangia_db= null
         custom_diamond_db= null
         custom_centrifuge_db = null
-
     }
 
     contigsTaxonomy {
@@ -174,9 +171,6 @@ params {
         tigrfam = false
         cassis = false //only with fungi
     }
-
-
-
 }
 
 //container settings
@@ -188,7 +182,6 @@ apptainer {
 
 //discover and auto-bind subworkflow bin folders
 nextflow.enable.moduleBinaries = true
-
 
 //which containers to use for which processes
 process {

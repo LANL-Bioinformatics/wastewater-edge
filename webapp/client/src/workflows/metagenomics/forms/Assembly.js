@@ -8,6 +8,7 @@ import { IntegerInput } from 'src/edge/project/forms/IntegerInput'
 import { RangeInput } from 'src/edge/project/forms/RangeInput'
 import { SelectInput } from 'src/edge/project/forms/SelectInput'
 import { FileInput } from 'src/edge/project/forms/FileInput'
+import { TextInput } from 'src/edge/project/forms/TextInput'
 import { Switcher } from 'src/edge/project/forms/Switcher'
 import { workflows } from '../defaults'
 
@@ -36,18 +37,21 @@ export const Assembly = (props) => {
     form.assemblerInputs[form.inputs['assembler'].value][name].value = inForm.rangeInput
     setDoValidation(doValidation + 1)
   }
+
   const setMainOption = (inForm, name) => {
     form.inputs[name].value = inForm.option
+    form.inputs[name].display = inForm.display
     setDoValidation(doValidation + 1)
   }
+
   const setOption = (inForm, name) => {
     form.assemblerInputs[form.inputs['assembler'].value][name].value = inForm.option
+    form.assemblerInputs[form.inputs['assembler'].value][name].display = inForm.display
+      ? inForm.display
+      : inForm.option
     setDoValidation(doValidation + 1)
   }
-  const setMainSelect = (inForm, name) => {
-    form.inputs[name].value = inForm.selectInput
-    setDoValidation(doValidation + 1)
-  }
+
   const setSelect = (inForm, name) => {
     form.assemblerInputs[form.inputs['assembler'].value][name].value = inForm.selectInput
     setDoValidation(doValidation + 1)
@@ -56,26 +60,14 @@ export const Assembly = (props) => {
   const setMainIntegerInput = (inForm, name) => {
     //console.log(inForm, name)
     form.inputs[name].value = inForm.integerInput
-    if (inForm.validForm) {
-      if (validInputs[form.inputs['assembler'].value][name]) {
-        validInputs[form.inputs['assembler'].value][name].isValid = true
-      }
-      if (name === 'minContigSize') {
-        //set all assemblers
-        Object.keys(validInputs).forEach((key) => {
-          validInputs[key][name].isValid = true
-        })
-      }
-    } else {
-      if (validInputs[form.inputs['assembler'].value][name]) {
-        validInputs[form.inputs['assembler'].value][name].isValid = false
-      }
-      if (name === 'minContigSize') {
-        //set all assemblers
-        Object.keys(validInputs).forEach((key) => {
-          validInputs[key][name].isValid = false
-        })
-      }
+    if (validInputs[form.inputs['assembler'].value][name]) {
+      validInputs[form.inputs['assembler'].value][name].isValid = inForm.validForm
+    }
+    if (name === 'minContigSize') {
+      //set all assemblers
+      Object.keys(validInputs).forEach((key) => {
+        validInputs[key][name].isValid = inForm.validForm
+      })
     }
     setDoValidation(doValidation + 1)
   }
@@ -83,15 +75,14 @@ export const Assembly = (props) => {
   const setIntegerInput = (inForm, name) => {
     //console.log(inForm, name)
     form.assemblerInputs[form.inputs['assembler'].value][name].value = inForm.integerInput
-    if (inForm.validForm) {
-      if (validInputs[form.inputs['assembler'].value][name]) {
-        validInputs[form.inputs['assembler'].value][name].isValid = true
-      }
-    } else {
-      if (validInputs[form.inputs['assembler'].value][name]) {
-        validInputs[form.inputs['assembler'].value][name].isValid = false
-      }
+    if (validInputs[form.inputs['assembler'].value][name]) {
+      validInputs[form.inputs['assembler'].value][name].isValid = inForm.validForm
     }
+    setDoValidation(doValidation + 1)
+  }
+
+  const setMainSwitcher = (inForm, name) => {
+    form.inputs[name].value = inForm.isTrue
     setDoValidation(doValidation + 1)
   }
 
@@ -103,14 +94,16 @@ export const Assembly = (props) => {
   const setFileInput = (inForm, name) => {
     form.assemblerInputs[form.inputs['assembler'].value][name].value = inForm.fileInput
     form.assemblerInputs[form.inputs['assembler'].value][name].display = inForm.fileInput_display
-    if (inForm.validForm) {
-      if (validInputs[form.inputs['assembler'].value][name]) {
-        validInputs[form.inputs['assembler'].value][name].isValid = true
-      }
-    } else {
-      if (validInputs[form.inputs['assembler'].value][name]) {
-        validInputs[form.inputs['assembler'].value][name].isValid = false
-      }
+    if (validInputs[form.inputs['assembler'].value][name]) {
+      validInputs[form.inputs['assembler'].value][name].isValid = inForm.validForm
+    }
+    setDoValidation(doValidation + 1)
+  }
+
+  const setMainTextInput = (inForm, name) => {
+    form.inputs[name].value = inForm.textInput
+    if (validInputs[name]) {
+      validInputs[name].isValid = inForm.validForm
     }
     setDoValidation(doValidation + 1)
   }
@@ -263,6 +256,31 @@ export const Assembly = (props) => {
             options={workflows[workflowName].inputs['aligner'].options}
             defaultValue={form.inputs['aligner'].value}
             tooltip={workflows[workflowName].inputs['aligner'].tooltip}
+          />
+          <br></br>
+          <TextInput
+            name={'aligner_options'}
+            setParams={setMainTextInput}
+            text={workflows[workflowName].inputs['aligner_options'].text}
+            tooltip={workflows[workflowName].inputs['aligner_options']['textInput'].tooltip}
+            tooltipClickable={true}
+            defaultValue={
+              workflows[workflowName].inputs['aligner_options']['textInput'].defaultValue
+            }
+            placeholder={workflows[workflowName].inputs['aligner_options']['textInput'].placeholder}
+            isOptional={workflows[workflowName].inputs['aligner_options']['textInput'].isOptional}
+          />
+          <br></br>
+          <Switcher
+            id={'extractUnmapped'}
+            name={'extractUnmapped'}
+            setParams={setMainSwitcher}
+            text={workflows[workflowName].inputs['extractUnmapped'].text}
+            defaultValue={
+              workflows[workflowName].inputs['extractUnmapped']['switcher'].defaultValue
+            }
+            trueText={workflows[workflowName].inputs['extractUnmapped']['switcher'].trueText}
+            falseText={workflows[workflowName].inputs['extractUnmapped']['switcher'].falseText}
           />
           <br></br>
           {form.inputs['assembler'].value === 'IDBA_UD' && (
@@ -645,6 +663,7 @@ export const Assembly = (props) => {
                     'Lrasm_algorithm'
                   ].tooltip
                 }
+                tooltipClickable={true}
               />
               <br></br>
               <Switcher

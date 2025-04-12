@@ -242,6 +242,11 @@ export const isValidFolder = (inputValue) => {
   return regexp.test(inputValue.replace(/\s+/g, ' ').trim())
 }
 
+export const isValidEvalue = (inputValue) => {
+  const regexp = new RegExp(/^([1-9]\.[0-9]+|[1-9])e-[0-9]+$/, 'i')
+  return regexp.test(inputValue.replace(/\s+/g, ' ').trim())
+}
+
 export const capitalizeFirstLetter = (str) => {
   if (!str) {
     return '' // Handle empty strings

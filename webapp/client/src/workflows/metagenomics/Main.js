@@ -13,6 +13,7 @@ import { HtmlText } from 'src/edge/common/HtmlText'
 import { InputRawReads } from './forms/InputRawReads'
 import { RunFaQCs } from './forms/RunFaQCs'
 import { Assembly } from './forms/Assembly'
+import { Annotation } from './forms/Annotation'
 import { workflowOptions, workflows } from './defaults'
 
 const Main = (props) => {
@@ -40,6 +41,7 @@ const Main = (props) => {
   }
   //callback function for child component
   const setRawData = (params) => {
+    //console.log('rawData:', params)
     setRawDataParams(params)
     setDoValidation(doValidation + 1)
   }
@@ -60,11 +62,18 @@ const Main = (props) => {
       desc: projectParams.projectDesc,
       type: workflow,
     }
-    formData.rawReads = {
-      source: rawDataParams.inputs.source.value,
-      seqPlatform: rawDataParams.inputs.seqPlatform.value,
-      paired: rawDataParams.inputs.paired.value,
-      inputFiles: rawDataParams.inputs.inputFiles.value,
+    if (workflow === 'annotation') {
+      formData.rawReads = {
+        source: rawDataParams.inputs.source.value,
+        inputFasta: rawDataParams.inputs.inputFiles.value[0],
+      }
+    } else {
+      formData.rawReads = {
+        source: rawDataParams.inputs.source.value,
+        seqPlatform: rawDataParams.inputs.seqPlatform.value,
+        paired: rawDataParams.inputs.paired.value,
+        inputFiles: rawDataParams.inputs.inputFiles.value,
+      }
     }
 
     // set workflow inputs
@@ -72,14 +81,21 @@ const Main = (props) => {
     // set workflow input display
     let inputDisplay = { 'Raw Reads': {} }
     inputDisplay[workflowList[workflow].label] = {}
-    Object.keys(rawDataParams.inputs).forEach((key) => {
-      if (rawDataParams.inputs[key].display) {
-        inputDisplay['Raw Reads'][rawDataParams.inputs[key].text] =
-          rawDataParams.inputs[key].display
-      } else {
-        inputDisplay['Raw Reads'][rawDataParams.inputs[key].text] = rawDataParams.inputs[key].value
-      }
-    })
+    if (workflow === 'annotation') {
+      inputDisplay['Raw Reads'][rawDataParams.inputs['source'].text] =
+        rawDataParams.inputs['source'].display
+      inputDisplay['Raw Reads']['Contig/Fasta File'] = rawDataParams.inputs['inputFiles'].display[0]
+    } else {
+      Object.keys(rawDataParams.inputs).forEach((key) => {
+        if (rawDataParams.inputs[key].display) {
+          inputDisplay['Raw Reads'][rawDataParams.inputs[key].text] =
+            rawDataParams.inputs[key].display
+        } else {
+          inputDisplay['Raw Reads'][rawDataParams.inputs[key].text] =
+            rawDataParams.inputs[key].value
+        }
+      })
+    }
 
     //add selected assembler inputs to main inputs
     if (workflow === 'assembly') {
@@ -88,6 +104,15 @@ const Main = (props) => {
         ...selectedWorkflows[workflow].inputs,
         // eslint-disable-next-line prettier/prettier
         ...selectedWorkflows[workflow].assemblerInputs[selectedWorkflows[workflow].inputs['assembler'].value]
+      }
+    }
+    //add selected annotateProgram inputs to main inputs
+    if (workflow === 'annotation') {
+      // eslint-disable-next-line prettier/prettier
+      selectedWorkflows[workflow].inputs = {
+        ...selectedWorkflows[workflow].inputs,
+        // eslint-disable-next-line prettier/prettier
+        ...selectedWorkflows[workflow].annotateProgramInputs[selectedWorkflows[workflow].inputs['annotateProgram'].value]
       }
     }
 
@@ -252,6 +277,7 @@ const Main = (props) => {
               <InputRawReads
                 setParams={setRawData}
                 source={'fastq'}
+                sourceDisplay={'READS/FASTQ'}
                 isValidFileInput={isValidFileInput}
                 text={workflows[workflow]['fastqInput'].text}
                 tooltip={workflows[workflow]['fastqInput'].tooltip}
@@ -290,6 +316,7 @@ const Main = (props) => {
               <InputRawReads
                 setParams={setRawData}
                 source={'fastq'}
+                sourceDisplay={'READS/FASTQ'}
                 isValidFileInput={isValidFileInput}
                 text={workflows[workflow]['fastqInput'].text}
                 tooltip={workflows[workflow]['fastqInput'].tooltip}
@@ -319,6 +346,45 @@ const Main = (props) => {
                   selectedWorkflows[workflow] ? selectedWorkflows[workflow].errMessage : null
                 }
                 seqPlatform={rawDataParams.inputs.seqPlatform.value}
+                allExpand={allExpand}
+                allClosed={allClosed}
+              />
+            </>
+          )}
+          {workflow === 'annotation' && (
+            <>
+              <InputRawReads
+                setParams={setRawData}
+                source={'fasta'}
+                sourceDisplay={'CONTIGS/FASTA'}
+                isValidFileInput={isValidFileInput}
+                text={workflows[workflow]['fastaInput'].text}
+                tooltip={workflows[workflow]['fastaInput'].tooltip}
+                enableInput={workflows[workflow]['fastaInput'].enableInput}
+                placeholder={workflows[workflow]['fastaInput'].placeholder}
+                dataSources={workflows[workflow]['fastaInput'].dataSources}
+                fileTypes={workflows[workflow]['fastaInput'].fileTypes}
+                projectTypes={workflows[workflow]['fastaInput'].projectTypes}
+                projectScope={workflows[workflow]['fastaInput'].projectScope}
+                viewFile={workflows[workflow]['fastaInput'].viewFile}
+                isOptional={workflows[workflow]['fastaInput'].isOptional}
+                cleanupInput={workflows[workflow]['fastaInput'].cleanupInput}
+                maxInput={workflows[workflow]['fastaInput'].maxInput}
+                isValid={rawDataParams ? rawDataParams.validForm : false}
+                errMessage={rawDataParams ? rawDataParams.errMessage : null}
+                allExpand={allExpand}
+                allClosed={allClosed}
+              />
+              <Annotation
+                name={workflow}
+                full_name={workflow}
+                setParams={setWorkflowParams}
+                isValid={
+                  selectedWorkflows[workflow] ? selectedWorkflows[workflow].validForm : false
+                }
+                errMessage={
+                  selectedWorkflows[workflow] ? selectedWorkflows[workflow].errMessage : null
+                }
                 allExpand={allExpand}
                 allClosed={allClosed}
               />

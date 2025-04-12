@@ -15,7 +15,7 @@ params {
         secondaryMetaboliteAnalysis = false
     }
 
-        outputLocations {
+    outputLocations {
         //everything in its separate output for the moment
         sra2fastqOutDir = ""
         processProvidedContigsOutDir = ""
@@ -29,9 +29,7 @@ params {
         annotationOutDir = ""
         smaOutDir = ""
         reportOutDir = "<%= outdir %>"
-
     }
-
 
     //module parameters -- passed directly into subworkflows according to best practices
     //these are the default values
@@ -97,9 +95,7 @@ params {
             ec = null
             numConsensus = null
         }
-
     }
-
     
     r2c {
         r2c_aligner = "bwa"
@@ -132,7 +128,6 @@ params {
         doCheckM = <%= doCheckM %> //double-check if allowing option in Wed. meeting
     }
 
-
     readsTaxonomy {
         splitTrimMinQ = 20
         //RTA tools: gottcha-genDB-b,gottcha-speDB-b,gottcha-strDB-b,gottcha-genDB-v,gottcha-speDB-v,gottcha-strDB-v,gottcha2-speDB-b,pangia,bwa,metaphlan4,kraken2,centrifuge,diamond
@@ -153,7 +148,6 @@ params {
         custom_pangia_db= null
         custom_diamond_db= null
         custom_centrifuge_db = null
-
     }
 
     contigsTaxonomy {
@@ -176,10 +170,6 @@ params {
         tigrfam = false
         cassis = false //only with fungi
     }
-
-
-
-
 }
 
 //container settings

@@ -175,25 +175,25 @@ const ProjectResult = (props) => {
             <>
               <div className="float-end edge-text-size-small">
                 <Button
+                  style={{ fontSize: 12, paddingBottom: '5px' }}
                   size="sm"
                   className="btn-pill"
                   color="ghost-primary"
                   onClick={() => setAllExpand(allExpand + 1)}
                 >
-                  {' '}
-                  expand{' '}
+                  expand
                 </Button>
-                |
+                &nbsp; | &nbsp;
                 <Button
+                  style={{ fontSize: 12, paddingBottom: '5px' }}
                   size="sm"
                   className="btn-pill"
                   color="ghost-primary"
                   onClick={() => setAllClosed(allClosed + 1)}
                 >
-                  {' '}
-                  close{' '}
+                  close
                 </Button>
-                sections&nbsp;&nbsp;
+                &nbsp; all sections &nbsp;
               </div>
               <br></br>
               <br></br>
