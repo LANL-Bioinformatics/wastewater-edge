@@ -57,6 +57,7 @@ export const components = {
   optionSelector: {
     validForm: true,
     option: '',
+    display: '',
   },
   fastqInput: {
     params: {
@@ -78,6 +79,7 @@ export const components = {
       errMessage: '',
       paired: true,
       platform: 'illumina',
+      platform_display: 'Illumina',
       fileInput: [],
       fileInput_display: [],
     },

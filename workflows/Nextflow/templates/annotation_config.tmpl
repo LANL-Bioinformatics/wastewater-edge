@@ -15,7 +15,7 @@ params {
         secondaryMetaboliteAnalysis = false
     }
 
-        outputLocations {
+    outputLocations {
         //everything in its separate output for the moment
         sra2fastqOutDir = ""
         processProvidedContigsOutDir = ""
@@ -29,9 +29,7 @@ params {
         annotationOutDir = "<%= outdir %>"
         smaOutDir = ""
         reportOutDir = "<%= outdir %>"
-
     }
-
 
     //module parameters -- passed directly into subworkflows according to best practices
     //these are the default values
@@ -97,9 +95,7 @@ params {
             ec = null
             numConsensus = null
         }
-
     }
-
     
     r2c {
         r2c_aligner = "bwa"
@@ -116,10 +112,10 @@ params {
         annotateProgram = <% if(typeof annotateProgram != "undefined") { %>"<%= annotateProgram %>"<% } else { %>"prokka"<%} %> //default
         customProtein = <% if(typeof customProtein != "undefined") { %>"<%= customProtein %>"<% } else { %>"${projectDir}/nf_assets/NO_FILE"<%} %> //setup for optional file pattern
         customHMM = <% if(typeof customHMM != "undefined") { %>"<%= customHMM %>"<% } else { %>"${projectDir}/nf_assets/NO_FILE2"<%} %>
-        sourceGBK = "<%= sourceGBK %>"
+        sourceGBK =  <% if(typeof sourceGBK != "undefined") { %>"<%= sourceGBK %>"<% } else { %>null<%} %>
         evalue = <% if(typeof evalue != "undefined") { %><%= evalue %><% } else { %>0.000000001<%} %>
         gcode = <% if(typeof gcode != "undefined") { %><%= gcode %><% } else { %>11<%} %>
-        keggView = <%= keggView %>
+        keggView =  <% if(typeof keggView != "undefined") { %><%= keggView %><% } else { %>false<%} %>
     }
 
     binning {
@@ -131,7 +127,6 @@ params {
         binningAbundFile = "${projectDir}/nf_assets/NO_FILE3"
         doCheckM = false
     }
-
 
     readsTaxonomy {
         splitTrimMinQ = 20
@@ -153,7 +148,6 @@ params {
         custom_pangia_db= null
         custom_diamond_db= null
         custom_centrifuge_db = null
-
     }
 
     contigsTaxonomy {
@@ -176,10 +170,6 @@ params {
         tigrfam = false
         cassis = false //only with fungi
     }
-
-
-
-
 }
 
 //container settings

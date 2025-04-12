@@ -29,7 +29,9 @@ export const FastqInput = (props) => {
     if (inForm.option.toLowerCase() !== 'illumina') {
       form.paired = false
     }
-    setNewState2(name, inForm.option)
+    form['platform'] = inForm.option
+    form['platform_display'] = inForm.display ? inForm.display : inForm.option
+    setDoValidation(doValidation + 1)
   }
   const setFileInput = (inForm, name) => {
     form.validForm = inForm.validForm

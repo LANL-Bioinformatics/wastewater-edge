@@ -18,4 +18,9 @@ export const workflowList = {
     category: 'metagenomics',
     info: 'Assembly workflow ...',
   },
+  annotation: {
+    label: 'Annotation',
+    category: 'metagenomics',
+    info: 'Annotation workflow ...',
+  },
 }

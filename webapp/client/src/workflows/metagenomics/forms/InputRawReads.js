@@ -10,7 +10,7 @@ import { inputRawReads } from '../defaults'
 
 export const InputRawReads = (props) => {
   const [collapseParms, setCollapseParms] = useState(false)
-  const [form, setState] = useState({ ...inputRawReads })
+  const [form] = useState({ ...inputRawReads })
   const [validInputs] = useState({ ...inputRawReads.validInputs })
   const [doValidation, setDoValidation] = useState(0)
 
@@ -20,39 +20,37 @@ export const InputRawReads = (props) => {
 
   const setOption = (inForm, name) => {
     form.inputs[name].value = inForm.option
+    form.inputs[name].display = inForm.display ? inForm.display : inForm.option
     setDoValidation(doValidation + 1)
   }
 
   const setFastqInput = (inForm, name) => {
     form.validForm = inForm.validForm
     form.inputs['seqPlatform'].value = inForm.platform
+    form.inputs['seqPlatform'].display = inForm.platform_display
     form.inputs['paired'].value = inForm.paired
     form.inputs[name].value = inForm.fileInput
     form.inputs[name].display = inForm.fileInput_display
-    if (inForm.validForm) {
-      if (validInputs[name]) {
-        validInputs[name].isValid = true
-      }
-    } else {
-      if (validInputs[name]) {
-        validInputs[name].isValid = false
-      }
+    if (validInputs[name]) {
+      validInputs[name].isValid = inForm.validForm
     }
     setDoValidation(doValidation + 1)
   }
+
   const setFileInput = (inForm, name) => {
     form.validForm = inForm.validForm
-    setState({
-      ...form,
-      fileInput: inForm.fileInput,
-      fileInput_display: inForm.fileInput_display,
-    })
+    form.inputs[name].value = inForm.fileInput
+    form.inputs[name].display = inForm.fileInput_display
+    if (validInputs[name]) {
+      validInputs[name].isValid = inForm.validForm
+    }
     setDoValidation(doValidation + 1)
   }
 
   useEffect(() => {
     if (props.source) {
       form.inputs['source'].value = props.source
+      form.inputs['source'].display = props.sourceDisplay
     }
   }, [props.source]) // eslint-disable-line react-hooks/exhaustive-deps
 
@@ -81,7 +79,7 @@ export const InputRawReads = (props) => {
     if (errors === '') {
       //files for server to caculate total input size
       let inputFiles = []
-      if (form.inputs['paired'].value) {
+      if (form.inputs['source'].value === 'fastq' && form.inputs['paired'].value) {
         form.inputs['inputFiles'].value.forEach((item) => {
           inputFiles.push(item.f1)
           inputFiles.push(item.f2)
@@ -132,6 +130,7 @@ export const InputRawReads = (props) => {
                 text={inputRawReads.inputs['source'].text}
                 tooltip={inputRawReads.inputs['source'].tooltip}
                 defaultValue={inputRawReads.inputs['source'].value}
+                display={inputRawReads.inputs['source'].display}
               />
               <br></br>
             </>
@@ -173,6 +172,7 @@ export const InputRawReads = (props) => {
                 seqPlatformText={inputRawReads.inputs['seqPlatform'].text}
                 seqPlatformTooltip={inputRawReads.inputs['seqPlatform'].tooltip}
                 seqPlatformDefaultValue={inputRawReads.inputs['seqPlatform'].value}
+                seqPlatformDisplay={inputRawReads.inputs['seqPlatform'].display}
                 pairedText={inputRawReads.inputs['paired'].text}
               />
               <br></br>
