@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from 'react'
 import { Card, CardBody, Collapse } from 'reactstrap'
 import { Header } from 'src/edge/project/forms/SectionHeader'
-import { TextInput } from 'src/edge/project/forms/TextInput'
+import { SRAAccessionInput } from 'src/edge/project/forms/SRAAccessionInput'
 import { workflows } from '../defaults'
 
 export const Sra2fastq = (props) => {
@@ -15,32 +15,10 @@ export const Sra2fastq = (props) => {
     setCollapseParms(!collapseParms)
   }
 
-  const isValidAccessions = (accessions) => {
-    if (!accessions) {
-      if (props.required) {
-        return false
-      } else {
-        return true
-      }
-    }
-    const parts = accessions.split(',')
-    for (var i = 0; i < parts.length; i++) {
-      //if(!/^[a-zA-Z]{3}[0-9]{6,9}$/.test(parts[i].trim())) {
-      if (
-        !/^(srp|erp|drp|srx|erx|drx|srs|ers|drs|srr|err|drr|sra|era|dra)[0-9]{6,9}$/i.test(
-          parts[i].trim(),
-        )
-      ) {
-        return false
-      }
-    }
-    return true
-  }
-
-  const setTextInput = (inForm, name) => {
+  const setSRAccessionInput = (inForm, name) => {
     if (inForm.validForm) {
-      form.inputs[name].value = inForm.textInput.split(/\s*(?:,|$)\s*/)
-      form.inputs[name].display = inForm.textInput
+      form.inputs[name].value = inForm.accessions
+      form.inputs[name].display = inForm.accessions_display
       if (validInputs[name]) {
         validInputs[name].isValid = true
       }
@@ -87,20 +65,7 @@ export const Sra2fastq = (props) => {
       />
       <Collapse isOpen={!collapseParms} id={'collapseParameters-' + props.name}>
         <CardBody>
-          <TextInput
-            name={'accessions'}
-            setParams={setTextInput}
-            text={workflows[workflowName].inputs['accessions'].text}
-            tooltip={workflows[workflowName].inputs['accessions']['textInput'].tooltip}
-            showError={workflows[workflowName].inputs['accessions']['textInput'].showError}
-            isOptional={workflows[workflowName].inputs['accessions']['textInput'].isOptional}
-            toUpperCase={workflows[workflowName].inputs['accessions']['textInput'].toUpperCase}
-            note={workflows[workflowName].inputs['accessions']['textInput'].note}
-            placeholder={workflows[workflowName].inputs['accessions']['textInput'].placeholder}
-            errMessage={workflows[workflowName].inputs['accessions']['textInput'].errMessage}
-            isValidTextInput={isValidAccessions}
-            reset={props.reset}
-          />
+          <SRAAccessionInput name={'accessions'} setParams={setSRAccessionInput} />
         </CardBody>
       </Collapse>
     </Card>

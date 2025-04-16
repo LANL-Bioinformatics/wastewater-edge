@@ -5,13 +5,13 @@ export const workflowOptions = [{ value: 'sra2fastq', label: workflowList['sra2f
 export const workflows = {
   sra2fastq: {
     validForm: false,
-    errMessage: 'Input error',
+    errMessage: 'SRA Accession(s) input error',
     inputs: {
       accessions: {
         text: 'SRA Accession(s)',
         value: [],
         display: '',
-        textInput: {
+        sraAccessionInput: {
           tooltip: 'Input SRA accessions (comma separate for > 1 input)',
           placeholder: 'ex: SRR1553609',
           showError: false,

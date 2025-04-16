@@ -23,4 +23,9 @@ export const workflowList = {
     category: 'metagenomics',
     info: 'Annotation workflow ...',
   },
+  binning: {
+    label: 'Binning',
+    category: 'metagenomics',
+    info: 'Binning workflow ...',
+  },
 }

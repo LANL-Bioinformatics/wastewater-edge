@@ -23,7 +23,7 @@ const Main = (props) => {
   const [sysMsg, setSysMsg] = useState()
 
   const setWorkflowParams = (params, workflowName) => {
-    //console.log('workflow:', params, workflowName)
+    // console.log('workflow:', params, workflowName)
     setSelectedWorkflows({ ...selectedWorkflows, [workflowName]: params })
     setDoValidation(doValidation + 1)
   }
@@ -58,7 +58,7 @@ const Main = (props) => {
     // set form data
     formData.workflow = myWorkflow
     formData.inputDisplay = inputDisplay
-    console.log(formData, apis.userProjects)
+    //console.log(formData, apis.userProjects)
     // submit to server via api
     postData(apis.userProjects, formData)
       .then((data) => {
@@ -171,7 +171,7 @@ const Main = (props) => {
 
       <br></br>
       <br></br>
-      <SraDataTable tableType="user" title={'My SRA Data'} {...props} />
+      <SraDataTable tableType="user" title={'My SRA Data'} update={submitting} />
     </div>
   )
 }
