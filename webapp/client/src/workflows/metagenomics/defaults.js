@@ -18,6 +18,7 @@ export const inputRawReads = {
       options: [
         { text: 'READS/FASTQ', value: 'fastq' },
         { text: 'CONTIGS/FASTA', value: 'fasta' },
+        { text: 'NCBI SRA', value: 'sra' },
       ],
     },
     seqPlatform: {
@@ -84,12 +85,16 @@ export const workflows = {
     errMessage: 'input error',
     paramsOn: true,
     files: [],
-    fastqInput: {
+    rawReadsInput: {
       text: 'READS/FASTQ',
       tooltip:
         'ReadsQC requires either paired-end Illumina data or single-end data from various sequencing platform in FASTQ format as the input; the file can be becompressed. <br/>Acceptable file formats: .fastq, .fq, .fastq.gz, .fq.gz<br />Note: The file size limit for the URL input is 10GB',
       enableInput: true,
       placeholder: 'Select a file or enter a file http(s) url',
+      sourceOptions: [
+        { text: 'READS/FASTQ', value: 'fastq' },
+        { text: 'NCBI SRA', value: 'sra' },
+      ],
       dataSources: ['upload', 'public', 'project'],
       fileTypes: ['fastq', 'fq', 'fastq.gz', 'fq.gz'],
       projectTypes: ['sra2fastq'],

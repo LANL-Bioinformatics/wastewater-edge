@@ -114,4 +114,26 @@ export const components = {
       projectDesc: null,
     },
   },
+  sraAccessionInput: {
+    params: {
+      accessions: {
+        text: 'SRA Accession(s)',
+        tooltip: 'Input SRA accessions (comma separate for > 1 input)',
+        placeholder: 'ex: SRR1553609',
+        showError: false,
+        isOptional: false,
+        toUpperCase: true,
+        errMessage: 'Invalid SRA accession(s) input',
+      },
+    },
+    validInputs: {
+      accessions: { isValid: false, error: 'Invalid SRA accession(s) input' },
+    },
+    init: {
+      validForm: false,
+      errMessage: null,
+      accessions: [],
+      accessions_display: '',
+    },
+  },
 }

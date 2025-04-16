@@ -4,6 +4,7 @@ import { isValidFileInput } from 'src/edge/common/util'
 import { HtmlText } from 'src/edge/common/HtmlText'
 import { Header } from 'src/edge/project/forms/SectionHeader'
 import { FastqInput } from 'src/edge/project/forms/FastqInput'
+import { SRAAccessionInput } from 'src/edge/project/forms/SRAAccessionInput'
 import { FileInputArray } from 'src/edge/project/forms/FileInputArray'
 import { OptionSelector } from 'src/edge/project/forms/OptionSelector'
 import { inputRawReads } from '../defaults'
@@ -47,6 +48,16 @@ export const InputRawReads = (props) => {
     setDoValidation(doValidation + 1)
   }
 
+  const setSRAccessionInput = (inForm, name) => {
+    form.validForm = inForm.validForm
+    form.inputs[name].value = inForm.accessions
+    form.inputs[name].display = inForm.accessions_display
+    if (validInputs[name]) {
+      validInputs[name].isValid = inForm.validForm
+    }
+    setDoValidation(doValidation + 1)
+    setDoValidation(doValidation + 1)
+  }
   useEffect(() => {
     if (props.source) {
       form.inputs['source'].value = props.source
@@ -126,9 +137,11 @@ export const InputRawReads = (props) => {
                 id={'source'}
                 name={'source'}
                 setParams={setOption}
-                options={inputRawReads.inputs['source'].options}
+                options={
+                  props.sourceOptions ? props.sourceOptions : inputRawReads.inputs['source'].options
+                }
                 text={inputRawReads.inputs['source'].text}
-                tooltip={inputRawReads.inputs['source'].tooltip}
+                tooltip={props.tooltip ? props.tooltip : inputRawReads.inputs['source'].tooltip}
                 defaultValue={inputRawReads.inputs['source'].value}
                 display={inputRawReads.inputs['source'].display}
               />
@@ -144,8 +157,8 @@ export const InputRawReads = (props) => {
                   props.isValidFileInput ? props.isValidFileInput : isValidFileInput
                 }
                 note={props.note}
-                text={props.text ? props.text : inputRawReads.fastqInput.text}
-                tooltip={props.tooltip ? props.tooltip : inputRawReads.fastqInput.tooltip}
+                text={!props.sourceOptions && props.text ? props.text : null}
+                tooltip={!props.sourceOptions && props.tooltip ? props.tooltip : null}
                 enableInput={
                   props.enableInput ? props.enableInput : inputRawReads.fastqInput.enableInput
                 }
@@ -212,6 +225,11 @@ export const InputRawReads = (props) => {
                 }
                 maxInput={props.maxInput ? props.maxInput : inputRawReads.fastaInput.maxInput}
               />
+            </>
+          )}
+          {form.inputs['source'].value === 'sra' && (
+            <>
+              <SRAAccessionInput name={'inputFiles'} setParams={setSRAccessionInput} />
             </>
           )}
         </CardBody>
