@@ -1,11 +1,12 @@
-import React, { useState, useEffect } from 'react'
+import React, { useEffect, useState } from 'react'
 import { useNavigate, useLocation } from 'react-router-dom'
-import ProjectSummary from '../ProjectSummary'
-import ProjectResult from '../../ProjectResult'
-import { LoaderDialog } from '../../../common/Dialogs'
-import { getData, apis } from '../../../common/util'
+import { useSelector } from 'react-redux'
+import ProjectSummary from '/src/edge/project/results/ProjectSummary'
+import { LoaderDialog } from '/src/edge/common/Dialogs'
+import { getData, apis } from '/src/edge/common/util'
+import ProjectResult from '../ProjectResult'
 
-const Public = (props) => {
+const Admin = (props) => {
   const navigate = useNavigate()
   const location = useLocation()
   const params = new URLSearchParams(location.search)
@@ -13,20 +14,25 @@ const Public = (props) => {
   const [project, setProject] = useState({})
   const [loading, setLoading] = useState(false)
   const [error, setError] = useState()
+  const user = useSelector((state) => state.user)
 
   useEffect(() => {
-    const codeParam = params.get('code')
-    if (codeParam) {
-      setCode(codeParam)
+    if (user.profile.role !== 'admin') {
+      navigate('/home')
     } else {
-      navigate('/public/projects')
+      const codeParam = params.get('code')
+      if (codeParam) {
+        setCode(codeParam)
+      } else {
+        navigate('/admin/projects')
+      }
     }
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [])
 
   useEffect(() => {
     const getProject = () => {
-      let url = `${apis.publicProjects}/${code}`
+      let url = `${apis.adminProjects}/${code}`
       getData(url)
         .then((data) => {
           setProject(data.project)
@@ -58,11 +64,11 @@ const Public = (props) => {
         <>
           <ProjectSummary project={project} />
           <br></br>
-          <ProjectResult project={project} type={'public'} />
+          <ProjectResult project={project} type={'admin'} />
         </>
       )}
     </div>
   )
 }
 
-export default Public
+export default Admin

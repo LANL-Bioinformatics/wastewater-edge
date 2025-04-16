@@ -1,12 +1,11 @@
 import React, { useEffect, useState } from 'react'
 import { useNavigate, useLocation } from 'react-router-dom'
-import { useSelector } from 'react-redux'
-import ProjectSummary from '../ProjectSummary'
-import ProjectResult from '../../ProjectResult'
-import { LoaderDialog } from '../../../common/Dialogs'
-import { getData, apis } from '../../../common/util'
+import ProjectSummary from '/src/edge/project/results/ProjectSummary'
+import { LoaderDialog } from '/src/edge/common/Dialogs'
+import { getData, apis } from '/src/edge/common/util'
+import ProjectResult from '../ProjectResult'
 
-const Admin = (props) => {
+const User = (props) => {
   const navigate = useNavigate()
   const location = useLocation()
   const params = new URLSearchParams(location.search)
@@ -14,25 +13,20 @@ const Admin = (props) => {
   const [project, setProject] = useState({})
   const [loading, setLoading] = useState(false)
   const [error, setError] = useState()
-  const user = useSelector((state) => state.user)
 
   useEffect(() => {
-    if (user.profile.role !== 'admin') {
-      navigate('/home')
+    const codeParam = params.get('code')
+    if (codeParam) {
+      setCode(codeParam)
     } else {
-      const codeParam = params.get('code')
-      if (codeParam) {
-        setCode(codeParam)
-      } else {
-        navigate('/admin/projects')
-      }
+      navigate('/user/projects')
     }
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [])
 
   useEffect(() => {
     const getProject = () => {
-      let url = `${apis.adminProjects}/${code}`
+      let url = `${apis.userProjects}/${code}`
       getData(url)
         .then((data) => {
           setProject(data.project)
@@ -58,17 +52,19 @@ const Admin = (props) => {
           <hr />
           <p className="text-muted float-left">
             The project might be deleted or you have no permission to acces it.
+            <br></br>
+            {error}
           </p>
         </div>
       ) : (
         <>
           <ProjectSummary project={project} />
           <br></br>
-          <ProjectResult project={project} type={'admin'} />
+          <ProjectResult project={project} type={'user'} />
         </>
       )}
     </div>
   )
 }
 
-export default Admin
+export default User

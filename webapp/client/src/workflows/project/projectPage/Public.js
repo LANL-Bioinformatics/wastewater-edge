@@ -1,11 +1,11 @@
-import React, { useEffect, useState } from 'react'
+import React, { useState, useEffect } from 'react'
 import { useNavigate, useLocation } from 'react-router-dom'
-import ProjectSummary from '../ProjectSummary'
-import ProjectResult from '../../ProjectResult'
-import { LoaderDialog } from '../../../common/Dialogs'
-import { getData, apis } from '../../../common/util'
+import ProjectSummary from '/src/edge/project/results/ProjectSummary'
+import { LoaderDialog } from '/src/edge/common/Dialogs'
+import { getData, apis } from '/src/edge/common/util'
+import ProjectResult from '../ProjectResult'
 
-const User = (props) => {
+const Public = (props) => {
   const navigate = useNavigate()
   const location = useLocation()
   const params = new URLSearchParams(location.search)
@@ -19,14 +19,14 @@ const User = (props) => {
     if (codeParam) {
       setCode(codeParam)
     } else {
-      navigate('/user/projects')
+      navigate('/public/projects')
     }
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [])
 
   useEffect(() => {
     const getProject = () => {
-      let url = `${apis.userProjects}/${code}`
+      let url = `${apis.publicProjects}/${code}`
       getData(url)
         .then((data) => {
           setProject(data.project)
@@ -52,19 +52,17 @@ const User = (props) => {
           <hr />
           <p className="text-muted float-left">
             The project might be deleted or you have no permission to acces it.
-            <br></br>
-            {error}
           </p>
         </div>
       ) : (
         <>
           <ProjectSummary project={project} />
           <br></br>
-          <ProjectResult project={project} type={'user'} />
+          <ProjectResult project={project} type={'public'} />
         </>
       )}
     </div>
   )
 }
 
-export default User
+export default Public
