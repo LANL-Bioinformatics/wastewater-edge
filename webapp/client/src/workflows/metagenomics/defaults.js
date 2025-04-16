@@ -87,6 +87,7 @@ export const workflows = {
     paramsOn: true,
     files: [],
     rawReadsInput: {
+      source: 'fastq',
       text: 'READS/FASTQ',
       tooltip:
         'ReadsQC requires either paired-end Illumina data or single-end data from various sequencing platform in FASTQ format as the input; the file can be becompressed. <br/>Acceptable file name extensions: .fastq, .fq, .fastq.gz, .fq.gz<br />Note: The file size limit for the URL input is 10GB',
@@ -254,7 +255,8 @@ export const workflows = {
     errMessage: 'input error',
     paramsOn: true,
     files: [],
-    fastqInput: {
+    rawReadsInput: {
+      source: 'fastq',
       text: 'READS/FASTQ',
       tooltip:
         'Assembly requires either paired-end Illumina data or single-end data from various sequencing platform in FASTQ format as the input; the file can be becompressed. <br/>Acceptable file name extensions: .fastq, .fq, .fastq.gz, .fq.gz<br />Note: The file size limit for the URL input is 10GB',
@@ -628,7 +630,8 @@ export const workflows = {
     errMessage: 'input error',
     paramsOn: true,
     files: [],
-    fastaInput: {
+    rawReadsInput: {
+      source: 'fasta',
       text: 'CONTIGS/FASTA',
       enableInput: true,
       placeholder: 'Select a file or enter a file http(s) url',
@@ -828,7 +831,8 @@ export const workflows = {
     errMessage: 'input error',
     paramsOn: true,
     files: [],
-    fastaInput: {
+    rawReadsInput: {
+      source: 'fasta',
       text: 'CONTIGS/FASTA',
       enableInput: true,
       placeholder: 'Select a file or enter a file http(s) url',
