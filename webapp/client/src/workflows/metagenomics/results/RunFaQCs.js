@@ -2,9 +2,11 @@ import React, { useState, useEffect } from 'react'
 import { Card, CardBody, Collapse } from 'reactstrap'
 import { StatsTable } from 'src/edge/common/Tables'
 import { Header } from 'src/edge/project/results/CardHeader'
+import config from 'src/config'
 
 export const RunFaQCs = (props) => {
   const [collapseCard, setCollapseCard] = useState(true)
+  const url = config.APP.BASE_URI + '/projects/' + props.project.code + '/'
 
   useEffect(() => {
     if (props.allExpand > 0) {
@@ -25,14 +27,19 @@ export const RunFaQCs = (props) => {
         toggleParms={() => {
           setCollapseCard(!collapseCard)
         }}
-        title={'ReadsQC Outputs'}
+        title={'ReadsQC Result'}
         collapseParms={collapseCard}
       />
       <Collapse isOpen={!collapseCard}>
         <CardBody>
           {props.result.stats && (
             <>
-              <StatsTable data={props.result.stats} headers={['Raw Reads', 'Stats']} />
+              <a href={url + props.result.report} target="_blank" rel="noreferrer">
+                [QC Report]
+              </a>
+              <br></br>
+              <br></br>
+              <StatsTable data={props.result.stats} headers={['Reads', 'Stats']} />
             </>
           )}
         </CardBody>
