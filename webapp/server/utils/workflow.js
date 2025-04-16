@@ -101,6 +101,13 @@ const generateWorkflowResult = (proj) => {
         fs.symlinkSync(`../../../../sra/${accession}`, `${outdir}/${accession}`);
 
       });
+    } else if (projectConf.workflow.name === 'runFaQCs') {
+      let stats = null;
+      const statsJsonFile = `${outdir}/QC.stats.json`;
+      if (fs.existsSync(statsJsonFile)) {
+        stats = JSON.parse(fs.readFileSync(statsJsonFile));
+      }
+      result.stats = stats;
     }
 
     fs.writeFileSync(resultJson, JSON.stringify(result));
