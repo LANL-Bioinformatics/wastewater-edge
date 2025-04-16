@@ -4,6 +4,7 @@ export const workflowOptions = [
   { value: 'runFaQCs', label: workflowList['runFaQCs'].label },
   { value: 'assembly', label: workflowList['assembly'].label },
   { value: 'annotation', label: workflowList['annotation'].label },
+  { value: 'binning', label: workflowList['binning'].label },
 ]
 
 export const inputRawReads = {
@@ -46,7 +47,7 @@ export const inputRawReads = {
   fastqInput: {
     text: 'Fastq File',
     tooltip:
-      'Either paired-end Illumina data or single-end data from various sequencing platform in FASTQ format as the input; the file can be becompressed. <br/>Acceptable file formats: .fastq, .fq, .fastq.gz, .fq.gz<br />Note: The file size limit for the URL input is 10GB',
+      'Either paired-end Illumina data or single-end data from various sequencing platform in FASTQ format as the input; the file can be becompressed. <br/>Acceptable file name extensions: .fastq, .fq, .fastq.gz, .fq.gz<br />Note: The file size limit for the URL input is 10GB',
     enableInput: true,
     placeholder: 'Select a file or enter a file http(s) url',
     dataSources: ['upload', 'public', 'project'],
@@ -61,7 +62,7 @@ export const inputRawReads = {
   fastaInput: {
     text: 'Contig Fasta File',
     tooltip:
-      'File can be becompressed. <br/>Acceptable file formats: .fasta, .fa, .contigs, .fasta.gz, .fa.gz<br />Note: The file size limit for the URL input is 10GB',
+      'File can be becompressed. <br/>Acceptable file name extensions: .fasta, .fa, .contigs, .fasta.gz, .fa.gz<br />Note: The file size limit for the URL input is 10GB',
     enableInput: true,
     placeholder: 'Select a file or enter a file http(s) url',
     dataSources: ['upload', 'public'],
@@ -88,7 +89,7 @@ export const workflows = {
     rawReadsInput: {
       text: 'READS/FASTQ',
       tooltip:
-        'ReadsQC requires either paired-end Illumina data or single-end data from various sequencing platform in FASTQ format as the input; the file can be becompressed. <br/>Acceptable file formats: .fastq, .fq, .fastq.gz, .fq.gz<br />Note: The file size limit for the URL input is 10GB',
+        'ReadsQC requires either paired-end Illumina data or single-end data from various sequencing platform in FASTQ format as the input; the file can be becompressed. <br/>Acceptable file name extensions: .fastq, .fq, .fastq.gz, .fq.gz<br />Note: The file size limit for the URL input is 10GB',
       enableInput: true,
       placeholder: 'Select a file or enter a file http(s) url',
       sourceOptions: [
@@ -256,7 +257,7 @@ export const workflows = {
     fastqInput: {
       text: 'READS/FASTQ',
       tooltip:
-        'Assembly requires either paired-end Illumina data or single-end data from various sequencing platform in FASTQ format as the input; the file can be becompressed. <br/>Acceptable file formats: .fastq, .fq, .fastq.gz, .fq.gz<br />Note: The file size limit for the URL input is 10GB',
+        'Assembly requires either paired-end Illumina data or single-end data from various sequencing platform in FASTQ format as the input; the file can be becompressed. <br/>Acceptable file name extensions: .fastq, .fq, .fastq.gz, .fq.gz<br />Note: The file size limit for the URL input is 10GB',
       enableInput: true,
       placeholder: 'Select a file or enter a file http(s) url',
       dataSources: ['upload', 'public', 'project'],
@@ -820,6 +821,95 @@ export const workflows = {
           error: 'Annotation Source Genbank error. Invalid file input',
         },
       },
+    },
+  },
+  binning: {
+    validForm: false,
+    errMessage: 'input error',
+    paramsOn: true,
+    files: [],
+    fastaInput: {
+      text: 'CONTIGS/FASTA',
+      enableInput: true,
+      placeholder: 'Select a file or enter a file http(s) url',
+      dataSources: ['upload', 'public', 'project'],
+      fileTypes: ['fasta', 'fa', 'fna', 'contigs', 'fasta.gz', 'fa.gz', 'fna.gz', 'contigs.gz'],
+      projectTypes: ['assembly'],
+      projectScope: ['self+shared'],
+      viewFile: false,
+      isOptional: false,
+      cleanupInput: true,
+      maxInput: 1,
+    },
+    inputs: {
+      binningMinLength: {
+        text: 'Minimum Contig Length',
+        value: 1000,
+        integerInput: {
+          tooltip: 'Default:1000, range: 1 - 10000',
+          defaultValue: 1000,
+          min: 1,
+          max: 10000,
+        },
+      },
+      binningMaxItr: {
+        text: 'Maximum EM Algorithm Iteration',
+        value: 50,
+        rangeInput: { defaultValue: 50, min: 1, max: 100, step: 1 },
+      },
+      binningProb: {
+        text: 'EM Probability',
+        tooltip: 'Probability threshold for EM final classification.',
+        value: 0.9,
+        rangeInput: { defaultValue: 0.9, min: 0.1, max: 1.0, step: 0.01 },
+      },
+      binningMarkerSet: {
+        text: 'Marker Gene Sets',
+        value: 107,
+        display: 107,
+        tooltip:
+          'By default MaxBin will look for 107 marker genes present in >95% of bacteria. Alternatively you can also choose 40 marker gene sets that are universal among bacteria and archaea (Wu et al., PLoS ONE 2013). This option may be better suited for environment dominated by archaea; however it tend to split genomes into more bins. You can choose between different marker gene sets and see which one works better.',
+        options: [
+          { text: 107, value: 107 },
+          { text: 40, value: 40 },
+        ],
+      },
+      binningAbundFile: {
+        text: 'Abundance File',
+        value: null,
+        display: null,
+        fileInput: {
+          tooltip:
+            'Required when input is contig only. Please make sure that your abundance information is provided in the following format (\t stands for a tab delimiter): (contig header)\t(abundance). <br/> \
+           For example: <br/>A0001 30.89<br/>A0002 20.02<br/><br/>Note: Acceptable file name extensions: txt, tsv',
+          enableInput: true,
+          placeholder: '(Required) Select a file or enter a file http(s) url',
+          dataSources: ['upload', 'public'],
+          fileTypes: ['txt', 'tsv'],
+          viewFile: false,
+          isOptional: false,
+          cleanupInput: true,
+        },
+      },
+      doCheckM: {
+        text: 'CheckM',
+        value: false,
+        switcher: {
+          tooltip:
+            'CheckM provides functions to assess the quality of genomes recovered from isolates, single cells, or metagenomes (Binned contigs). It provides robust estimates of genome completeness and contamination by using collocated sets of genes that are ubiquitous and single-copy within a phylogenetic lineage. Memory hog warning!!! At least 32GB',
+          trueText: 'Yes',
+          falseText: 'No',
+          defaultValue: false,
+        },
+      },
+    },
+    // only for input with validation method
+    validInputs: {
+      binningMinLength: {
+        isValid: true,
+        error: 'Minimum Contig Length error. Default: 1000, range: 1 - 10000',
+      },
+      binningAbundFile: { isValid: false, error: 'Abundance File input error.' },
     },
   },
 }

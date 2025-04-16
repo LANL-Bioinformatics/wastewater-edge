@@ -58,7 +58,7 @@ const Main = (props) => {
     // set form data
     formData.workflow = myWorkflow
     formData.inputDisplay = inputDisplay
-    console.log(formData, apis.userProjects)
+    //console.log(formData, apis.userProjects)
     // submit to server via api
     postData(apis.userProjects, formData)
       .then((data) => {
