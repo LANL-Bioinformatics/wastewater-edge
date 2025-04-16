@@ -102,12 +102,14 @@ const generateWorkflowResult = (proj) => {
 
       });
     } else if (projectConf.workflow.name === 'runFaQCs') {
-      let stats = null;
       const statsJsonFile = `${outdir}/QC.stats.json`;
       if (fs.existsSync(statsJsonFile)) {
-        stats = JSON.parse(fs.readFileSync(statsJsonFile));
+        result.stats = JSON.parse(fs.readFileSync(statsJsonFile));
       }
-      result.stats = stats;
+      const reportFile = `${outdir}/QC_qc_report.pdf`;
+      if (fs.existsSync(reportFile)) {
+        result.report = `${workflowList[projectConf.workflow.name].outdir}/QC_qc_report.pdf`;
+      }
     }
 
     fs.writeFileSync(resultJson, JSON.stringify(result));
