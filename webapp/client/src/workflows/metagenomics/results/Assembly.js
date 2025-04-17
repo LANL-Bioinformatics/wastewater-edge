@@ -4,7 +4,7 @@ import { StatsTable } from 'src/edge/common/Tables'
 import { Header } from 'src/edge/project/results/CardHeader'
 import config from 'src/config'
 
-export const RunFaQCs = (props) => {
+export const Assembly = (props) => {
   const [collapseCard, setCollapseCard] = useState(true)
   const url = config.APP.BASE_URI + '/projects/' + props.project.code + '/'
 
@@ -27,7 +27,7 @@ export const RunFaQCs = (props) => {
         toggleParms={() => {
           setCollapseCard(!collapseCard)
         }}
-        title={'ReadsQC Result'}
+        title={'Assembly Result'}
         collapseParms={collapseCard}
       />
       <Collapse isOpen={!collapseCard}>
@@ -35,7 +35,7 @@ export const RunFaQCs = (props) => {
           {props.result.report && (
             <>
               <a href={url + props.result.report} target="_blank" rel="noreferrer">
-                [QC Report]
+                [Assembly Report]
               </a>
               <br></br>
               <br></br>
@@ -43,7 +43,7 @@ export const RunFaQCs = (props) => {
           )}
           {props.result.stats && (
             <>
-              <StatsTable data={props.result.stats} headers={[]} />
+              <StatsTable data={props.result.stats[0]} headers={[]} />
             </>
           )}
         </CardBody>
