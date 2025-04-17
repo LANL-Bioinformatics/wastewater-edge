@@ -5,6 +5,7 @@ import { getData, fetchFile, apis } from '/src/edge/common/util'
 import ProjectGeneral from '/src/edge/project/results/ProjectGeneral'
 import ProjectOutputs from '/src/edge/project/results/ProjectOutputs'
 import { RunFaQCs } from '../metagenomics/results/RunFaQCs'
+import { Assembly } from '../metagenomics/results/Assembly'
 
 const ProjectResult = (props) => {
   const [project, setProject] = useState()
@@ -215,7 +216,15 @@ const ProjectResult = (props) => {
                 <RunFaQCs
                   result={result}
                   project={project}
-                  title={props.project.type + ' Result'}
+                  userType={type}
+                  allExpand={allExpand}
+                  allClosed={allClosed}
+                />
+              )}
+              {project.type === 'assembly' && (
+                <Assembly
+                  result={result}
+                  project={project}
                   userType={type}
                   allExpand={allExpand}
                   allClosed={allClosed}

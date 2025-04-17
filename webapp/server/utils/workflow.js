@@ -1,5 +1,6 @@
 const path = require('path');
 const fs = require('fs');
+const Papa = require('papaparse');
 const Upload = require('../edge-api/models/upload');
 const config = require('../config');
 
@@ -106,9 +107,18 @@ const generateWorkflowResult = (proj) => {
       if (fs.existsSync(statsJsonFile)) {
         result.stats = JSON.parse(fs.readFileSync(statsJsonFile));
       }
-      const reportFile = `${outdir}/QC_qc_report.pdf`;
+      const reportFile = `${outdir}/final_report.pdf`;
       if (fs.existsSync(reportFile)) {
-        result.report = `${workflowList[projectConf.workflow.name].outdir}/QC_qc_report.pdf`;
+        result.report = `${workflowList[projectConf.workflow.name].outdir}/final_report.pdf`;
+      }
+    } else if (projectConf.workflow.name === 'assembly') {
+      const statsFile = `${outdir}/contigs_stats.txt`;
+      if (fs.existsSync(statsFile)) {
+        result.stats = Papa.parse(fs.readFileSync(statsFile).toString(), { delimiter: '\t', header: true, skipEmptyLines: true }).data;
+      }
+      const reportFile = `${outdir}/final_report.pdf`;
+      if (fs.existsSync(reportFile)) {
+        result.report = `${workflowList[projectConf.workflow.name].outdir}/final_report.pdf`;
       }
     }
 
