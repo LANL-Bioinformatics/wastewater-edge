@@ -28,4 +28,9 @@ export const workflowList = {
     category: 'metagenomics',
     info: 'Binning workflow ...',
   },
+  antiSmash: {
+    label: 'AntiSmash',
+    category: 'metagenomics',
+    info: 'Secondary Metabolite Analysis ',
+  },
 }

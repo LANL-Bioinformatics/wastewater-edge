@@ -16,6 +16,7 @@ import { Assembly } from './forms/Assembly'
 import { Annotation } from './forms/Annotation'
 import { Binning } from './forms/Binning'
 import { workflowOptions, workflows } from './defaults'
+import { AntiSmash } from './forms/AntiSmash'
 
 const Main = (props) => {
   const navigate = useNavigate()
@@ -428,6 +429,45 @@ const Main = (props) => {
                 allClosed={allClosed}
               />
               <Binning
+                name={workflow}
+                full_name={workflow}
+                setParams={setWorkflowParams}
+                isValid={
+                  selectedWorkflows[workflow] ? selectedWorkflows[workflow].validForm : false
+                }
+                errMessage={
+                  selectedWorkflows[workflow] ? selectedWorkflows[workflow].errMessage : null
+                }
+                allExpand={allExpand}
+                allClosed={allClosed}
+              />
+            </>
+          )}
+          {workflow === 'antiSmash' && (
+            <>
+              <InputRawReads
+                setParams={setRawData}
+                isValidFileInput={isValidFileInput}
+                source={workflows[workflow]['rawReadsInput'].source}
+                sourceDisplay={workflows[workflow]['rawReadsInput'].text}
+                text={workflows[workflow]['rawReadsInput'].text}
+                tooltip={workflows[workflow]['rawReadsInput'].tooltip}
+                enableInput={workflows[workflow]['rawReadsInput'].enableInput}
+                placeholder={workflows[workflow]['rawReadsInput'].placeholder}
+                dataSources={workflows[workflow]['rawReadsInput'].dataSources}
+                fileTypes={workflows[workflow]['rawReadsInput'].fileTypes}
+                projectTypes={workflows[workflow]['rawReadsInput'].projectTypes}
+                projectScope={workflows[workflow]['rawReadsInput'].projectScope}
+                viewFile={workflows[workflow]['rawReadsInput'].viewFile}
+                isOptional={workflows[workflow]['rawReadsInput'].isOptional}
+                cleanupInput={workflows[workflow]['rawReadsInput'].cleanupInput}
+                maxInput={workflows[workflow]['rawReadsInput'].maxInput}
+                isValid={rawDataParams ? rawDataParams.validForm : false}
+                errMessage={rawDataParams ? rawDataParams.errMessage : null}
+                allExpand={allExpand}
+                allClosed={allClosed}
+              />
+              <AntiSmash
                 name={workflow}
                 full_name={workflow}
                 setParams={setWorkflowParams}

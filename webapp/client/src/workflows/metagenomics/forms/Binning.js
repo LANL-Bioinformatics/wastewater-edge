@@ -1,12 +1,11 @@
 import React, { useState, useEffect } from 'react'
 import { Card, CardBody, Collapse } from 'reactstrap'
-import { isValidFileInput, isValidEvalue } from 'src/edge/common/util'
+import { isValidFileInput } from 'src/edge/common/util'
 import { Header } from 'src/edge/project/forms/SectionHeader'
 import { FileInput } from 'src/edge/project/forms/FileInput'
 import { IntegerInput } from 'src/edge/project/forms/IntegerInput'
 import { OptionSelector } from 'src/edge/project/forms/OptionSelector'
 import { RangeInput } from 'src/edge/project/forms/RangeInput'
-import { TextInput } from 'src/edge/project/forms/TextInput'
 import { Switcher } from 'src/edge/project/forms/Switcher'
 import { workflows } from '../defaults'
 

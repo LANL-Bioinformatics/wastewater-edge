@@ -5,6 +5,7 @@ export const workflowOptions = [
   { value: 'assembly', label: workflowList['assembly'].label },
   { value: 'annotation', label: workflowList['annotation'].label },
   { value: 'binning', label: workflowList['binning'].label },
+  { value: 'antiSmash', label: workflowList['antiSmash'].label },
 ]
 
 export const inputRawReads = {
@@ -865,5 +866,143 @@ export const workflows = {
       },
       binningAbundFile: { isValid: false, error: 'Abundance File input error.' },
     },
+  },
+  antiSmash: {
+    validForm: true,
+    errMessage: 'input error',
+    paramsOn: true,
+    files: [],
+    rawReadsInput: {
+      source: 'fasta',
+      text: 'CONTIGS/FASTA',
+      enableInput: true,
+      placeholder: 'Select a file or enter a file http(s) url',
+      dataSources: ['upload', 'public', 'project'],
+      fileTypes: ['fasta', 'fa', 'fna', 'contigs', 'gb', 'gbk', 'genbank'],
+      projectTypes: ['assembly', 'annotation'],
+      projectScope: ['self+shared'],
+      viewFile: false,
+      isOptional: false,
+      cleanupInput: true,
+      maxInput: 1,
+    },
+    inputs: {
+      smaTaxon: {
+        text: 'Taxon',
+        value: 'bacteria',
+        display: 'bacteria',
+        tooltip:
+          'EDGE use antiSMASH v6.1.1 for the rapid genome-wide identification, annotation and analysis of secondary metabolite biosynthesis gene clusters in bacterial and fungal genomes.',
+        options: [
+          { text: 'bacteria', value: 'bacteria' },
+          { text: 'fungi', value: 'fungi' },
+        ],
+      },
+      knownclusterblast: {
+        text: 'Known ClusterBlast',
+        value: true,
+        switcher: {
+          tooltip:
+            'Compare identified clusters against known gene clusters from the MIBiG database.',
+          trueText: 'On',
+          falseText: 'Off',
+          defaultValue: true,
+        },
+      },
+      subclusterblast: {
+        text: 'Sub ClusterBlast',
+        value: true,
+        switcher: {
+          tooltip:
+            'Compare identified clusters against known subclusters responsible for synthesising precursors.',
+          trueText: 'On',
+          falseText: 'Off',
+          defaultValue: true,
+        },
+      },
+      clusterblast: {
+        text: 'ClusterBlast',
+        value: false,
+        switcher: {
+          tooltip:
+            'Compare identified clusters against a database of antiSMASH-predicted clusters.',
+          trueText: 'On',
+          falseText: 'Off',
+          defaultValue: false,
+        },
+      },
+      mibig: {
+        text: 'MIBiG cluster comparison',
+        value: false,
+        switcher: {
+          tooltip: 'Run a comparison against the MIBiG dataset.',
+          trueText: 'On',
+          falseText: 'Off',
+          defaultValue: false,
+        },
+      },
+      fullhmm: {
+        text: 'Cluster Pfam analysis',
+        value: false,
+        switcher: {
+          tooltip: 'Run a whole-genome HMMer analysis.',
+          trueText: 'On',
+          falseText: 'Off',
+          defaultValue: false,
+        },
+      },
+      pfam2go: {
+        text: 'Pfam-based GO term annotation',
+        value: false,
+        switcher: {
+          tooltip: 'Run Pfam to Gene Ontology mapping module.',
+          trueText: 'On',
+          falseText: 'Off',
+          defaultValue: false,
+        },
+      },
+      asf: {
+        text: 'Active Site Finder',
+        value: true,
+        switcher: {
+          tooltip: 'Run active site finder module.',
+          trueText: 'On',
+          falseText: 'Off',
+          defaultValue: true,
+        },
+      },
+      rre: {
+        text: 'RREFinder',
+        value: true,
+        switcher: {
+          tooltip: 'Run RREFinder precision mode on all RiPP gene clusters.',
+          trueText: 'On',
+          falseText: 'Off',
+          defaultValue: true,
+        },
+      },
+      tigrfam: {
+        text: 'TIGRFam analysis',
+        value: false,
+        switcher: {
+          tooltip: 'Annotate clusters using TIGRFam profiles.',
+          trueText: 'On',
+          falseText: 'Off',
+          defaultValue: false,
+        },
+      },
+      cassis: {
+        text: 'Cluster-border prediction based on transcription factor binding sites (CASSIS)',
+        value: false,
+        switcher: {
+          tooltip: 'Use CASSIS algorithm for cluster border prediction (fungal seqs only).',
+          trueText: 'On',
+          falseText: 'Off',
+          defaultValue: false,
+        },
+      },
+    },
+    // only for input with validation method
+    validInputs: {},
   },
 }
