@@ -16,8 +16,9 @@ const generateInputs = async (projHome, projectConf, proj) => {
   const params = {
     ...projectConf.workflow.input,
     ...projectConf.rawReads,
+    // download sra data to shared directory
+    sraOutdir: config.IO.SRA_BASE_DIR,
     inputFastq2: [],
-    outdir: `${projHome}/${workflowSettings.outdir}`,
     projOutdir: `${projHome}/${workflowSettings.outdir}`,
     project: proj.name,
     executor_config: `${config.NEXTFLOW.CONFIG_DIR}/${executorConfig}`,
@@ -40,10 +41,6 @@ const generateInputs = async (projHome, projectConf, proj) => {
     }
   }
 
-  // download sra data to shared directory
-  if (projectConf.workflow.name === 'sra2fastq') {
-    params.outdir = config.IO.SRA_BASE_DIR;
-  }
   // render input template and write to nextflow_params.json
   let inputs = ejs.render(template, params);
   if (config.NEXTFLOW.SLURM_EDGE_ROOT && config.NEXTFLOW.EDGE_ROOT) {

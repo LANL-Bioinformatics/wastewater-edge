@@ -5,8 +5,8 @@ import { components } from './defaults'
 
 export const SRAAccessionInput = (props) => {
   const componentName = 'sraAccessionInput'
-  const [form] = useState({ ...components[componentName].init })
-  const [validInputs] = useState({ ...components[componentName].validInputs })
+  const [form, setState] = useState({ ...components[componentName].init })
+  const [validInputs, setValidInputs] = useState({ ...components[componentName].validInputs })
   const [doValidation, setDoValidation] = useState(0)
 
   const setTextInput = (inForm, name) => {
@@ -77,6 +77,7 @@ export const SRAAccessionInput = (props) => {
             : components[componentName].params['accessions'].errMessage
         }
         isValidTextInput={props.isValidInput ? props.isValidInput : isValidSRAAccessionInput}
+        reset={props.reset}
       />
     </>
   )
