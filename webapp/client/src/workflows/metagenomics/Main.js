@@ -63,7 +63,13 @@ const Main = (props) => {
       desc: projectParams.projectDesc,
       type: workflow,
     }
-    if (workflow === 'annotation' || workflow === 'binning') {
+    if (rawDataParams.inputs.source.value === 'sra') {
+      formData.rawReads = {
+        source: rawDataParams.inputs.source.value,
+        accessions: rawDataParams.inputs.inputFiles.value,
+      }
+      rawDataParams.files = []
+    } else if (rawDataParams.inputs.source.value === 'fasta') {
       formData.rawReads = {
         source: rawDataParams.inputs.source.value,
         inputFasta: rawDataParams.inputs.inputFiles.value[0],
@@ -82,7 +88,11 @@ const Main = (props) => {
     // set workflow input display
     let inputDisplay = { 'Raw Reads': {} }
     inputDisplay[workflowList[workflow].label] = {}
-    if (workflow === 'annotation' || workflow === 'binning') {
+    if (rawDataParams.inputs.source.value === 'sra') {
+      inputDisplay['Raw Reads'][rawDataParams.inputs['source'].text] =
+        rawDataParams.inputs['source'].display
+      inputDisplay['Raw Reads']['SRA Accession(s)'] = rawDataParams.inputs['inputFiles'].display
+    } else if (rawDataParams.inputs.source.value === 'fasta') {
       inputDisplay['Raw Reads'][rawDataParams.inputs['source'].text] =
         rawDataParams.inputs['source'].display
       inputDisplay['Raw Reads']['Contig/Fasta File'] = rawDataParams.inputs['inputFiles'].display[0]
@@ -277,10 +287,10 @@ const Main = (props) => {
             <>
               <InputRawReads
                 setParams={setRawData}
-                //sourceOptions={workflows[workflow]['rawReadsInput'].sourceOptions}
                 isValidFileInput={isValidFileInput}
                 source={workflows[workflow]['rawReadsInput'].source}
                 sourceDisplay={workflows[workflow]['rawReadsInput'].text}
+                sourceOptions={workflows[workflow]['rawReadsInput'].sourceOptions}
                 text={workflows[workflow]['rawReadsInput'].text}
                 tooltip={workflows[workflow]['rawReadsInput'].tooltip}
                 enableInput={workflows[workflow]['rawReadsInput'].enableInput}
@@ -320,6 +330,7 @@ const Main = (props) => {
                 isValidFileInput={isValidFileInput}
                 source={workflows[workflow]['rawReadsInput'].source}
                 sourceDisplay={workflows[workflow]['rawReadsInput'].text}
+                sourceOptions={workflows[workflow]['rawReadsInput'].sourceOptions}
                 text={workflows[workflow]['rawReadsInput'].text}
                 tooltip={workflows[workflow]['rawReadsInput'].tooltip}
                 enableInput={workflows[workflow]['rawReadsInput'].enableInput}

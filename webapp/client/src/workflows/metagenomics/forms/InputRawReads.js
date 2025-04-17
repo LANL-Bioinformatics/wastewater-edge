@@ -230,6 +230,8 @@ export const InputRawReads = (props) => {
           {form.inputs['source'].value === 'sra' && (
             <>
               <SRAAccessionInput name={'inputFiles'} setParams={setSRAccessionInput} />
+              <HtmlText text={inputRawReads.sraInput.note} />
+              <br></br>
             </>
           )}
         </CardBody>

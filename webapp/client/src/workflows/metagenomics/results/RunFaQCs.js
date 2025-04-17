@@ -32,13 +32,17 @@ export const RunFaQCs = (props) => {
       />
       <Collapse isOpen={!collapseCard}>
         <CardBody>
-          {props.result.stats && (
+          {props.result.report && (
             <>
               <a href={url + props.result.report} target="_blank" rel="noreferrer">
                 [QC Report]
               </a>
               <br></br>
               <br></br>
+            </>
+          )}
+          {props.result.stats && (
+            <>
               <StatsTable data={props.result.stats} headers={['Reads', 'Stats']} />
             </>
           )}
