@@ -27,7 +27,7 @@ params {
         binningOutDir = ""
         readsTaxonomyOutDir = ""
         annotationOutDir = ""
-        smaOutDir = ""
+        smaOutDir = "<%= projOutdir %>"
         reportOutDir = "<%= projOutdir %>"
 
     }
@@ -35,13 +35,13 @@ params {
     //module parameters -- passed directly into subworkflows according to best practices
     //these are the default values
     shared {
-        inputFastq = []
-        inputFastq2 = []
-        pairedFile = false
-        inputContigs = "${projectDir}/nf_assets/NO_FILE3" //contigs provided as input to entire pipeline
-        assembledContigs = <% if(typeof inputFasta != "undefined") { %>"<%= inputFasta %>"<% } else { %>"${projectDir}/nf_assets/NO_FILE3"<%} %>
+        inputFastq = <% if(typeof inputFastq != "undefined") { %><%- JSON.stringify(inputFastq) %> %><% } else { %>[]<%} %>
+        inputFastq2 = <% if(typeof inputFastq2 != "undefined") { %><%- JSON.stringify(inputFastq2) %> %><% } else { %>[]<%} %>
+        pairedFile = <% if(typeof paired != "undefined") { %><%= paired %><% } else { %>false<%} %>
+        inputContigs = <% if(typeof inputFasta != "undefined") { %>"<%= inputFasta %>"<% } else { %>"${projectDir}/nf_assets/NO_FILE3"<%} %>
+        assembledContigs = "${projectDir}/nf_assets/NO_FILE3" //contigs provided to bypass assembly
         projName = "<%= project %>"
-        fastqSource = null
+        fastqSource = <% if(typeof seqPlatform != "undefined") { %>"<%= seqPlatform %>"<% } else { %>null<%} %>
     }
 
     sra2fastq {
