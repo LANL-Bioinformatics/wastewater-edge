@@ -29,7 +29,7 @@ export const Switcher = (props) => {
   return (
     <>
       <Row>
-        <Col md="3">
+        <Col md={props.colMd1 ? props.colMd1 : '3'}>
           {props.tooltip ? (
             <MyTooltip
               id={`switcherTooltip-${props.name}`}
@@ -44,7 +44,7 @@ export const Switcher = (props) => {
             <>{props.text}</>
           )}{' '}
         </Col>
-        <Col xs="12" md="9">
+        <Col xs="12" md={props.colMd2 ? props.colMd2 : '9'}>
           <ButtonGroup className="mr-3" aria-label="First group" size="sm">
             <Button
               color="outline-primary"

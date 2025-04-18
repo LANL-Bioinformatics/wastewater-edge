@@ -5,7 +5,7 @@ const Upload = require('../edge-api/models/upload');
 const config = require('../config');
 
 const cromwellWorkflows = [];
-const nextflowWorkflows = ['sra2fastq', 'runFaQCs', 'assembly', 'annotation', 'binning'];
+const nextflowWorkflows = ['sra2fastq', 'runFaQCs', 'assembly', 'annotation', 'binning', 'antiSmash'];
 const nextflowConfigs = {
   executor_config: {
     slurm: 'slurm.config',
@@ -48,6 +48,11 @@ const workflowList = {
     outdir: 'output/Binning',
     nextflow_main: 'main.nf',
     config_tmpl: 'binning_config.tmpl',
+  },
+  antiSmash: {
+    outdir: 'output/AntiSmash',
+    nextflow_main: 'main.nf',
+    config_tmpl: 'AntiSmash_config.tmpl',
   },
 };
 
