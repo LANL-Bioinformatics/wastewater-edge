@@ -10,6 +10,7 @@ export const SRAAccessionInput = (props) => {
   const [doValidation, setDoValidation] = useState(0)
 
   const setTextInput = (inForm, name) => {
+    form.validForm = inForm.validForm
     if (inForm.validForm) {
       form[name] = inForm.textInput.split(/\s*(?:,|$)\s*/)
       form[`${name}_display`] = inForm.textInput
