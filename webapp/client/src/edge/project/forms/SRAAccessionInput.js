@@ -27,6 +27,12 @@ export const SRAAccessionInput = (props) => {
   }
 
   useEffect(() => {
+    setState({ ...components[componentName].init })
+    setValidInputs({ ...components[componentName].validInputs })
+    setDoValidation(doValidation + 1)
+  }, [props.reset]) // eslint-disable-line react-hooks/exhaustive-deps
+
+  useEffect(() => {
     // check input errors
     let errors = ''
     Object.keys(validInputs).forEach((key) => {

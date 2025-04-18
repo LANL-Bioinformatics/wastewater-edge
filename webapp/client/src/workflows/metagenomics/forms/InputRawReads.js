@@ -14,6 +14,7 @@ export const InputRawReads = (props) => {
   const [form] = useState({ ...inputRawReads })
   const [validInputs] = useState({ ...inputRawReads.validInputs })
   const [doValidation, setDoValidation] = useState(0)
+  const [reset, setReset] = useState(0)
 
   const toggleParms = () => {
     setCollapseParms(!collapseParms)
@@ -22,6 +23,7 @@ export const InputRawReads = (props) => {
   const setOption = (inForm, name) => {
     form.inputs[name].value = inForm.option
     form.inputs[name].display = inForm.display ? inForm.display : inForm.option
+    setReset(reset + 1)
     setDoValidation(doValidation + 1)
   }
 
@@ -293,7 +295,11 @@ export const InputRawReads = (props) => {
           )}
           {form.inputs['source'].value === 'sra' && (
             <>
-              <SRAAccessionInput name={'inputFiles'} setParams={setSRAccessionInput} />
+              <SRAAccessionInput
+                name={'inputFiles'}
+                setParams={setSRAccessionInput}
+                reset={reset}
+              />
               <HtmlText text={inputRawReads.sraInput.note} />
               <br></br>
             </>
