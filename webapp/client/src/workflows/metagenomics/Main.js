@@ -44,7 +44,7 @@ const Main = (props) => {
   }
   //callback function for child component
   const setRawData = (params) => {
-    console.log('rawData:', params)
+    //console.log('rawData:', params)
     setRawDataParams(params)
     setDoValidation(doValidation + 1)
   }
