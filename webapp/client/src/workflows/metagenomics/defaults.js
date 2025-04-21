@@ -823,14 +823,12 @@ export const workflows = {
     rawReadsInput: {
       source: 'fasta',
       text: 'CONTIGS/FASTA',
-      tooltip:
-        'The binning program in EDGE is MaxBin2. MaxBin2 is a tool designed for metagenomic binning, where it clusters assembled contigs from metagenomes into genome bins based on sequence composition and abundance information. ',
       fasta: {
         enableInput: true,
         placeholder: 'Select a file or enter a file http(s) url',
         dataSources: ['upload', 'public', 'project'],
         fileTypes: ['fasta', 'fa', 'fna', 'contigs'],
-        projectTypes: ['assembly','annotation'],
+        projectTypes: ['assembly', 'annotation'],
         projectScope: ['self+shared'],
         viewFile: false,
         isOptional: false,
@@ -852,16 +850,26 @@ export const workflows = {
       binningMaxItr: {
         text: 'Maximum EM Algorithm Iteration',
         value: 50,
-        tooltip:
-          'It limits how many times MaxBin2 runs the EM refinement process. 50 is a balance between performance and quality of binning. Users can change it if you think your data needs more or fewer iterations to reach a good convergence (e.g., if you\'re using very complex or very simple datasets).',
-        rangeInput: { defaultValue: 50, min: 1, max: 100, step: 1 },
+        rangeInput: {
+          tooltip:
+            "It limits how many times MaxBin2 runs the EM refinement process. 50 is a balance between performance and quality of binning. Users can change it if you think your data needs more or fewer iterations to reach a good convergence (e.g., if you're using very complex or very simple datasets).",
+          defaultValue: 50,
+          min: 1,
+          max: 100,
+          step: 1,
+        },
       },
       binningProb: {
         text: 'EM Probability',
-        tooltip:
-          'It\'s the confidence cutoff for assigning contigs to bins. 90% ensures high-confidence assignments. A lower threshold would increase bin completeness but may reduce purity, while a higher threshold increases purity but may miss borderline contigs.',
         value: 0.9,
-        rangeInput: { defaultValue: 0.9, min: 0.1, max: 1.0, step: 0.01 },
+        rangeInput: {
+          tooltip:
+            "It's the confidence cutoff for assigning contigs to bins. 90% ensures high-confidence assignments. A lower threshold would increase bin completeness but may reduce purity, while a higher threshold increases purity but may miss borderline contigs.",
+          defaultValue: 0.9,
+          min: 0.1,
+          max: 1.0,
+          step: 0.01,
+        },
       },
       binningMarkerSet: {
         text: 'Marker Gene Sets',

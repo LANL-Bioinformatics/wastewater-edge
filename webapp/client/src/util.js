@@ -26,7 +26,7 @@ export const workflowList = {
   binning: {
     label: 'Binning',
     category: 'metagenomics',
-    info: 'Binning workflow ...',
+    info: 'The binning program in EDGE is MaxBin2. MaxBin2 is a tool designed for metagenomic binning, where it clusters assembled contigs from metagenomes into genome bins based on sequence composition and abundance information.',
   },
   antiSmash: {
     label: 'AntiSmash',

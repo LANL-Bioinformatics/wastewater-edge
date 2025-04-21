@@ -397,7 +397,7 @@ const Main = (props) => {
                 source={workflows[workflow]['rawReadsInput'].source}
                 sourceDisplay={workflows[workflow]['rawReadsInput'].text}
                 text={workflows[workflow]['rawReadsInput'].text}
-                tooltip={workflows[workflow]['rawReadsInput'].tooltip}
+                note={workflows[workflow]['rawReadsInput'].note}
                 fastaSettings={workflows[workflow]['rawReadsInput'].fasta}
                 isValid={rawDataParams ? rawDataParams.validForm : false}
                 errMessage={rawDataParams ? rawDataParams.errMessage : null}
