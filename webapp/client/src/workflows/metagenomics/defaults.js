@@ -95,7 +95,7 @@ export const inputRawReads = {
   fastaInput: {
     text: 'Contig Fasta File',
     tooltip:
-      'Acceptable file name extensions: .fasta, .fa, .contigs,<br />Note: The file size limit for the URL input is 10GB',
+      'Acceptable file name extensions: .fasta, .fa, .fna, .contigs<br />Note: The file size limit for the URL input is 10GB',
     enableInput: true,
     placeholder: 'Select a file or enter a file http(s) url',
     dataSources: ['upload', 'public'],
@@ -153,9 +153,9 @@ export const workflows = {
     inputs: {
       trimQual: {
         text: 'Trim Quality Level',
+        tooltip: 'Targets # as quality level (default 20) for trimming',
         value: 20,
         rangeInput: {
-          tooltip: 'Targets # as quality level (default 20) for trimming',
           defaultValue: 20,
           min: 0,
           max: 40,
@@ -164,9 +164,9 @@ export const workflows = {
       },
       trim5end: {
         text: "Cut #bp from 5'-end",
+        tooltip: 'Cut # bp from 5 end before quality trimming/filtering',
         value: 0,
         rangeInput: {
-          tooltip: 'Cut # bp from 5 end before quality trimming/filtering',
           defaultValue: 0,
           min: 0,
           max: 100,
@@ -175,9 +175,9 @@ export const workflows = {
       },
       trim3end: {
         text: "Cut #bp from 3'-end",
+        tooltip: 'Cut # bp from 3 end before quality trimming/filtering',
         value: 0,
         rangeInput: {
-          tooltip: 'Cut # bp from 3 end before quality trimming/filtering',
           defaultValue: 0,
           min: 0,
           max: 100,
@@ -186,9 +186,9 @@ export const workflows = {
       },
       trimAdapter: {
         text: 'Trim Adapter',
+        tooltip: 'Trim reads with illumina adapter/primers (default: No)',
         value: false,
         switcher: {
-          tooltip: 'Trim reads with illumina adapter/primers (default: No)',
           trueText: 'Yes',
           falseText: 'No',
           defaultValue: false,
@@ -196,9 +196,9 @@ export const workflows = {
       },
       trimRate: {
         text: 'Trim Adapter mismatch ratio',
+        tooltip: "Mismatch ratio of adapters' length(default : 0.2, allow 20% mismatches) ",
         value: 0.2,
         rangeInput: {
-          tooltip: "Mismatch ratio of adapters' length(default : 0.2, allow 20% mismatches) ",
           defaultValue: 0.2,
           min: 0.0,
           max: 1.0,
@@ -207,9 +207,9 @@ export const workflows = {
       },
       trimPolyA: {
         text: 'Trim polyA',
+        tooltip: 'Trim poly A ( > 15 )',
         value: false,
         switcher: {
-          tooltip: 'Trim poly A ( > 15 )',
           trueText: 'Yes',
           falseText: 'No',
           defaultValue: false,
@@ -217,11 +217,11 @@ export const workflows = {
       },
       artifactFile: {
         text: 'Adapter/Primer FASTA',
+        tooltip:
+          'Additional artifact (adapters/primers/contaminations) reference file in fasta format',
         value: null,
         display: null,
         fileInput: {
-          tooltip:
-            'Additional artifact (adapters/primers/contaminations) reference file in fasta format',
           enableInput: true,
           placeholder: '(Optional) Select a file or enter a file http(s) url',
           dataSources: ['upload', 'public'],
@@ -233,10 +233,10 @@ export const workflows = {
       },
       minLen: {
         text: 'Minimum Read Length',
+        tooltip:
+          'Trimmed read should have to be at least this minimum length (default:50, range: 0 - 1000)',
         value: 50,
         integerInput: {
-          tooltip:
-            'Trimmed read should have to be at least this minimum length (default:50, range: 0 - 1000)',
           defaultValue: 50,
           min: 0,
           max: 1000,
@@ -244,9 +244,9 @@ export const workflows = {
       },
       avgQual: {
         text: 'Average Quality Cutoff',
+        tooltip: 'Average quality cutoff (default:0, no filtering)',
         value: 0,
         rangeInput: {
-          tooltip: 'Average quality cutoff (default:0, no filtering)',
           defaultValue: 0,
           min: 0,
           max: 40,
@@ -255,10 +255,10 @@ export const workflows = {
       },
       numN: {
         text: '"N" Base Cutoff',
+        tooltip:
+          'Trimmed read has greater than or equal to this number of continuous base "N" will be discarded. (default: 2, "NN")',
         value: 2,
         rangeInput: {
-          tooltip:
-            'Trimmed read has greater than or equal to this number of continuous base "N" will be discarded. (default: 2, "NN")',
           defaultValue: 2,
           min: 1,
           max: 10,
@@ -267,10 +267,10 @@ export const workflows = {
       },
       filtLC: {
         text: 'Low Complexity Filter',
+        tooltip:
+          'Low complexity filter ratio, Maximum fraction of mono-/di-nucleotide sequence  (default: 0.85)',
         value: 0.85,
         rangeInput: {
-          tooltip:
-            'Low complexity filter ratio, Maximum fraction of mono-/di-nucleotide sequence  (default: 0.85)',
           defaultValue: 0.85,
           min: 0.0,
           max: 1.0,
@@ -279,9 +279,9 @@ export const workflows = {
       },
       filtPhiX: {
         text: 'Filter phiX',
+        tooltip: 'Filter phiX reads',
         value: false,
         switcher: {
-          tooltip: 'Filter phiX reads',
           trueText: 'Yes',
           falseText: 'No',
           defaultValue: false,
@@ -324,10 +324,10 @@ export const workflows = {
     inputs: {
       assembler: {
         text: 'Assembler',
-        value: 'IDBA_UD',
-        display: 'IDBA_UD',
         tooltip:
           'IDBA_UD performs well on isolates as well as metagenomes but it may not work well on very large genomes; SPAdes performs well on isolates as well as single cell data but it may not work on larger genomes, and it takes more computational resource. PacBio CLR and Oxford Nanopore reads are used for gap closure and repeat resolution.; MEGAHIT is an ultra-fast single-node solution for large and complex metagenomics assembly via succinct de Bruijn graph which achieves low memory assembly.; Unicycler is an assembly pipeline for bacterial genomes. It can assemble Illumina-only read sets where it functions as a SPAdes-optimise. For the best possible assemblies, give it both Illumina reads and long reads, and it will conduct a hybrid assembly.; LRASM is designed for long noise reads such as reads from Nanopore and it assemble fastq/fasta formatted reads using miniasm/wtdbg2/flye and use racon to perform consensus.',
+        value: 'IDBA_UD',
+        display: 'IDBA_UD',
         options: [
           { text: 'IDBA_UD', value: 'IDBA_UD' },
           { text: 'SPAdes', value: 'SPAdes' },
@@ -354,10 +354,10 @@ export const workflows = {
       },
       minContigSize: {
         text: 'Minimum Contig Length',
+        tooltip:
+          'Trimmed read should have to be at least this minimum length (default:200, range: 0 - 1000)',
         value: 200,
         integerInput: {
-          tooltip:
-            'Trimmed read should have to be at least this minimum length (default:200, range: 0 - 1000)',
           defaultValue: 200,
           min: 0,
           max: 1000,
@@ -365,10 +365,10 @@ export const workflows = {
       },
       aligner: {
         text: 'Validation Aligner',
-        value: 'bwa',
-        display: 'Bowtie 2',
         tooltip:
           'After assembly, the reads will use the aligner mapped to assembled contigs for validation.',
+        value: 'bwa',
+        display: 'Bowtie 2',
         options: [
           { text: 'Bowtie 2', value: 'bowtie2' },
           { text: 'BWA mem', value: 'bwa' },
@@ -378,14 +378,13 @@ export const workflows = {
       aligner_options: {
         text: 'Aligner Options',
         value: null,
+        tooltip:
+          'Click &nbsp;<a href="http://bowtie-bio.sourceforge.net/bowtie2/manual.shtml#usage" target="_blank" rel="noopener noreferrer">' +
+          '<span style="color:yellow;">Bowtie2</span></a> &nbsp;|&nbsp; ' +
+          '&nbsp;<a href="http://bio-bwa.sourceforge.net/bwa.shtml#3" target="_blank" rel="noopener noreferrer"><span style="color:yellow;">BWA mem</span></a> &nbsp;|&nbsp; ' +
+          '&nbsp;<a href="https://lh3.github.io/minimap2/minimap2.html" target="_blank" rel="noopener noreferrer"><span style="color:yellow;">Minimap2</span></a>&nbsp; for detail.',
         textInput: {
           placeholder: '(optional)',
-          tooltip:
-            'Click &nbsp;<a href="http://bowtie-bio.sourceforge.net/bowtie2/manual.shtml#usage" target="_blank" rel="noopener noreferrer">' +
-            '<span style="color:yellow;">Bowtie2</span></a> &nbsp;|&nbsp; ' +
-            '&nbsp;<a href="http://bio-bwa.sourceforge.net/bwa.shtml#3" target="_blank" rel="noopener noreferrer"><span style="color:yellow;">BWA mem</span></a> &nbsp;|&nbsp; ' +
-            '&nbsp;<a href="https://lh3.github.io/minimap2/minimap2.html" target="_blank" rel="noopener noreferrer"><span style="color:yellow;">Minimap2</span></a>&nbsp; for detail.',
-
           showError: false,
           isOptional: true,
           showErrorTooltip: true,
@@ -438,8 +437,6 @@ export const workflows = {
       SPAdes: {
         spades_algorithm: {
           text: 'Algorithm',
-          value: 'default',
-          display: 'Default',
           tooltip:
             '<table border="1"><tbody>' +
             '<tr><th>Algorithm</th><th>Targeting applications</th></tr>' +
@@ -454,6 +451,8 @@ export const workflows = {
             '<tr><td>Metaplasmid</td><td>plasmid detection in metagenomic datasets</td></tr>' +
             '<tr><td>RNA viral</td><td>virus assembly module from RNA-Seq data</td></tr>' +
             '</tbody></table>',
+          value: 'default',
+          display: 'Default',
           options: [
             { value: 'default', label: 'Default' },
             { value: 'singlecell', label: 'Single-cell (MDA)' },
@@ -499,8 +498,6 @@ export const workflows = {
       MEGAHIT: {
         megahit_preset: {
           text: 'Preset',
-          value: 'meta',
-          display: 'meta',
           tooltip:
             '<table border="1"><tbody>' +
             '<tr><th>Presets</th><th>Targeting applications</th></tr>' +
@@ -508,6 +505,8 @@ export const workflows = {
             '<tr><td>meta-sensitive</td><td>More sensitive metagenome assembly, but slower</td></tr>' +
             '<tr><td>meta-large</td><td>Large and complex metagenome assembly, such as soil</td></tr>' +
             '</tbody></table>',
+          value: 'meta',
+          display: 'meta',
           options: [
             { value: 'meta', label: 'meta' },
             { value: 'meta-sensitive', label: 'meta-sensitive' },
@@ -518,10 +517,10 @@ export const workflows = {
       UniCycler: {
         Unicycler_bridgingMode: {
           text: 'Bridging Mode',
-          value: 'normal',
-          display: 'Normal',
           tooltip:
             'Normal = moderate contig size and misassembly rate; Conservative = smaller contigs, lowest misassembly rate; Bold = longest contigs, higher misassembly rate.',
+          value: 'normal',
+          display: 'Normal',
           options: [
             { text: 'Normal', value: 'normal' },
             { text: 'Conservative', value: 'conservative' },
@@ -544,9 +543,9 @@ export const workflows = {
         },
         Unicycler_minLongReads: {
           text: 'Minimum Long Reads Cutoff (bp)',
+          tooltip: 'Default:2000, range: 1 - 10000',
           value: 2000,
           integerInput: {
-            tooltip: 'Default:2000, range: 1 - 10000',
             defaultValue: 2000,
             min: 1,
             max: 10000,
@@ -556,8 +555,6 @@ export const workflows = {
       LRASM: {
         Lrasm_algorithm: {
           text: 'Algorithm',
-          value: 'flye',
-          display: 'flye',
           tooltip:
             '<a href="https://www.ncbi.nlm.nih.gov/pubmed/27153593" target="_blank" rel="noopener noreferrer"><span style="color:yellow;">miniasm</span></a> ' +
             'is a fast OLC-based de novo assembler for noisy long reads. It takes all-vs-all read self-mappings ' +
@@ -568,7 +565,8 @@ export const workflows = {
             '<a href="https://github.com/mikolmogorov/Flye" target="_blank" rel="noopener noreferrer"><span style="color:yellow;">Flye</span></a> is ' +
             'a de novo assembler for single molecule sequencing reads, such as those produced by PacBio and Oxford Nanopore Technologies. ' +
             'It is designed for a wide range of datasets, from small bacterial projects to large mammalian-scale assemblies. metaFlye is a special mode of Flye for metagenome assembly.',
-
+          value: 'flye',
+          display: 'flye',
           options: [
             { text: 'minasm', value: 'minasm' },
             { text: 'wtdbg2', value: 'wtdbg2' },
@@ -578,10 +576,10 @@ export const workflows = {
         },
         Lrasm_ec: {
           text: 'Error Correction',
+          tooltip:
+            'Reads Error-correction by racon using all-vs-all pairwise overlaps between reads including dual overlaps. This step is computationally intensive in terms of memory and time usage.',
           value: false,
           switcher: {
-            tooltip:
-              'Reads Error-correction by racon using all-vs-all pairwise overlaps between reads including dual overlaps. This step is computationally intensive in terms of memory and time usage.',
             trueText: 'Yes',
             falseText: 'No',
             defaultValue: false,
@@ -660,9 +658,9 @@ export const workflows = {
     inputs: {
       minContigSize: {
         text: 'Minimum Contig Length',
+        tooltip: 'Default:700, range: 1 - 10000',
         value: 700,
         integerInput: {
-          tooltip: 'Default:700, range: 1 - 10000',
           defaultValue: 700,
           min: 1,
           max: 10000,
@@ -670,10 +668,10 @@ export const workflows = {
       },
       annotateProgram: {
         text: 'Annotation Tool',
-        value: 'prokka',
-        display: 'Prokka',
         tooltip:
           'Prokka is ab initio annotation tool. RATT will transfer the annotation from the provided closest relatvie genome annotation.',
+        value: 'prokka',
+        display: 'Prokka',
         options: [
           { text: 'Prokka', value: 'prokka' },
           { text: 'RATT', value: 'ratt' },
@@ -684,10 +682,10 @@ export const workflows = {
       prokka: {
         taxKingdom: {
           text: 'Specify Kingdom',
-          value: 'bacteria',
-          display: 'Bacteria',
           tooltip:
             'Please choose the genome type you would like to annotate for Prokka to do genome annotation.',
+          value: 'bacteria',
+          display: 'Bacteria',
           options: [
             { text: 'Archaea', value: 'archaea' },
             { text: 'Bacteria', value: 'bacteria' },
@@ -705,10 +703,10 @@ export const workflows = {
         },
         gcode: {
           text: 'Genetic Code',
+          tooltip:
+            'The genetic code will change according to the kingdom selected. Default is 11. 1 for viruses, 5 fro mitochondria. Or you can specify it here.',
           value: 11,
           rangeInput: {
-            tooltip:
-              'The genetic code will change according to the kingdom selected. Default is 11. 1 for viruses, 5 fro mitochondria. Or you can specify it here.',
             defaultValue: 11,
             min: 1,
             max: 33,
@@ -717,10 +715,10 @@ export const workflows = {
         },
         customProtein: {
           text: 'Protein FASTA/GenBank for Prokka',
+          tooltip: 'Protein FASTA or GBK file to use as 1st priority annoation sources',
           value: null,
           display: null,
           fileInput: {
-            tooltip: 'Protein FASTA or GBK file to use as 1st priority annoation sources',
             enableInput: true,
             placeholder: '(Optional) Select a file or enter a file http(s) url',
             dataSources: ['upload', 'public'],
@@ -732,10 +730,10 @@ export const workflows = {
         },
         customHMM: {
           text: 'Trusted HMM for Prokka',
+          tooltip: 'Trusted HMM to first annotate from',
           value: null,
           display: null,
           fileInput: {
-            tooltip: 'Trusted HMM to first annotate from',
             enableInput: true,
             placeholder: '(Optional) Select a file or enter a file http(s) url',
             dataSources: ['upload', 'public'],
@@ -750,7 +748,6 @@ export const workflows = {
           value: '1e-09',
           textInput: {
             placeholder: '(required)',
-            tooltip: null,
             showError: false,
             isOptional: false,
             showErrorTooltip: true,
@@ -760,9 +757,9 @@ export const workflows = {
         },
         keggView: {
           text: 'KEGG Pathway View',
+          tooltip: 'Visualize Prokka annotation in KEGG map. Need Internet Connection',
           value: true,
           switcher: {
-            tooltip: 'Visualize Prokka annotation in KEGG map. Need Internet Connection',
             trueText: 'Yes',
             falseText: 'No',
             defaultValue: true,
@@ -772,11 +769,11 @@ export const workflows = {
       ratt: {
         sourceGBK: {
           text: 'Annotation Source Genbank',
+          tooltip:
+            'Please provide the reference/source annotation (Genbank file), EDGE will use RATT to transfer the annotation from the reference genome. The reference genome must be close relative to the sample.',
           value: null,
           display: null,
           fileInput: {
-            tooltip:
-              'Please provide the reference/source annotation (Genbank file), EDGE will use RATT to transfer the annotation from the reference genome. The reference genome must be close relative to the sample.',
             enableInput: true,
             placeholder: '(Required) Select a file or enter a file http(s) url',
             dataSources: ['upload', 'public'],
@@ -839,9 +836,9 @@ export const workflows = {
     inputs: {
       binningMinLength: {
         text: 'Minimum Contig Length',
+        tooltip: 'Default:1000, range: 1 - 10000',
         value: 1000,
         integerInput: {
-          tooltip: 'Default:1000, range: 1 - 10000',
           defaultValue: 1000,
           min: 1,
           max: 10000,
@@ -849,10 +846,10 @@ export const workflows = {
       },
       binningMaxItr: {
         text: 'Maximum EM Algorithm Iteration',
+        tooltip:
+          "It limits how many times MaxBin2 runs the EM refinement process. 50 is a balance between performance and quality of binning. Users can change it if you think your data needs more or fewer iterations to reach a good convergence (e.g., if you're using very complex or very simple datasets).",
         value: 50,
         rangeInput: {
-          tooltip:
-            "It limits how many times MaxBin2 runs the EM refinement process. 50 is a balance between performance and quality of binning. Users can change it if you think your data needs more or fewer iterations to reach a good convergence (e.g., if you're using very complex or very simple datasets).",
           defaultValue: 50,
           min: 1,
           max: 100,
@@ -861,10 +858,10 @@ export const workflows = {
       },
       binningProb: {
         text: 'EM Probability',
+        tooltip:
+          "It's the confidence cutoff for assigning contigs to bins. 90% ensures high-confidence assignments. A lower threshold would increase bin completeness but may reduce purity, while a higher threshold increases purity but may miss borderline contigs.",
         value: 0.9,
         rangeInput: {
-          tooltip:
-            "It's the confidence cutoff for assigning contigs to bins. 90% ensures high-confidence assignments. A lower threshold would increase bin completeness but may reduce purity, while a higher threshold increases purity but may miss borderline contigs.",
           defaultValue: 0.9,
           min: 0.1,
           max: 1.0,
@@ -873,10 +870,10 @@ export const workflows = {
       },
       binningMarkerSet: {
         text: 'Marker Gene Sets',
-        value: 107,
-        display: 107,
         tooltip:
           'By default MaxBin will look for 107 marker genes present in >95% of bacteria. Alternatively you can also choose 40 marker gene sets that are universal among bacteria and archaea (Wu et al., PLoS ONE 2013). This option may be better suited for environment dominated by archaea; however it tend to split genomes into more bins. You can choose between different marker gene sets and see which one works better.',
+        value: 107,
+        display: 107,
         options: [
           { text: 107, value: 107 },
           { text: 40, value: 40 },
@@ -884,12 +881,12 @@ export const workflows = {
       },
       binningAbundFile: {
         text: 'Abundance File',
+        tooltip:
+          'Required when input is contig only. Please make sure that your abundance information is provided in the following format (\t stands for a tab delimiter): (contig header)\t(abundance). <br/> \
+           For example: <br/>A0001 30.89<br/>A0002 20.02<br/><br/>Note: Acceptable file name extensions: txt, tsv',
         value: null,
         display: null,
         fileInput: {
-          tooltip:
-            'Required when input is contig only. Please make sure that your abundance information is provided in the following format (\t stands for a tab delimiter): (contig header)\t(abundance). <br/> \
-           For example: <br/>A0001 30.89<br/>A0002 20.02<br/><br/>Note: Acceptable file name extensions: txt, tsv',
           enableInput: true,
           placeholder: '(Required) Select a file or enter a file http(s) url',
           dataSources: ['upload', 'public'],
@@ -901,10 +898,10 @@ export const workflows = {
       },
       doCheckM: {
         text: 'CheckM',
+        tooltip:
+          'CheckM provides functions to assess the quality of genomes recovered from isolates, single cells, or metagenomes (Binned contigs). It provides robust estimates of genome completeness and contamination by using collocated sets of genes that are ubiquitous and single-copy within a phylogenetic lineage. Memory hog warning!!! At least 32GB',
         value: false,
         switcher: {
-          tooltip:
-            'CheckM provides functions to assess the quality of genomes recovered from isolates, single cells, or metagenomes (Binned contigs). It provides robust estimates of genome completeness and contamination by using collocated sets of genes that are ubiquitous and single-copy within a phylogenetic lineage. Memory hog warning!!! At least 32GB',
           trueText: 'Yes',
           falseText: 'No',
           defaultValue: false,
@@ -929,6 +926,9 @@ export const workflows = {
       source: 'fasta',
       text: 'CONTIGS/FASTA',
       fasta: {
+        text: 'Contig Fasta File',
+        tooltip:
+          'Acceptable file name extensions: .fasta, .fa, .fna, .contigs, .gb, .gbk, .genbank<br />Note: The file size limit for the URL input is 10GB',
         enableInput: true,
         placeholder: 'Select a file or enter a file http(s) url',
         dataSources: ['upload', 'public', 'project'],
@@ -944,10 +944,10 @@ export const workflows = {
     inputs: {
       smaTaxon: {
         text: 'Taxon',
-        value: 'bacteria',
-        display: 'bacteria',
         tooltip:
           'EDGE use antiSMASH v6.1.1 for the rapid genome-wide identification, annotation and analysis of secondary metabolite biosynthesis gene clusters in bacterial and fungal genomes.',
+        value: 'bacteria',
+        display: 'bacteria',
         options: [
           { text: 'bacteria', value: 'bacteria' },
           { text: 'fungi', value: 'fungi' },
@@ -955,10 +955,9 @@ export const workflows = {
       },
       knownclusterblast: {
         text: 'Known ClusterBlast',
+        tooltip: 'Compare identified clusters against known gene clusters from the MIBiG database.',
         value: true,
         switcher: {
-          tooltip:
-            'Compare identified clusters against known gene clusters from the MIBiG database.',
           trueText: 'On',
           falseText: 'Off',
           defaultValue: true,
@@ -966,10 +965,10 @@ export const workflows = {
       },
       subclusterblast: {
         text: 'Sub ClusterBlast',
+        tooltip:
+          'Compare identified clusters against known subclusters responsible for synthesising precursors.',
         value: true,
         switcher: {
-          tooltip:
-            'Compare identified clusters against known subclusters responsible for synthesising precursors.',
           trueText: 'On',
           falseText: 'Off',
           defaultValue: true,
@@ -977,10 +976,9 @@ export const workflows = {
       },
       clusterblast: {
         text: 'ClusterBlast',
+        tooltip: 'Compare identified clusters against a database of antiSMASH-predicted clusters.',
         value: false,
         switcher: {
-          tooltip:
-            'Compare identified clusters against a database of antiSMASH-predicted clusters.',
           trueText: 'On',
           falseText: 'Off',
           defaultValue: false,
@@ -988,9 +986,9 @@ export const workflows = {
       },
       mibig: {
         text: 'MIBiG cluster comparison',
+        tooltip: 'Run a comparison against the MIBiG dataset.',
         value: false,
         switcher: {
-          tooltip: 'Run a comparison against the MIBiG dataset.',
           trueText: 'On',
           falseText: 'Off',
           defaultValue: false,
@@ -998,9 +996,9 @@ export const workflows = {
       },
       fullhmm: {
         text: 'Cluster Pfam analysis',
+        tooltip: 'Run a whole-genome HMMer analysis.',
         value: false,
         switcher: {
-          tooltip: 'Run a whole-genome HMMer analysis.',
           trueText: 'On',
           falseText: 'Off',
           defaultValue: false,
@@ -1008,9 +1006,9 @@ export const workflows = {
       },
       pfam2go: {
         text: 'Pfam-based GO term annotation',
+        tooltip: 'Run Pfam to Gene Ontology mapping module.',
         value: false,
         switcher: {
-          tooltip: 'Run Pfam to Gene Ontology mapping module.',
           trueText: 'On',
           falseText: 'Off',
           defaultValue: false,
@@ -1018,9 +1016,9 @@ export const workflows = {
       },
       asf: {
         text: 'Active Site Finder',
+        tooltip: 'Run active site finder module.',
         value: true,
         switcher: {
-          tooltip: 'Run active site finder module.',
           trueText: 'On',
           falseText: 'Off',
           defaultValue: true,
@@ -1028,9 +1026,9 @@ export const workflows = {
       },
       rre: {
         text: 'RREFinder',
+        tooltip: 'Run RREFinder precision mode on all RiPP gene clusters.',
         value: true,
         switcher: {
-          tooltip: 'Run RREFinder precision mode on all RiPP gene clusters.',
           trueText: 'On',
           falseText: 'Off',
           defaultValue: true,
@@ -1038,9 +1036,9 @@ export const workflows = {
       },
       tigrfam: {
         text: 'TIGRFam analysis',
+        tooltip: 'Annotate clusters using TIGRFam profiles.',
         value: false,
         switcher: {
-          tooltip: 'Annotate clusters using TIGRFam profiles.',
           trueText: 'On',
           falseText: 'Off',
           defaultValue: false,
@@ -1048,9 +1046,9 @@ export const workflows = {
       },
       cassis: {
         text: 'Cluster-border prediction based on transcription factor binding sites (CASSIS)',
+        tooltip: 'Use CASSIS algorithm for cluster border prediction (fungal seqs only).',
         value: false,
         switcher: {
-          tooltip: 'Use CASSIS algorithm for cluster border prediction (fungal seqs only).',
           trueText: 'On',
           falseText: 'Off',
           defaultValue: false,
@@ -1095,10 +1093,10 @@ export const workflows = {
     inputs: {
       contigTax: {
         text: 'Contigs Classification',
+        tooltip:
+          'EDGE will map contigs to NCBI genomes using minimap2 and make a taxonomic inference for each contig.',
         value: true,
         switcher: {
-          tooltip:
-            'EDGE will map contigs to NCBI genomes using minimap2 and make a taxonomic inference for each contig.',
           trueText: 'Yes',
           falseText: 'No',
           defaultValue: true,
@@ -1112,6 +1110,10 @@ export const workflows = {
       },
       enabledTools: {
         text: 'Classification Tools',
+        tooltip:
+          'EDGE uses multiple tools for taxonomy classification including GOTTCHA (bacterial & viral databases), ' +
+          'MetaPhlAn4, Kraken and reads mapping to NCBI RefSeq using BWA. Each tool has its own database and you can find the taxonomy information ' +
+          'table <a href="https://lanl-bioinformatics.github.io/EDGE/docs/taxonomyDBtable.html" target="_blank" rel="noopener noreferrer"><span style="color:yellow;">[here]</span></a>',
         defaultSelections: taxClassificationOptions['classification-tools-default'],
         value: taxClassificationOptions['classification-tools-default'].map((item) => {
           return item.value
@@ -1147,16 +1149,12 @@ export const workflows = {
             options: taxClassificationOptions['Other-Tools'],
           },
         ],
-        tooltip:
-          'EDGE uses multiple tools for taxonomy classification including GOTTCHA (bacterial & viral databases), ' +
-          'MetaPhlAn4, Kraken and reads mapping to NCBI RefSeq using BWA. Each tool has its own database and you can find the taxonomy information ' +
-          'table <a href="https://lanl-bioinformatics.github.io/EDGE/docs/taxonomyDBtable.html" target="_blank" rel="noopener noreferrer"><span style="color:yellow;">[here]</span></a>',
       },
       splitTrimMinQ: {
         text: 'Splitrim Quality Level',
+        tooltip: 'Splitrim is used for GOTTCHA classification',
         value: 20,
         rangeInput: {
-          tooltip: 'Splitrim is used for GOTTCHA classification',
           defaultValue: 20,
           min: 1,
           max: 140,

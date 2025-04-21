@@ -178,9 +178,7 @@ export const Taxonomy = (props) => {
                   name={'splitTrimMinQ'}
                   setParams={setRangeInput}
                   text={workflows[workflowName].readInputs['splitTrimMinQ'].text}
-                  tooltip={
-                    workflows[workflowName].readInputs['splitTrimMinQ']['rangeInput'].tooltip
-                  }
+                  tooltip={workflows[workflowName].readInputs['splitTrimMinQ'].tooltip}
                   tooltipClickable={true}
                   defaultValue={
                     workflows[workflowName].readInputs['splitTrimMinQ']['rangeInput'].defaultValue
@@ -195,10 +193,7 @@ export const Taxonomy = (props) => {
                   setParams={setFileInput}
                   isValidFileInput={isValidFileInput}
                   text={workflows[workflowName].readInputs['custom_gottcha_genDB_b'].text}
-                  tooltip={
-                    workflows[workflowName].readInputs['custom_gottcha_genDB_b']['fileInput']
-                      .tooltip
-                  }
+                  tooltip={workflows[workflowName].readInputs['custom_gottcha_genDB_b'].tooltip}
                   enableInput={
                     workflows[workflowName].readInputs['custom_gottcha_genDB_b']['fileInput']
                       .enableInput
@@ -234,10 +229,7 @@ export const Taxonomy = (props) => {
                   setParams={setFileInput}
                   isValidFileInput={isValidFileInput}
                   text={workflows[workflowName].readInputs['custom_gottcha_speDB_b'].text}
-                  tooltip={
-                    workflows[workflowName].readInputs['custom_gottcha_speDB_b']['fileInput']
-                      .tooltip
-                  }
+                  tooltip={workflows[workflowName].readInputs['custom_gottcha_speDB_b'].tooltip}
                   enableInput={
                     workflows[workflowName].readInputs['custom_gottcha_speDB_b']['fileInput']
                       .enableInput
@@ -273,10 +265,7 @@ export const Taxonomy = (props) => {
                   setParams={setFileInput}
                   isValidFileInput={isValidFileInput}
                   text={workflows[workflowName].readInputs['custom_gottcha_strDB_b'].text}
-                  tooltip={
-                    workflows[workflowName].readInputs['custom_gottcha_strDB_b']['fileInput']
-                      .tooltip
-                  }
+                  tooltip={workflows[workflowName].readInputs['custom_gottcha_strDB_b'].tooltip}
                   enableInput={
                     workflows[workflowName].readInputs['custom_gottcha_strDB_b']['fileInput']
                       .enableInput
@@ -312,10 +301,7 @@ export const Taxonomy = (props) => {
                   setParams={setFileInput}
                   isValidFileInput={isValidFileInput}
                   text={workflows[workflowName].readInputs['custom_gottcha_genDB_v'].text}
-                  tooltip={
-                    workflows[workflowName].readInputs['custom_gottcha_genDB_v']['fileInput']
-                      .tooltip
-                  }
+                  tooltip={workflows[workflowName].readInputs['custom_gottcha_genDB_v'].tooltip}
                   enableInput={
                     workflows[workflowName].readInputs['custom_gottcha_genDB_v']['fileInput']
                       .enableInput
@@ -351,10 +337,7 @@ export const Taxonomy = (props) => {
                   setParams={setFileInput}
                   isValidFileInput={isValidFileInput}
                   text={workflows[workflowName].readInputs['custom_gottcha_speDB_v'].text}
-                  tooltip={
-                    workflows[workflowName].readInputs['custom_gottcha_speDB_v']['fileInput']
-                      .tooltip
-                  }
+                  tooltip={workflows[workflowName].readInputs['custom_gottcha_speDB_v'].tooltip}
                   enableInput={
                     workflows[workflowName].readInputs['custom_gottcha_speDB_v']['fileInput']
                       .enableInput
@@ -390,10 +373,7 @@ export const Taxonomy = (props) => {
                   setParams={setFileInput}
                   isValidFileInput={isValidFileInput}
                   text={workflows[workflowName].readInputs['custom_gottcha_strDB_v'].text}
-                  tooltip={
-                    workflows[workflowName].readInputs['custom_gottcha_strDB_v']['fileInput']
-                      .tooltip
-                  }
+                  tooltip={workflows[workflowName].readInputs['custom_gottcha_strDB_v'].tooltip}
                   enableInput={
                     workflows[workflowName].readInputs['custom_gottcha_strDB_v']['fileInput']
                       .enableInput
@@ -429,10 +409,7 @@ export const Taxonomy = (props) => {
                   setParams={setFileInput}
                   isValidFileInput={isValidFileInput}
                   text={workflows[workflowName].readInputs['custom_gottcha2_speDB_b'].text}
-                  tooltip={
-                    workflows[workflowName].readInputs['custom_gottcha2_speDB_b']['fileInput']
-                      .tooltip
-                  }
+                  tooltip={workflows[workflowName].readInputs['custom_gottcha2_speDB_b'].tooltip}
                   enableInput={
                     workflows[workflowName].readInputs['custom_gottcha2_speDB_b']['fileInput']
                       .enableInput
@@ -468,7 +445,7 @@ export const Taxonomy = (props) => {
                   setParams={setFileInput}
                   isValidFileInput={isValidFileInput}
                   text={workflows[workflowName].readInputs['custom_bwa_db'].text}
-                  tooltip={workflows[workflowName].readInputs['custom_bwa_db']['fileInput'].tooltip}
+                  tooltip={workflows[workflowName].readInputs['custom_bwa_db'].tooltip}
                   enableInput={
                     workflows[workflowName].readInputs['custom_bwa_db']['fileInput'].enableInput
                   }
@@ -497,9 +474,7 @@ export const Taxonomy = (props) => {
                   setParams={setFileInput}
                   isValidFileInput={isValidFileInput}
                   text={workflows[workflowName].readInputs['custom_metaphlan_db'].text}
-                  tooltip={
-                    workflows[workflowName].readInputs['custom_metaphlan_db']['fileInput'].tooltip
-                  }
+                  tooltip={workflows[workflowName].readInputs['custom_metaphlan_db'].tooltip}
                   enableInput={
                     workflows[workflowName].readInputs['custom_metaphlan_db']['fileInput']
                       .enableInput
@@ -533,9 +508,7 @@ export const Taxonomy = (props) => {
                   setParams={setFileInput}
                   isValidFileInput={isValidFileInput}
                   text={workflows[workflowName].readInputs['custom_kraken_db'].text}
-                  tooltip={
-                    workflows[workflowName].readInputs['custom_kraken_db']['fileInput'].tooltip
-                  }
+                  tooltip={workflows[workflowName].readInputs['custom_kraken_db'].tooltip}
                   enableInput={
                     workflows[workflowName].readInputs['custom_kraken_db']['fileInput'].enableInput
                   }
@@ -564,9 +537,7 @@ export const Taxonomy = (props) => {
                   setParams={setFileInput}
                   isValidFileInput={isValidFileInput}
                   text={workflows[workflowName].readInputs['custom_pangia_db'].text}
-                  tooltip={
-                    workflows[workflowName].readInputs['custom_pangia_db']['fileInput'].tooltip
-                  }
+                  tooltip={workflows[workflowName].readInputs['custom_pangia_db'].tooltip}
                   enableInput={
                     workflows[workflowName].readInputs['custom_pangia_db']['fileInput'].enableInput
                   }
@@ -595,9 +566,7 @@ export const Taxonomy = (props) => {
                   setParams={setFileInput}
                   isValidFileInput={isValidFileInput}
                   text={workflows[workflowName].readInputs['custom_diamond_db'].text}
-                  tooltip={
-                    workflows[workflowName].readInputs['custom_diamond_db']['fileInput'].tooltip
-                  }
+                  tooltip={workflows[workflowName].readInputs['custom_diamond_db'].tooltip}
                   enableInput={
                     workflows[workflowName].readInputs['custom_diamond_db']['fileInput'].enableInput
                   }
@@ -627,9 +596,7 @@ export const Taxonomy = (props) => {
                   setParams={setFileInput}
                   isValidFileInput={isValidFileInput}
                   text={workflows[workflowName].readInputs['custom_centrifuge_db'].text}
-                  tooltip={
-                    workflows[workflowName].readInputs['custom_centrifuge_db']['fileInput'].tooltip
-                  }
+                  tooltip={workflows[workflowName].readInputs['custom_centrifuge_db'].tooltip}
                   enableInput={
                     workflows[workflowName].readInputs['custom_centrifuge_db']['fileInput']
                       .enableInput
@@ -668,7 +635,7 @@ export const Taxonomy = (props) => {
               name={'contigTax'}
               setParams={setSwitcher}
               text={workflows[workflowName].inputs['contigTax'].text}
-              tooltip={workflows[workflowName].inputs['contigTax']['switcher'].tooltip}
+              tooltip={workflows[workflowName].inputs['contigTax'].tooltip}
               defaultValue={workflows[workflowName].inputs['contigTax']['switcher'].defaultValue}
               trueText={workflows[workflowName].inputs['contigTax']['switcher'].trueText}
               falseText={workflows[workflowName].inputs['contigTax']['switcher'].falseText}

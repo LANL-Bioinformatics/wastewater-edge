@@ -94,10 +94,10 @@ export const AntiSmash = (props) => {
             name={'smaTaxon'}
             setParams={setOption}
             text={workflows[workflowName].inputs['smaTaxon'].text}
+            tooltip={workflows[workflowName].inputs['smaTaxon'].tooltip}
             options={workflows[workflowName].inputs['smaTaxon'].options}
             defaultValue={form.inputs['smaTaxon'].value}
             display={form.inputs['smaTaxon'].display}
-            tooltip={workflows[workflowName].inputs['smaTaxon'].tooltip}
           />
           <br></br>
           <Row>
@@ -109,7 +109,7 @@ export const AntiSmash = (props) => {
                 name={'knownclusterblast'}
                 setParams={setSwitcher}
                 text={workflows[workflowName].inputs['knownclusterblast'].text}
-                tooltip={workflows[workflowName].inputs['knownclusterblast']['switcher'].tooltip}
+                tooltip={workflows[workflowName].inputs['knownclusterblast'].tooltip}
                 defaultValue={
                   workflows[workflowName].inputs['knownclusterblast']['switcher'].defaultValue
                 }
@@ -127,7 +127,7 @@ export const AntiSmash = (props) => {
                 name={'subclusterblast'}
                 setParams={setSwitcher}
                 text={workflows[workflowName].inputs['subclusterblast'].text}
-                tooltip={workflows[workflowName].inputs['subclusterblast']['switcher'].tooltip}
+                tooltip={workflows[workflowName].inputs['subclusterblast'].tooltip}
                 defaultValue={
                   workflows[workflowName].inputs['subclusterblast']['switcher'].defaultValue
                 }
@@ -146,7 +146,7 @@ export const AntiSmash = (props) => {
                 name={'clusterblast'}
                 setParams={setSwitcher}
                 text={workflows[workflowName].inputs['clusterblast'].text}
-                tooltip={workflows[workflowName].inputs['clusterblast']['switcher'].tooltip}
+                tooltip={workflows[workflowName].inputs['clusterblast'].tooltip}
                 defaultValue={
                   workflows[workflowName].inputs['clusterblast']['switcher'].defaultValue
                 }
@@ -162,7 +162,7 @@ export const AntiSmash = (props) => {
                 name={'mibig'}
                 setParams={setSwitcher}
                 text={workflows[workflowName].inputs['mibig'].text}
-                tooltip={workflows[workflowName].inputs['mibig']['switcher'].tooltip}
+                tooltip={workflows[workflowName].inputs['mibig'].tooltip}
                 defaultValue={workflows[workflowName].inputs['mibig']['switcher'].defaultValue}
                 trueText={workflows[workflowName].inputs['mibig']['switcher'].trueText}
                 falseText={workflows[workflowName].inputs['mibig']['switcher'].falseText}
@@ -179,7 +179,7 @@ export const AntiSmash = (props) => {
                 name={'fullhmm'}
                 setParams={setSwitcher}
                 text={workflows[workflowName].inputs['fullhmm'].text}
-                tooltip={workflows[workflowName].inputs['fullhmm']['switcher'].tooltip}
+                tooltip={workflows[workflowName].inputs['fullhmm'].tooltip}
                 defaultValue={workflows[workflowName].inputs['fullhmm']['switcher'].defaultValue}
                 trueText={workflows[workflowName].inputs['fullhmm']['switcher'].trueText}
                 falseText={workflows[workflowName].inputs['fullhmm']['switcher'].falseText}
@@ -193,7 +193,7 @@ export const AntiSmash = (props) => {
                 name={'pfam2go'}
                 setParams={setSwitcher}
                 text={workflows[workflowName].inputs['pfam2go'].text}
-                tooltip={workflows[workflowName].inputs['pfam2go']['switcher'].tooltip}
+                tooltip={workflows[workflowName].inputs['pfam2go'].tooltip}
                 defaultValue={workflows[workflowName].inputs['pfam2go']['switcher'].defaultValue}
                 trueText={workflows[workflowName].inputs['pfam2go']['switcher'].trueText}
                 falseText={workflows[workflowName].inputs['pfam2go']['switcher'].falseText}
@@ -210,7 +210,7 @@ export const AntiSmash = (props) => {
                 name={'asf'}
                 setParams={setSwitcher}
                 text={workflows[workflowName].inputs['asf'].text}
-                tooltip={workflows[workflowName].inputs['asf']['switcher'].tooltip}
+                tooltip={workflows[workflowName].inputs['asf'].tooltip}
                 defaultValue={workflows[workflowName].inputs['asf']['switcher'].defaultValue}
                 trueText={workflows[workflowName].inputs['asf']['switcher'].trueText}
                 falseText={workflows[workflowName].inputs['asf']['switcher'].falseText}
@@ -224,7 +224,7 @@ export const AntiSmash = (props) => {
                 name={'rre'}
                 setParams={setSwitcher}
                 text={workflows[workflowName].inputs['rre'].text}
-                tooltip={workflows[workflowName].inputs['rre']['switcher'].tooltip}
+                tooltip={workflows[workflowName].inputs['rre'].tooltip}
                 defaultValue={workflows[workflowName].inputs['rre']['switcher'].defaultValue}
                 trueText={workflows[workflowName].inputs['rre']['switcher'].trueText}
                 falseText={workflows[workflowName].inputs['rre']['switcher'].falseText}
@@ -243,7 +243,7 @@ export const AntiSmash = (props) => {
                     name={'cassis'}
                     setParams={setSwitcher}
                     text={workflows[workflowName].inputs['cassis'].text}
-                    tooltip={workflows[workflowName].inputs['cassis']['switcher'].tooltip}
+                    tooltip={workflows[workflowName].inputs['cassis'].tooltip}
                     defaultValue={workflows[workflowName].inputs['cassis']['switcher'].defaultValue}
                     trueText={workflows[workflowName].inputs['cassis']['switcher'].trueText}
                     falseText={workflows[workflowName].inputs['cassis']['switcher'].falseText}
@@ -259,7 +259,7 @@ export const AntiSmash = (props) => {
                 name={'tigrfam'}
                 setParams={setSwitcher}
                 text={workflows[workflowName].inputs['tigrfam'].text}
-                tooltip={workflows[workflowName].inputs['tigrfam']['switcher'].tooltip}
+                tooltip={workflows[workflowName].inputs['tigrfam'].tooltip}
                 defaultValue={workflows[workflowName].inputs['tigrfam']['switcher'].defaultValue}
                 trueText={workflows[workflowName].inputs['tigrfam']['switcher'].trueText}
                 falseText={workflows[workflowName].inputs['tigrfam']['switcher'].falseText}

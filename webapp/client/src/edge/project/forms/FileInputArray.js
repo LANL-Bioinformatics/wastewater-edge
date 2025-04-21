@@ -2,7 +2,7 @@ import React, { useState, useEffect } from 'react'
 import { Button, Col, Row } from 'reactstrap'
 import { useForm, useFieldArray, Controller } from 'react-hook-form'
 import FileSelector from './FileSelector'
-import { WarningTooltip } from '../../common/MyTooltip'
+import { MyTooltip, WarningTooltip } from '../../common/MyTooltip'
 import { defaults } from '../../common/util'
 import { components } from './defaults'
 
@@ -77,7 +77,18 @@ export const FileInputArray = (props) => {
       <Row>
         {(!props.maxInput || props.maxInput > 1) && (
           <Col md="3">
-            {props.text}
+            {props.tooltip ? (
+              <MyTooltip
+                id={`fileInputArrayTooltip-${props.name}`}
+                tooltip={props.tooltip}
+                text={props.text}
+                place={props.tooltipPlace ? props.tooltipPlace : defaults.tooltipPlace}
+                color={props.tooltipColor ? props.tooltipColor : defaults.tooltipColor}
+                showTooltip={props.showTooltip ? props.showTooltip : defaults.showTooltip}
+              />
+            ) : (
+              <>{props.text}</>
+            )}
             {!props.isOptional && fileInputFields.length === 0 && (
               <WarningTooltip id={props.name} tooltip={'Required at least one input.'} />
             )}
@@ -114,7 +125,20 @@ export const FileInputArray = (props) => {
                 {props.text} #{index + 1}
               </Col>
             ) : (
-              <Col md="3"> {props.text}</Col>
+              <Col md="3">
+                {props.tooltip ? (
+                  <MyTooltip
+                    id={`fileInputArrayTooltip-${props.name}`}
+                    tooltip={props.tooltip}
+                    text={props.text}
+                    place={props.tooltipPlace ? props.tooltipPlace : defaults.tooltipPlace}
+                    color={props.tooltipColor ? props.tooltipColor : defaults.tooltipColor}
+                    showTooltip={props.showTooltip ? props.showTooltip : defaults.showTooltip}
+                  />
+                ) : (
+                  <>{props.text}</>
+                )}
+              </Col>
             )}
             <Col xs="12" md="9">
               <Controller

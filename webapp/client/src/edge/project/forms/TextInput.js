@@ -101,7 +101,10 @@ export const TextInput = (props) => {
             <>
               {props.text}
               {errors && errors.textInput && props.showErrorTooltip && (
-                <ErrorTooltip id="projectName" tooltip={errors.textInput.message} />
+                <ErrorTooltip
+                  id={`textInputErrTooltip-${props.name}`}
+                  tooltip={errors.textInput.message}
+                />
               )}
             </>
           )}
