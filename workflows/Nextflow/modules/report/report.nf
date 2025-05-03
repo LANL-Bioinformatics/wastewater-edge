@@ -22,6 +22,7 @@ process report {
 
     input:
     val settings
+    val platform
     path fastqCount
     path qcStats
     path qcReport
@@ -46,8 +47,8 @@ process report {
     my \$time=time();
     my \$Rscript="./merge.R";
     my \$InputLogPDF="./Inputs.pdf";
-    my \$ont_flag = (${settings["fastqSource"]} =~ /nanopore/)? 1 : 0; 
-    my \$pacbio_flag = (${settings["fastqSource"]} =~ /pacbio/i)? 1 : 0; 
+    my \$ont_flag = ("${platform != null ? platform.trim(): ""}" =~ /NANOPORE/)? 1 : 0; 
+    my \$pacbio_flag = ("${platform != null ? platform.trim(): ""}" =~ /PACBIO/)? 1 : 0; 
     my \$mergeFiles="\$InputLogPDF,";
     \$mergeFiles.="$qcReport"."," if ( -e "$qcReport");
     my \$imagesDir = "./HTML_Report/images";
@@ -99,7 +100,7 @@ process report {
     text(0,nextPos-0.22,\\"Inputs:\\",adj=0,font=2)
     Rscript
 
-    if ( -e '$fastqCount'){ 
+    if ( -s '$fastqCount'){ 
     print \$Rfh <<Rscript;
     popViewport(0)
     input<-read.table(file=\\"$fastqCount\\")
@@ -195,6 +196,7 @@ process report {
 workflow REPORT {
     take:
     settings
+    platform
     fastqCount
     qcStats
     qcReport
@@ -208,6 +210,7 @@ workflow REPORT {
 
     main:
     report(settings,
+        platform,
         fastqCount,
         qcStats,
         qcReport,
