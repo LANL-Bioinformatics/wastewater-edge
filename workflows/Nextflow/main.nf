@@ -13,6 +13,7 @@ include {ANNOTATION} from './modules/runAnnotation/runAnnotation.nf'
 include {PHAGEFINDER} from './modules/phageFinder/phageFinder.nf'
 include {ANTISMASH} from './modules/runAntiSmash/runAntiSmash.nf'
 include {BINNING} from './modules/contigBinning/contigBinning.nf'
+include {PHYLOGENETICANALYSIS} from './modules/SNPtree/SNPtree.nf'
 include {REPORT} from './modules/report/report.nf'
 
 workflow {
@@ -157,6 +158,10 @@ workflow {
     //binning
     if(params.modules.binning) {
         BINNING(baseSettings.plus(params.binning), contigs, abundances)
+    }
+
+    if(params.modules.snpTree) {
+        PHYLOGENETICANALYSIS(baseSettings.plus(params.snpTree).plus(params.annotation), paired.ifEmpty(["${projectDir}/nf_assets/NO_FILE"]), unpaired.ifEmpty("${projectDir}/nf_assets/NO_FILE2"), contigs.ifEmpty("${projectDir}/nf_assets/NO_FILE3"))
     }
 
     //report generation
