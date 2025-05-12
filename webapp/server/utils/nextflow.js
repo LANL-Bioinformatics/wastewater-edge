@@ -55,12 +55,18 @@ const generateInputs = async (projHome, projectConf, proj) => {
 };
 
 const getJobStatus = (statusStr) => {
-  // parse output from 'nextflow log <run name> -f status
-  const statuses = statusStr.split(/\n/);
-  let completeCnt = 0;
+  // parse output from 'nextflow log <run name> -f name,status
+  const lines = statusStr.split(/\n/);
   let i = 0;
-  for (i = 0; i < statuses.length; i += 1) {
-    const status = statuses[i].trim();
+  let statuses ={};
+  //Use lastest status for retries
+  for (i = 0; i < lines.length; i += 1) {
+    const [name, status]= lines[i].trim().split('\t');
+    statuses[name] = status;
+  }
+  let completeCnt = 0;
+  for (const key in statuses) {
+    const status = statuses[key];
     if (status === '' || status === 'COMPLETED') {
       // empty line === COMPLETED
       completeCnt += 1;
@@ -177,7 +183,7 @@ const updateJobStatus = async (job, proj) => {
   }
 
   // Task status. Possible values are: COMPLETED, FAILED, and ABORTED.
-  cmd = `${config.NEXTFLOW.SLURM_SSH} NXF_CACHE_DIR=${slurmProjHome}/nextflow/work nextflow log ${job.id} -f status`;
+  cmd = `${config.NEXTFLOW.SLURM_SSH} NXF_CACHE_DIR=${slurmProjHome}/nextflow/work nextflow log ${job.id} -f name,status`;
   ret = await execCmd(cmd);
   if (!ret || ret.code !== 0) {
     // command failed
