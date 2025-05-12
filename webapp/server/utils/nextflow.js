@@ -62,7 +62,10 @@ const getJobStatus = (statusStr) => {
   //Use lastest status for retries
   for (i = 0; i < lines.length; i += 1) {
     const [name, status]= lines[i].trim().split('\t');
-    statuses[name] = status;
+    // skip empty lines
+    if(name) {
+      statuses[name] = status;
+    }
   }
   let completeCnt = 0;
   for (const key in statuses) {
