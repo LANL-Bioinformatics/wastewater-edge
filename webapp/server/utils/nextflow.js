@@ -75,7 +75,7 @@ const getJobStatus = (statusStr) => {
       return 'Aborted';
     }
   }
-  if (completeCnt === statuses.length) {
+  if (completeCnt === Object.keys(statuses).length) {
     return 'Succeeded';
   }
   return 'Failed';
