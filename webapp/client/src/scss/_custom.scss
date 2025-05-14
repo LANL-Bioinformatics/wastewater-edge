@@ -12,7 +12,6 @@ $app: #6a9e5d;
 .app-color {
   color: $app;
 }
-
 .sidebar-brand-full {
   padding-top: 0px;
   padding-right: 0px;
@@ -330,3 +329,21 @@ button:hover {
 .rendered-file-browser .file a {
   text-decoration: none;
 }
+//buttons, have to set this for tree select
+.mr-3 {
+  z-index: 0;
+}
+// react-dropdown-tree-select
+.dropdown-content .infinite-scroll-component {
+  overflow-y: inherit;
+}
+.dropdown-content {
+  overflow-y: auto !important;
+  max-height: 300px;
+  z-index: 999;
+}
+.edge-tree-select .tag-item .search {
+  width: 30vw;
+}
+.disableCheckbox .checkbox-item { display: none; }
+

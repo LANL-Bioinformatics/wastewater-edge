@@ -143,7 +143,7 @@
         //SNP DB path. Should contain SNPdb, bwa_index, NCBI genomes
         snpDBbase = "${projectDir}/../../../database"
         //SNP databases: Ecoli, Yersinia, Francisella, Brucella, Bacillus
-        snpDBname = <% if(typeof snpDBname !== 'undefined') { %>"<%= snpDBname %>"<% } else { %>"Ecoli"<%} %>
+        snpDBname = <% if(typeof snpDBname !== 'undefined' && snpDBname) { %>"<%= snpDBname %>"<% } else { %>null<%} %>
         //List of genome name from NCBI genomes see $EDGE/edge_ui/data/Ref_list.json
         snpGenomes = <% if(typeof snpGenomes !== 'undefined') { %><%- JSON.stringify(snpGenomes) %><% } else { %>[]<%} %>
         //User-provided reference genomes
