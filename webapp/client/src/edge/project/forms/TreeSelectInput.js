@@ -20,7 +20,8 @@ export const TreeSelectInput = (props) => {
 
   const treeSelectorSearchPredicate = (node, searchTerm) => {
     //slow
-    return node.label && node.label.toLowerCase().includes(searchTerm)
+    //only show child nodes: node._depth === 1
+    return node.label && node.label.toLowerCase().includes(searchTerm) && node._depth === 1
     //fast
     //return node.label && node.label.toLowerCase().startsWith(searchTerm)
   }
@@ -39,7 +40,7 @@ export const TreeSelectInput = (props) => {
         keepChildrenOnSearch={false}
         showChildren={true}
         mode={props.mode}
-        showPartiallySelected={true}
+        showPartiallySelected={false}
         inlineSearchInput={false}
         onChange={(currentNode, selectedNodes) => onSelectionChange(currentNode, selectedNodes)}
       />
