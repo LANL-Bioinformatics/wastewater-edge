@@ -345,5 +345,8 @@ button:hover {
 .edge-tree-select .tag-item .search {
   width: 30vw;
 }
-.disableCheckbox .checkbox-item { display: none; }
+.hideCheckbox {
+  color: #321fdb;
+}
+.hideCheckbox .checkbox-item { display: none; }
 
