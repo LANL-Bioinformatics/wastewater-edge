@@ -43,4 +43,9 @@ export const workflowList = {
     category: 'metagenomics',
     info: 'Phylogeny Analysis workflow ',
   },
+  refBased: {
+    label: 'Reference-Based Analysis',
+    category: 'metagenomics',
+    info: 'Reference-Based Analysis workflow ',
+  },
 }
