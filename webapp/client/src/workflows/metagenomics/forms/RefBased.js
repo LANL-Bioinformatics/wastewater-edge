@@ -72,6 +72,10 @@ export const RefBased = (props) => {
 
   const setSwitcher = (inForm, name) => {
     form.inputs[name].value = inForm.isTrue
+    if (name === 'r2gGetConsensus') {
+      //reset validInputs
+      validInputs['r2gConsensusMaxCov'].isValid = true
+    }
     setDoValidation(doValidation + 1)
   }
 
@@ -149,6 +153,7 @@ export const RefBased = (props) => {
 
     if (errors === '') {
       //files for server to caculate total input size
+      form.files = form.inputs['referenceGenomes'].value
       form.errMessage = null
       form.validForm = true
     } else {
