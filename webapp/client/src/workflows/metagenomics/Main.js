@@ -220,7 +220,10 @@ const Main = (props) => {
     function loadRefList() {
       getData('/api/workflow/metag/reflist')
         .then((data) => {
-          return data.reflist
+          return data.reflist.reduce(function (options, ref) {
+            options.push({ value: ref, label: ref.replaceAll('_', ' ') })
+            return options
+          }, [])
         })
         .then((options) => {
           setRefGenomeOptions(options)

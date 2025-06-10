@@ -1473,12 +1473,12 @@ export const workflows = {
           'This workflow is a whole genome SNP based analysis that requires at minimum one reference genome and at least three dataset for building the phylogenetic tree. Because this analysis is based on read alignments and/or contig alignments to the reference genome(s), we strongly recommend only selecting genomes that can be adequately aligned at the nucleotide level (i.e. ~90% identity or better).',
         value: [],
         display: [],
-        treeSelectInput: {
-          placeholder:
-            'Search genomes... ex: Escherichia. Select at least 3 but no more than 20 genomes',
-          mode: 'multiSelect',
+        asyncSelectInput: {
+          placeholder: 'Select at least 3 but no more than 20 genomes',
           min: 3,
           max: 20,
+          //max search results to display
+          maxOptions: 2000,
         },
       },
       snpRefGenome: {
@@ -1566,11 +1566,12 @@ export const workflows = {
           'List of genome name from NCBI genomes see https://raw.githubusercontent.com/LANL-Bioinformatics/EDGE/refs/heads/devel/edge_ui/data/Ref_list.json',
         value: [],
         display: [],
-        treeSelectInput: {
-          placeholder: 'Search genomes... ex: Escherichia. Select no more than 20 genomes',
-          mode: 'multiSelect',
+        asyncSelectInput: {
+          placeholder: 'Select no more than 20 genomes',
           min: 0,
           max: 20,
+          //max search results to display
+          maxOptions: 2000,
         },
       },
       referenceGenomes: {

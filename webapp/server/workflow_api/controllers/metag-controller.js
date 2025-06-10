@@ -9,7 +9,7 @@ const getReflist = async (req, res) => {
   try {
     logger.debug('/api/workflow/metag/reflist');
     const rawdata = fs.readFileSync(config.WORKFLOW.REF_LIST);
-    const reflist = JSON.parse(rawdata).tree;
+    const reflist = Object.keys(JSON.parse(rawdata)).sort();
 
     return res.json({
       reflist,

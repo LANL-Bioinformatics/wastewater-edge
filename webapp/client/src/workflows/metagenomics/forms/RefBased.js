@@ -4,12 +4,10 @@ import { Card, CardBody, Collapse } from 'reactstrap'
 import { isValidFileInput } from 'src/edge/common/util'
 import { Header } from 'src/edge/project/forms/SectionHeader'
 import { FileInputArray } from 'src/edge/project/forms/FileInputArray'
-import { SRAAccessionInput } from 'src/edge/project/forms/SRAAccessionInput'
 import { IntegerInput } from 'src/edge/project/forms/IntegerInput'
 import { OptionSelector } from 'src/edge/project/forms/OptionSelector'
-import { SelectInput } from 'src/edge/project/forms/SelectInput'
+import { AsyncSelectInput } from 'src/edge/project/forms/AsyncSelectInput'
 import { Switcher } from 'src/edge/project/forms/Switcher'
-import { TreeSelectInput } from 'src/edge/project/forms/TreeSelectInput'
 import { TextInput } from 'src/edge/project/forms/TextInput'
 import { RangeInput } from 'src/edge/project/forms/RangeInput'
 import { workflows } from '../defaults'
@@ -50,7 +48,7 @@ export const RefBased = (props) => {
     }
   }
 
-  const SetTreeSelectInput = (inForm, name) => {
+  const SetAsyncSelectInput = (inForm, name) => {
     if (validInputs[name]) {
       validInputs[name].isValid = inForm.validForm
     }
@@ -184,22 +182,21 @@ export const RefBased = (props) => {
             Given one or multiple reference genome FASTA files, EDGE will turn on the analysis of the reads/contigs mapping to reference and JBrowse reference track generation. Given a reference genome genbank file, EDGE will also turn on variant analysis.
           </span>
           <br></br>
-          <TreeSelectInput
+          <AsyncSelectInput
             name={'selectGenomes'}
             text={workflows[workflowName].inputs['selectGenomes'].text}
             tooltip={workflows[workflowName].inputs['selectGenomes'].tooltip}
-            tooltipClickable={true}
             placeholder={
-              workflows[workflowName].inputs['selectGenomes']['treeSelectInput'].placeholder
+              workflows[workflowName].inputs['selectGenomes']['asyncSelectInput'].placeholder
             }
-            mode={workflows[workflowName].inputs['selectGenomes']['treeSelectInput'].mode}
-            min={workflows[workflowName].inputs['selectGenomes']['treeSelectInput'].min}
-            max={workflows[workflowName].inputs['selectGenomes']['treeSelectInput'].max}
-            data={props.refGenomeOptions}
-            setParams={SetTreeSelectInput}
+            isMulti={true}
+            min={workflows[workflowName].inputs['selectGenomes']['asyncSelectInput'].min}
+            max={workflows[workflowName].inputs['selectGenomes']['asyncSelectInput'].max}
+            maxOptions={workflows[workflowName].inputs['selectGenomes']['asyncSelectInput'].maxOptions}
+            options={props.refGenomeOptions}
+            setParams={SetAsyncSelectInput}
             showSelections={true}
             showSelectionsText={'genome(s) selected'}
-            reset={resetGenomeSelect}
           />
           <br></br>
           <center>And/Or</center>
