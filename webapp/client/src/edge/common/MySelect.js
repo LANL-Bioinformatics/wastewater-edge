@@ -278,14 +278,12 @@ export const MyAsyncSelect = (props) => {
           if (size <= props.maxSelected) {
             //add 'Select All' to menu
             options.unshift({
-              label:
-                'Select All (' + options.length + '). Max selections allowed: ' + props.maxSelected,
+              label: 'Results (' + options.length + '). Select All',
               value: 'all',
             })
           } else {
             options.unshift({
-              label:
-                'Results (' + options.length + '). Max selections allowed: ' + props.maxSelected,
+              label: 'Results (' + options.length + ')',
               value: 'results',
               isDisabled: true,
             })
