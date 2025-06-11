@@ -16,7 +16,7 @@ export const workflowList = {
   assembly: {
     label: 'Assembly',
     category: 'metagenomics',
-    info: 'EDGE provides the IDBA, Spades, MegaHit for illumina reads, LRASM includes miniasm and wtdbg2 alogrithm and (meta)flye for PacBio/Nanopore reads, and Unicycler for bacteria genomes hybird assembly. These assembly tools are to accommodate a range of sample types and data sizes.',
+    info: 'EDGE provides the IDBA, Spades, MegaHit for illumina reads, LRASM includes miniasm and wtdbg2 algorithm and (meta)flye for PacBio/Nanopore reads, and Unicycler for bacteria genomes hybrid assembly. These assembly tools are to accommodate a range of sample types and data sizes.',
   },
   annotation: {
     label: 'Annotation',
