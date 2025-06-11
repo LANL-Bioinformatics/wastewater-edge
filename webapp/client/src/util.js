@@ -21,7 +21,7 @@ export const workflowList = {
   annotation: {
     label: 'Annotation',
     category: 'metagenomics',
-    info: ' Prokka and RATT are provided for ab initio or transfer annoation from close-related reference genome. Prokka is a software tool for rapid prokaryotic genome annotation, while RATT (Rapid Annotation Transfer Tool) is used to transfer annotations from a reference genome to a related genome based on sequence similarity.',
+    info: 'Prokka and RATT are provided for ab initio or transfer annotation from closely related reference genome. Prokka is a software tool for rapid prokaryotic genome annotation, while RATT (Rapid Annotation Transfer Tool) is used to transfer annotations from a reference genome to a related genome based on sequence similarity.',
   },
   binning: {
     label: 'Binning',
