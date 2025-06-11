@@ -144,7 +144,7 @@ process visualizePhylogenyHTML {
     path "*.html", emit: treeHTML
 
     script:
-    def outName = treeFiles.name.replace(".nwk", ".html")
+    def outName = treeFiles.name.replaceAll(/\.nwk$/, ".html")
     """
     phylocanvas_tree_with_controls.py "${treeFiles}" "${outName}"
     """
@@ -184,5 +184,5 @@ workflow PHYLOGENETICANALYSIS {
                         prepareSNPphylogeny.out.phyloAnn)
 
     visualizePhylogenyHTML(settings, prepareXMLphylogeny.out)
-    
+
 }
