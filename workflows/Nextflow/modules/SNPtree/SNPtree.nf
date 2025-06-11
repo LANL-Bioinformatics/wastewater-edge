@@ -146,7 +146,7 @@ process visualizePhylogenyHTML {
     script:
     def outName = treeFiles.name.replace(".nwk", ".html")
     """
-    phylocanvas_tree_with_controls.py ${treeFiles} ${outName}
+    phylocanvas_tree_with_controls.py "${treeFiles}" "${outName}"
     """
 }
 
