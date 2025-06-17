@@ -128,6 +128,27 @@ process prepareXMLphylogeny {
     """
 }
 
+process visualizePhylogenyHTML {
+    label 'phyl'
+
+    publishDir(
+        path: "${settings["phylogenyOutDir"]}",
+        mode: 'copy'
+    )
+
+    input:
+    val settings
+    path treeFiles from prepareXMLphylogeny.out.filter { it.name.endsWith(".nwk") }
+
+    output:
+    path "*.html", emit: treeHTML
+
+    script:
+    def outName = treeFiles.name.replaceAll(/\.nwk$/, ".html")
+    """
+    phylocanvas_tree_with_controls.py "${treeFiles}" "${outName}"
+    """
+}
 
 
 //Workflow for phylogenetic analysis
@@ -162,5 +183,6 @@ workflow PHYLOGENETICANALYSIS {
                         resultTree,
                         prepareSNPphylogeny.out.phyloAnn)
 
+    visualizePhylogenyHTML(settings, prepareXMLphylogeny.out)
 
 }

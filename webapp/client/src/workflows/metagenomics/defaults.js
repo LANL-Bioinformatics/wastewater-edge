@@ -29,7 +29,7 @@ export const taxClassificationOptions = {
     { value: 'metaphlan4', label: 'MetaPhlAn4' },
     { value: 'kraken2', label: 'Kraken2' },
     { value: 'centrifuge', label: 'Centrifuge' },
-    { value: 'diamond', label: 'IAMOND (Amino acid-based classification)' },
+    { value: 'diamond', label: 'DIAMOND (Amino acid-based classification)' },
   ],
   'classification-tools-default': [
     { value: 'gottcha-speDB-b', label: 'GOTTCHA Species (Bacterial DB)' },
