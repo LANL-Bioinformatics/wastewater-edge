@@ -14,6 +14,7 @@ include {PHAGEFINDER} from './modules/phageFinder/phageFinder.nf'
 include {ANTISMASH} from './modules/runAntiSmash/runAntiSmash.nf'
 include {BINNING} from './modules/contigBinning/contigBinning.nf'
 include {PHYLOGENETICANALYSIS} from './modules/SNPtree/SNPtree.nf'
+include {GENEFAMILYANALYSIS} from './modules/geneFamilyAnalysis/geneFamilyAnalysis.nf'
 include {REPORT} from './modules/report/report.nf'
 
 workflow {
@@ -139,12 +140,16 @@ workflow {
     //Annotation and PhageFinder
     antismashInput = contigs
     annStats = channel.empty()
+    annGFF = channel.empty()
+    annFAA = channel.empty()
     if(params.modules.annotation) {
         ANNOTATION(baseSettings.plus(params.annotation), annContigs)
         annStats = ANNOTATION.out.annStats
+        annGFF = ANNOTATION.out.gff
+        annFAA = ANNOTATION.out.faa
 
         if(params.modules.phageFinder && (params.annotation.taxKingdom == null || !(params.annotation.taxKingdom.equalsIgnoreCase("viruses")))) {
-            PHAGEFINDER(baseSettings, ANNOTATION.out.gff, ANNOTATION.out.faa, ANNOTATION.out.fna)
+            PHAGEFINDER(baseSettings, annGFF, annFAA, ANNOTATION.out.fna)
         }
 
         antismashInput = ANNOTATION.out.gbk
@@ -162,6 +167,15 @@ workflow {
 
     if(params.modules.snpTree) {
         PHYLOGENETICANALYSIS(baseSettings.plus(params.snpTree).plus(params.annotation), paired.ifEmpty(["${projectDir}/nf_assets/NO_FILE"]), unpaired.ifEmpty("${projectDir}/nf_assets/NO_FILE2"), contigs.ifEmpty("${projectDir}/nf_assets/NO_FILE3"))
+    }
+
+    if(params.modules.geneFamilyAnalysis) {
+        GENEFAMILYANALYSIS(baseSettings.plus(params.geneFamily), 
+            paired.ifEmpty(["${projectDir}/nf_assets/NO_FILE"]), 
+            unpaired.ifEmpty("${projectDir}/nf_assets/NO_FILE2"),
+            annFAA.ifEmpty("${projectDir}/nf_assets/NO_FILE3"), 
+            annGFF.ifEmpty("${projectDir}/nf_assets/NO_FILE4")
+        )
     }
 
     //report generation
