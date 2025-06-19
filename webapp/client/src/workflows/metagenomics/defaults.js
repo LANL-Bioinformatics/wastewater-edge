@@ -8,6 +8,7 @@ export const workflowOptions = [
   { value: 'antiSmash', label: workflowList['antiSmash'].label },
   { value: 'taxonomy', label: workflowList['taxonomy'].label },
   { value: 'phylogeny', label: workflowList['phylogeny'].label },
+  { value: 'refBased', label: workflowList['refBased'].label },
 ]
 
 export const taxClassificationOptions = {
@@ -1472,12 +1473,12 @@ export const workflows = {
           'This workflow is a whole genome SNP based analysis that requires at minimum one reference genome and at least three dataset for building the phylogenetic tree. Because this analysis is based on read alignments and/or contig alignments to the reference genome(s), we strongly recommend only selecting genomes that can be adequately aligned at the nucleotide level (i.e. ~90% identity or better).',
         value: [],
         display: [],
-        treeSelectInput: {
-          placeholder:
-            'Search genomes... ex: Escherichia. Select at least 3 but no more than 20 genomes',
-          mode: 'multiSelect',
+        asyncSelectInput: {
+          placeholder: 'Select at least 3 but no more than 20 genomes',
           min: 3,
           max: 20,
+          //max search results to display
+          maxOptions: 2000,
         },
       },
       snpRefGenome: {
@@ -1530,6 +1531,333 @@ export const workflows = {
       phameBootstrapNum: {
         isValid: true,
         error: 'Bootstrap Number error. Invalid integer input. Range: 1 - 1000',
+      },
+    },
+  },
+  refBased: {
+    validForm: true,
+    errMessage: 'input error',
+    paramsOn: true,
+    files: [],
+    rawReadsInput: {
+      source: 'fastq',
+      text: 'READS/FASTQ',
+      sourceOptions: [
+        { text: 'READS/FASTQ', value: 'fastq' },
+        { text: 'NCBI SRA', value: 'sra' },
+      ],
+      fastq: {
+        enableInput: true,
+        placeholder: 'Select a file or enter a file http(s) url',
+        dataSources: ['upload', 'public', 'project'],
+        fileTypes: ['fastq', 'fq', 'fastq.gz', 'fq.gz'],
+        projectTypes: ['runFaQCs'],
+        projectScope: ['self+shared'],
+        viewFile: false,
+        isOptional: false,
+        cleanupInput: true,
+        maxInput: 1000,
+      },
+    },
+    inputs: {
+      selectGenomes: {
+        text: 'Select Genome(s)',
+        tooltip:
+          'List of genome name from NCBI genomes see https://raw.githubusercontent.com/LANL-Bioinformatics/EDGE/refs/heads/devel/edge_ui/data/Ref_list.json',
+        value: [],
+        display: [],
+        asyncSelectInput: {
+          placeholder: 'Select no more than 20 genomes',
+          min: 0,
+          max: 20,
+          //max search results to display
+          maxOptions: 2000,
+        },
+      },
+      referenceGenomes: {
+        text: 'Reference Genome',
+        value: [],
+        display: [],
+        fileInputArray: {
+          text: 'Genome',
+          enableInput: true,
+          placeholder: 'Select a file or enter a file http(s) url',
+          dataSources: ['upload', 'public'],
+          fileTypes: ['fasta', 'fa', 'fna', 'genbank', 'gb', 'gbk', 'gbff'],
+          projectTypes: [],
+          projectScope: ['self+shared'],
+          viewFile: false,
+          isOptional: true,
+          cleanupInput: true,
+          maxInput: 100,
+        },
+      },
+      r2gAligner: {
+        text: 'Read Aligner',
+        tooltip:
+          'EDGE use default setting of the aligner. Bowtie2 default is for global alignment and BWA mem algorithm will do local alignment. If users would like to overwrite the setting, users can use "Aligner Options" to do so. For example, use “–local” to run bowtie2 with local alignment mode. Or, use “-x ont2d” to run BWA mem with Nanopore reads.',
+        value: 'bwa',
+        display: 'Bowtie 2',
+        options: [
+          { text: 'Bowtie 2', value: 'bowtie2' },
+          { text: 'BWA mem', value: 'bwa' },
+          { text: 'Minimap2', value: 'minimap2' },
+        ],
+      },
+      r2gAlignerOptions: {
+        text: 'Aligner Options',
+        value: null,
+        tooltip:
+          'Click &nbsp;<a href="http://bowtie-bio.sourceforge.net/bowtie2/manual.shtml#usage" target="_blank" rel="noopener noreferrer">' +
+          '<span style="color:yellow;">Bowtie2</span></a> &nbsp;|&nbsp; ' +
+          '&nbsp;<a href="http://bio-bwa.sourceforge.net/bwa.shtml#3" target="_blank" rel="noopener noreferrer"><span style="color:yellow;">BWA mem</span></a> &nbsp;|&nbsp; ' +
+          '&nbsp;<a href="https://lh3.github.io/minimap2/minimap2.html" target="_blank" rel="noopener noreferrer"><span style="color:yellow;">Minimap2</span></a>&nbsp; for detail.',
+        textInput: {
+          placeholder: '(optional)',
+          showError: false,
+          isOptional: true,
+          showErrorTooltip: true,
+          defaultValue: null,
+        },
+      },
+      r2gMinMapQual: {
+        text: 'Map Quality',
+        tooltip:
+          'For coverage calculation and variants call, BWA MEM/minimap2 uses MAPQ=60 for uniquely mapped and bowtie2 uses MAPQ=42.',
+        value: 60,
+        rangeInput: {
+          defaultValue: 60,
+          min: 1,
+          max: 255,
+          step: 1,
+        },
+      },
+      r2gMaxClip: {
+        text: 'MaxClip',
+        tooltip: 'Use samclip to filter alignment result. Maximum clip length to allow.',
+        value: 50,
+        rangeInput: {
+          defaultValue: 50,
+          min: 1,
+          max: 300,
+          step: 1,
+        },
+      },
+      r2gVariantCall: {
+        text: 'Variant Call',
+        tooltip:
+          'EDGE will use samtools/bcftools (version 1.21) to call variants. See detailed at https://www.htslib.org/workflow/wgs-call.html',
+        value: true,
+        switcher: {
+          trueText: 'Yes',
+          falseText: 'No',
+          defaultValue: true,
+        },
+      },
+      r2gMapUnmapped: {
+        text: 'Identify Unmapped Reads',
+        tooltip:
+          'EDGE will try to classify reads that are unmapped to references by mapping them to NCBI RefSeq database.',
+        value: false,
+        switcher: {
+          trueText: 'Yes',
+          falseText: 'No',
+          defaultValue: false,
+        },
+      },
+      r2gExtractMapped: {
+        text: 'Extract Mapped Reads',
+        value: false,
+        switcher: {
+          trueText: 'Yes',
+          falseText: 'No',
+          defaultValue: false,
+        },
+      },
+      r2gExtractUnmapped: {
+        text: 'Extract Unmapped Reads',
+        value: false,
+        switcher: {
+          trueText: 'Yes',
+          falseText: 'No',
+          defaultValue: false,
+        },
+      },
+      r2gGetConsensus: {
+        text: 'Consensus Fasta',
+        tooltip: 'Generated Consensus Fasta from the mapping result. See additional for parameters',
+        value: false,
+        switcher: {
+          trueText: 'Yes',
+          falseText: 'No',
+          defaultValue: false,
+        },
+      },
+    },
+    r2gGetConsensusInputs: {
+      r2gConsensusMinMapQual: {
+        text: 'Minimum mapQ',
+        tooltip: 'Minimum mapping quality for a read to be used in the pileup generation.',
+        value: 60,
+        rangeInput: {
+          defaultValue: 60,
+          min: 1,
+          max: 255,
+          step: 1,
+        },
+      },
+      r2gConsensusMinCov: {
+        text: 'Minimum Coverage',
+        tooltip: 'Minimum level of coverage required to avoid an N in the consensus.',
+        value: 5,
+        rangeInput: {
+          defaultValue: 5,
+          min: 1,
+          max: 100,
+          step: 1,
+        },
+      },
+      r2gConsensusMaxCov: {
+        text: 'Maximum Coverage',
+        tooltip: 'Maximum per base coverage to be used in the pileup generation.',
+        value: 8000,
+        integerInput: {
+          defaultValue: 8000,
+          min: 1,
+          max: 10000,
+        },
+      },
+      r2gConsensusAltProp: {
+        text: 'Alternate Base Threshold',
+        tooltip:
+          'Requires that a greater proportion of the reads (than this threshold) must support an alternative base for the consensus to be changed.',
+        value: 0.5,
+        rangeInput: {
+          defaultValue: 0.5,
+          min: 0,
+          max: 1,
+          step: 0.1,
+        },
+      },
+      r2gConsensusAltIndelProp: {
+        text: 'Indels Threshold',
+        tooltip:
+          'Requires that a greater proportion of the reads (than this threshold) must support an INDELs for the consensus to be changed.',
+        value: 0.5,
+        rangeInput: {
+          defaultValue: 0.5,
+          min: 0,
+          max: 1,
+          step: 0.1,
+        },
+      },
+      r2gConsensusMinBaseQual: {
+        text: 'Minimum baseQ',
+        tooltip: 'Minimum base quality for a base to be used in the evalution of the consensus.',
+        value: 20,
+        rangeInput: {
+          defaultValue: 20,
+          min: 1,
+          max: 60,
+          step: 1,
+        },
+      },
+      r2gConsensusDisableBAQ: {
+        text: 'Disable BAQ',
+        tooltip: 'Disable BAQ (per-Base Alignment Quality)',
+        value: true,
+        switcher: {
+          trueText: 'Yes',
+          falseText: 'No',
+          defaultValue: true,
+        },
+      },
+      r2gConsensusPCRdedup: {
+        text: 'Remove PCR Duplicates',
+        tooltip: 'Remove PCR duplicates by samtools markdup',
+        value: true,
+        switcher: {
+          trueText: 'Yes',
+          falseText: 'No',
+          defaultValue: true,
+        },
+      },
+      r2gConsensusHomopolymerFilt: {
+        text: 'Homopolymer Filter',
+        tooltip: 'Filter the INDELs variants < 0.8 INDEL Threshold in homopolymer (>= 4bp) region',
+        value: false,
+        switcher: {
+          trueText: 'Yes',
+          falseText: 'No',
+          defaultValue: false,
+        },
+      },
+      r2gConsensusStrandBiasFilt: {
+        text: 'StrandBias Filter',
+        tooltip:
+          'Filter the SNP variants based on both Fisher Exact test Phred scaled p value score (>60) and the symmetric odds ratio test score (>3)',
+        value: false,
+        switcher: {
+          trueText: 'Yes',
+          falseText: 'No',
+          defaultValue: false,
+        },
+      },
+      r2gConsensusVarlogOpt: {
+        text: 'Log variant',
+        tooltip: '',
+        value: false,
+        switcher: {
+          trueText: 'Yes',
+          falseText: 'No',
+          defaultValue: false,
+        },
+      },
+      r2gConsensusCompOpt: {
+        text: 'Log compisition',
+        tooltip: '',
+        value: false,
+        switcher: {
+          trueText: 'Yes',
+          falseText: 'No',
+          defaultValue: false,
+        },
+      },
+    },
+    r2gVariantCallInputs: {
+      r2gVariantCallMinQual: {
+        text: 'Variant QUAL',
+        tooltip:
+          'Minimum QUAL SCORE, QUAL phred-scaled quality score for the assertion made in ALT, to filter varaint call result.',
+        value: 60,
+        rangeInput: {
+          defaultValue: 60,
+          min: 1,
+          max: 255,
+          step: 1,
+        },
+      },
+      r2gVariantCallPloidy: {
+        text: 'Ploidy',
+        tooltip: 'Ploidy for variants call',
+        value: 'diploid',
+        display: 'Diploid',
+        options: [
+          { text: 'Haploid', value: 'haploid' },
+          { text: 'Diploid', value: 'diploid' },
+        ],
+      },
+    },
+    // only for input with validation method
+    validInputs: {
+      selectGenomes: {
+        isValid: false,
+        error: 'Select Genome(s) error. Select at least 1 but no more than 20 genomes',
+      },
+      referenceGenomes: { isValid: true, error: 'Reference genome error. Invalid input' },
+      r2gConsensusMaxCov: {
+        isValid: true,
+        error: 'Maximum Coverage error. Invalid integer input. Range: 1 - 10000',
       },
     },
   },

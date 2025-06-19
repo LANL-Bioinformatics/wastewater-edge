@@ -32,6 +32,10 @@ export const components = {
     validForm: false,
     selection: null,
   },
+  asyncSelectInput: {
+    validForm: false,
+    selections: [],
+  },
   multSelectInput: {
     validForm: false,
     selections: [],

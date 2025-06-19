@@ -19,6 +19,7 @@ import { workflowOptions, workflows } from './defaults'
 import { AntiSmash } from './forms/AntiSmash'
 import { Taxonomy } from './forms/Taxonomy'
 import { Phylogeny } from './forms/Phylogeny'
+import { RefBased } from './forms/RefBased'
 
 const Main = (props) => {
   const navigate = useNavigate()
@@ -148,6 +149,18 @@ const Main = (props) => {
         ...selectedWorkflows[workflow].genomeInputs
       }
     }
+    //add optional inputs to main inputs
+    if (workflow === 'refBased') {
+      // eslint-disable-next-line prettier/prettier
+      selectedWorkflows[workflow].inputs = {
+        ...selectedWorkflows[workflow].inputs,
+        // eslint-disable-next-line prettier/prettier
+        ...(selectedWorkflows[workflow].inputs['r2gVariantCall'].value ? selectedWorkflows[workflow].r2gVariantCallInputs : {}),
+        ...(selectedWorkflows[workflow].inputs['r2gGetConsensus'].value
+          ? selectedWorkflows[workflow].r2gGetConsensusInputs
+          : {}),
+      }
+    }
 
     Object.keys(selectedWorkflows[workflow].inputs).forEach((key) => {
       myWorkflow.input[key] = selectedWorkflows[workflow].inputs[key].value
@@ -207,7 +220,10 @@ const Main = (props) => {
     function loadRefList() {
       getData('/api/workflow/metag/reflist')
         .then((data) => {
-          return data.reflist
+          return data.reflist.reduce(function (options, ref) {
+            options.push({ value: ref, label: ref.replaceAll('_', ' ') })
+            return options
+          }, [])
         })
         .then((options) => {
           setRefGenomeOptions(options)
@@ -217,7 +233,7 @@ const Main = (props) => {
         })
     }
 
-    if (!refGenomeOptions && workflow === 'phylogeny') {
+    if (!refGenomeOptions && (workflow === 'phylogeny' || workflow === 'refBased')) {
       loadRefList()
     }
     setDoValidation(doValidation + 1)
@@ -541,6 +557,43 @@ const Main = (props) => {
                 allClosed={allClosed}
               />
               <Phylogeny
+                name={workflow}
+                full_name={workflow}
+                title={workflowList[workflow].label}
+                setParams={setWorkflowParams}
+                isValid={
+                  selectedWorkflows[workflow] ? selectedWorkflows[workflow].validForm : false
+                }
+                errMessage={
+                  selectedWorkflows[workflow] ? selectedWorkflows[workflow].errMessage : null
+                }
+                source={rawDataParams.inputs.source.value}
+                refGenomeOptions={refGenomeOptions}
+                allExpand={allExpand}
+                allClosed={allClosed}
+              />
+            </>
+          )}
+          <br></br>
+          {workflow === 'refBased' && (
+            <>
+              <InputRawReads
+                setParams={setRawData}
+                isValidFileInput={isValidFileInput}
+                source={workflows[workflow]['rawReadsInput'].source}
+                sourceDisplay={workflows[workflow]['rawReadsInput'].text}
+                sourceOptionsOn={true}
+                sourceOptions={workflows[workflow]['rawReadsInput'].sourceOptions}
+                text={workflows[workflow]['rawReadsInput'].text}
+                tooltip={workflows[workflow]['rawReadsInput'].tooltip}
+                title={'Input Raw Reads'}
+                fastqSettings={workflows[workflow]['rawReadsInput'].fastq}
+                isValid={rawDataParams ? rawDataParams.validForm : false}
+                errMessage={rawDataParams ? rawDataParams.errMessage : null}
+                allExpand={allExpand}
+                allClosed={allClosed}
+              />
+              <RefBased
                 name={workflow}
                 full_name={workflow}
                 title={workflowList[workflow].label}

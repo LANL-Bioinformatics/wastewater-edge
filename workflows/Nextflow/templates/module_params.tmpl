@@ -141,7 +141,7 @@
 
     refBased {
         selectGenomes = <% if(typeof selectGenomes !== 'undefined') { %><%- JSON.stringify(selectGenomes) %><% } else { %>[]<%} %>
-        referenceGenomes = <% if(typeof referenceGenome !== 'undefined') { %><%- JSON.stringify(referenceGenome) %><% } else { %>[]<%} %>
+        referenceGenomes = <% if(typeof referenceGenomes !== 'undefined') { %><%- JSON.stringify(referenceGenomes) %><% } else { %>[]<%} %>
         //expects id_mapping.txt in the same directory as refDB
         refDB = "/project/refdata/nextflow/database/bwa_index/NCBI-Bacteria-Virus.fna"
         genomeLocation = "/project/refdata/nextflow/database/NCBI_genomes"

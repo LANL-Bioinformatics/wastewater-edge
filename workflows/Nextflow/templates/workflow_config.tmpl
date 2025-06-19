@@ -12,7 +12,7 @@ params {
         readsTaxonomyAssignment = <% if(typeof readTax !== 'undefined') { %><%= readTax %><% } else { %>false<%} %>
         contigsTaxonomyAssignment = <% if(typeof contigTax !== 'undefined') { %><%= contigTax %><% } else { %>false<%} %>
         secondaryMetaboliteAnalysis =  <% if(workflow === 'antiSmash') { %>true<% } else { %>false<%} %>
-        refBasedAnalysis = <% if(workflow === 'referenceBased') { %>true<% } else { %>false<%} %>
+        refBasedAnalysis = <% if(workflow === 'refBased') { %>true<% } else { %>false<%} %>
         snpTree = <% if(workflow === 'phylogeny') { %>true<% } else { %>false<%} %>
     }
 

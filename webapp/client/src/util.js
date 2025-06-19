@@ -43,4 +43,9 @@ export const workflowList = {
     category: 'metagenomics',
     info: 'Phylogeny Analysis workflow is a whole genome SNP-based analysis that uses one reference assembly to which both reads and contigs are mapped. Because this analysis is based on read alignments and/or contig alignments to the reference genome(s), we strongly recommend only selecting genomes that can be adequately aligned at the nucleotide level (i.e. ~90% identity or better). The number of ‘core’ nucleotides able to be aligned among all genomes, and the number of SNPs within the core, are what determine the resolution of the phylogenetic tree.',
   },
+  refBased: {
+    label: 'Reference-Based Analysis',
+    category: 'metagenomics',
+    info: 'Reference-Based Analysis workflow ',
+  },
 }
