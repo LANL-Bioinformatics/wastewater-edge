@@ -152,10 +152,12 @@ process jsonQCstats {
     path stats
 
     output:
-    path "QC.stats.json"
+    path "QC.stats.json" emit: qcStatsJson
+    path "QC_summary_plots.html"
+
     script:
     """
-    statsToJSON.py -i $stats
+    statsToJSON.py --json_out ./QC.stats.json -html_out ./QC_summary_plots.html $stats
     """
 }
 
