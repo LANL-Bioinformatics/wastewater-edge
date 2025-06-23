@@ -157,7 +157,7 @@ process jsonQCstats {
 
     script:
     """
-    statsToJSON.py --json_out ./QC.stats.json -html_out ./QC_summary_plots.html $stats
+    statsToJSON.py --json_out ./QC.stats.json --html_out ./QC_summary_plots.html $stats
     """
 }
 
