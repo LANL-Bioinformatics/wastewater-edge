@@ -152,8 +152,8 @@ process jsonQCstats {
     path stats
 
     output:
-    path "QC.stats.json" emit: qcStatsJson
-    path "QC_summary_plots.html" emit: qcSummaryHtml
+    path "QC.stats.json", emit: qcStatsJson
+    path "QC_summary_plots.html", emit: qcSummaryHtml
 
     script:
     """
