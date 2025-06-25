@@ -42,8 +42,8 @@ jobs:
                   tags: ghcr.io/lanl-bioinformatics/edge-run_faqcs:${{ steps.get_version.outputs.version }}
             - name: update image tag ID and version in the config
               run: |
-                 imageName=ghcr.io/lanl-bioinformatics/edge-run_faqcs:${{ steps.get_version.outputs.version }}
-                 version=${{ steps.get_version.outputs.version }}
+                 imageName="ghcr.io/lanl-bioinformatics/edge-run_faqcs:${{ steps.get_version.outputs.version }}"
+                 version="${{ steps.get_version.outputs.version }}"
                  sed -i -E "s#apwat/run_faqcs:[0-9a-zA-Z._-]+#${imageName}#" -E "s#edge-run_faqcs:[0-9a-zA-Z._-]+#edge-run_faqcs:${version}#" workflows/Nextflow/configs/container.config
             #A GitHub Action to detect changed files during a Workflow run and to commit and push them back to the GitHub repository. 
             #By default, the commit is made in the name of "GitHub Actions" and co-authored by the user that made the last commit.
