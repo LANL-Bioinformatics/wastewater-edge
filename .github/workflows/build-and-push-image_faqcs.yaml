@@ -37,6 +37,6 @@ jobs:
               uses: docker/build-push-action@v5
               with:
                   context: .
-                  file: Docker/BBtools_Dockerfile.txt
+                  file: workflows/Nextflow/modules/runFaQCs/Dockerfile
                   push: true
-                  tags: ghcr.io/LANL-Bioinformatics/edge-run_faqcs:${{ steps.get_version.outputs.version }}
+                  tags: ghcr.io/lanl-bioinformatics/edge-run_faqcs:${{ steps.get_version.outputs.version }}
