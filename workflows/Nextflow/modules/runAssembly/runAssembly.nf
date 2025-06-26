@@ -494,6 +494,37 @@ process bestIncompleteAssembly {
 
 }
 
+process assembly_vis {
+    label "assembly"
+    label "tiny"
+
+    publishDir(
+        path: "${settings["assemblyOutDir"]}",
+        mode: 'copy'
+    )
+
+    input:
+    val settings
+    path contigs
+
+    output:
+    path "stats/assembly_stats_report.html"
+    path "stats/assembly_stats_report.txt"
+
+    script:
+    """
+    set -euo pipefail
+    metaquast.py --version > version.txt
+    metaquast.py -o ./stats -m ${settings["minContigSize"]} --no-icarus --max-ref-number 0 ${contigs}
+    if [ -f ./stats/report.html ]; then
+        sed -e 's/.top-panel {/.top-panel {\n display:none;/' ./stats/report.html > ./stats/assembly_stats_report.html
+        mv ./stats/report.txt ./stats/assembly_stats_report.txt
+    else
+        echo "None of the assembly files contains correct contigs. contigs should >= ${settings["minContigSize"]} bp for the report" > stats/assembly_stats_report.html
+        echo "None of the assembly files contains correct contigs. contigs should >= ${settings["minContigSize"]} bp for the report" > stats/assembly_stats_report.txt
+    fi
+    """
+}
 //main workflow logic
 workflow ASSEMBLY {
     take:
@@ -598,6 +629,9 @@ workflow ASSEMBLY {
         error "Invalid assembler: ${settings["assembler"]}"
     }
 
+    //assembly visualization
+    assembly_vis(settings, outContigs)
+    
     emit:
     outContigs
     annotationContigs
