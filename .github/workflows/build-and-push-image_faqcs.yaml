@@ -48,17 +48,19 @@ jobs:
                  sed -i -E "s#edge-run_faqcs:[0-9a-zA-Z._-]+#edge-run_faqcs:${version}#" workflows/Nextflow/configs/container.config
             #A GitHub Action to detect changed files during a Workflow run and to commit and push them back to the GitHub repository. 
             #By default, the commit is made in the name of "GitHub Actions" and co-authored by the user that made the last commit.
-            - uses: stefanzweifel/git-auto-commit-action@v5
+            - name: auto-commit image version update
+              uses: stefanzweifel/git-auto-commit-action@v5
               with:
                   branch: auto-update-${{ github.run_id }}
                   create_branch: true
                   commit_message: "Auto update of run faqcs docker image version ${{ steps.get_version.outputs.version }}"
             - name: Create Pull Request
-              uses: peter-evans/create-pull-request@v5
-              with:
-                  commit-message: "Automated update faqcs docker image version ${{ steps.get_version.outputs.version }}"
-                  branch: auto-update-${{ github.run_id }}
-                  base: main
-                  title: "Automated PR: update faqcs docker image version ${{ steps.get_version.outputs.version }}"
-                  body: |
-                      This PR was created automatically.
+              run: |
+                  title="Automated PR: update faqcs docker image version ${{ steps.get_version.outputs.version }}"
+                  gh pr create \
+                      --base main \
+                      --head auto-update-${{ github.run_id }} \
+                      --title "$title" \
+                      --body "Created by GitHub Action"
+              env:
+                  GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
