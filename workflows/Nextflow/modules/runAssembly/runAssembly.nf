@@ -517,7 +517,7 @@ process assembly_vis {
     metaquast.py --version > version.txt
     metaquast.py -o ./stats -m ${settings["minContigSize"]} --no-icarus --max-ref-number 0 ${contigs}
     if [ -f ./stats/report.html ]; then
-        sed -e 's/.top-panel {/.top-panel {\n display:none;/' ./stats/report.html > ./stats/assembly_stats_report.html
+        sed -e 's/.top-panel {/.top-panel {\\n display:none;/' ./stats/report.html > ./stats/assembly_stats_report.html
         mv ./stats/report.txt ./stats/assembly_stats_report.txt
     else
         echo "None of the assembly files contains correct contigs. contigs should >= ${settings["minContigSize"]} bp for the report" > stats/assembly_stats_report.html
@@ -631,7 +631,7 @@ workflow ASSEMBLY {
 
     //assembly visualization
     assembly_vis(settings, outContigs)
-    
+
     emit:
     outContigs
     annotationContigs
