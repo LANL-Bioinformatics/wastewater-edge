@@ -508,8 +508,8 @@ process assembly_vis {
     path contigs
 
     output:
-    path "stats/assembly_stats_report.html"
-    path "stats/assembly_stats_report.txt"
+    path "stats/assembly_stats_report.html" , emit: stats_html
+    path "stats/assembly_stats_report.txt" , emit: stats_txt
 
     script:
     """
