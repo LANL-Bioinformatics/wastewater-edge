@@ -520,8 +520,9 @@ process assembly_vis {
         sed -e 's/.top-panel {/.top-panel {\\n display:none;/' ./stats/report.html > ./stats/assembly_stats_report.html
         mv ./stats/report.txt ./stats/assembly_stats_report.txt
     else
-        echo "None of the assembly files contain valid contigs. Each contig should be >= ${settings["minContigSize"]} bp for inclusion in the report." > stats/assembly_stats_report.html
-        echo "None of the assembly files contain valid contigs. Each contig should be >= ${settings["minContigSize"]} bp for inclusion in the report." > stats/assembly_stats_report.txt
+        ERR_MSG="MetaQUAST failed to generate report. Please check the input contigs file. Contigs should >= ${settings["minContigSize"]} bp for the report"
+        echo "\$ERR_MSG" > stats/assembly_stats_report.html
+        echo "\$ERR_MSG" > stats/assembly_stats_report.txt
     fi
     """
 }
