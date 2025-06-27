@@ -46,6 +46,8 @@ jobs:
                  version="${{ steps.get_version.outputs.version }}"
                  sed -i -E "s#kaijli/sra2fastq:[0-9a-zA-Z._-]+#${imageName}#" workflows/Nextflow/configs/container.config
                  sed -i -E "s#edge_sra2fastq:[0-9a-zA-Z._-]+#edge_sra2fastq:${version}#" workflows/Nextflow/configs/container.config
+                 sed -i -E "s#kaijli/sra2fastq:[0-9a-zA-Z._-]+#${imageName}#" workflows/Nextflow/nextflow.config
+                 sed -i -E "s#edge_sra2fastq:[0-9a-zA-Z._-]+#edge_sra2fastq:${version}#" workflows/Nextflow/nextflow.config
             #A GitHub Action to detect changed files during a Workflow run and to commit and push them back to the GitHub repository. 
             #By default, the commit is made in the name of "GitHub Actions" and co-authored by the user that made the last commit.
             - name: auto-commit image version update
