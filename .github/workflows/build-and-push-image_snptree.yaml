@@ -55,10 +55,10 @@ jobs:
               with:
                   branch: auto-update-${{ github.run_id }}
                   create_branch: true
-                  commit_message: "Auto update of run assembly docker image version ${{ steps.get_version.outputs.version }}"
+                  commit_message: "Auto update of run SNPtree docker image version ${{ steps.get_version.outputs.version }}"
             - name: Create Pull Request
               run: |
-                  title="Automated PR: update assembly docker image version ${{ steps.get_version.outputs.version }}"
+                  title="Automated PR: update SNPtree docker image version ${{ steps.get_version.outputs.version }}"
                   gh pr create \
                       --base main \
                       --head auto-update-${{ github.run_id }} \
