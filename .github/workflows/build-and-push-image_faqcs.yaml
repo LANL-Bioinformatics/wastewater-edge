@@ -1,4 +1,4 @@
-name: Build and push container image to GHCR
+name: Build and push container faqcs
 
 # Run this workflow whenever a Dockerfile is updated.
 on:
