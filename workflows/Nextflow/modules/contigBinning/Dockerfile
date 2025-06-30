@@ -1,6 +1,6 @@
 # syntax=docker/dockerfile:1
 FROM continuumio/miniconda3:main AS build
-ENV version=1.0
+ENV version=1.0.0
 
 ENV container=docker
 
