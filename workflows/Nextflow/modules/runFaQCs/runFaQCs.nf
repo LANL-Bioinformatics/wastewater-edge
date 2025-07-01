@@ -195,8 +195,8 @@ workflow FAQCS {
     paired = qc.out.pairedQC
     unpaired = qc.out.unpairedQC
     qcReport = qc.out.qcReport
-    qcStats = qc.out.qcStats.fileter { it.name == "QC.stats.txt" }
-    
+    qcStats = qc.out.qcStats.filter { it.name == "QC.stats.txt" }
+
     emit:
     paired
     unpaired
