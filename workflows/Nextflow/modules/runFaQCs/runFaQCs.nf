@@ -159,7 +159,7 @@ process jsonQCstats {
     path "QC_summary_plots.html", emit: qcSummaryHtml
 
     script:
-    def statsTXTfile = stats.filter { it.name == "QC.stats.txt" }
+    def statsTXTfile = (stats instanceof List) ? stats.find { it.name == "QC.stats.txt" } : stats
     """
     statsToJSON.py --json_out ./QC.stats.json --html_out ./QC_summary_plots.html $statsTXTfile 
     """
