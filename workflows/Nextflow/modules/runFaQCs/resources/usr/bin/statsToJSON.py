@@ -3,8 +3,11 @@
 import re
 import json
 import argparse
+import os
 import plotly.graph_objects as go
 from plotly.subplots import make_subplots
+import faqcs_len_histogram
+
 
 def parse_qc_file(input_path):
     json_dict = {}
@@ -131,11 +134,64 @@ def create_qc_plot(json_dict, criteria_labels, output_html):
 
     fig.write_html(output_html)
 
+def merge_html_plots(summary_path, histogram_path, output_path="final.html"):
+    with open(summary_path, "r") as f:
+        summary_html = f.read()
+    with open(histogram_path, "r") as f:
+        histogram_html = f.read()
+
+    def extract_body_content(html):
+        match = re.search(r"<body.*?>(.*)</body>", html, re.DOTALL)
+        return match.group(1).strip() if match else html
+
+    summary_content = extract_body_content(summary_html)
+    histogram_content = extract_body_content(histogram_html)
+
+    final_html = f"""
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>QC Report</title>
+    <style>
+        details {{
+            margin-bottom: 20px;
+            border: 1px solid #ccc;
+            padding: 10px;
+            border-radius: 4px;
+        }}
+        summary {{
+            font-size: 18px;
+            font-weight: bold;
+            cursor: pointer;
+        }}
+    </style>
+</head>
+<body>
+    <details open>
+        <summary>QC Summary Plots</summary>
+        {summary_content}
+    </details>
+
+    <details open>
+        <summary>Length Histogram Plots</summary>
+        {histogram_content}
+    </details>
+</body>
+</html>
+"""
+    with open(output_path, "w") as f:
+        f.write(final_html)
+    print(f"[✓] Final merged report saved to: {output_path}")
+
 def main(): 
     parser = argparse.ArgumentParser(description="Parse QC stats and generate plots.")
     parser.add_argument("input_file", help="Path to the QC.stats file")
     parser.add_argument("--json_out", default="QC.stats.json", help="Path to output JSON summary")
     parser.add_argument("--html_out", default="QC_summary_plots.html", help="Path to output HTML plot")
+    parser.add_argument("--hist_out", default="QC_length_histogram.html", help="Path to output length histogram plot")
+    parser.add_argument("--final_out", default="QC_final_report.html", help="Path to merged final HTML output")
+
 
     args = parser.parse_args()
 
@@ -147,6 +203,21 @@ def main():
 
     # Generate plot
     create_qc_plot(json_dict, criteria_labels, args.html_out)
+
+    # Check for histogram inputs
+    qc_stats_dir = os.path.dirname(os.path.abspath(args.input_file))
+    hist1_path = os.path.join(qc_stats_dir, "qa.QC.length_count.txt")
+    hist2_path = os.path.join(qc_stats_dir, "QC.length_count.txt")
+    if not (os.path.exists(hist1_path) and os.path.exists(hist2_path)):
+        print(f"Skipping histogram generation: required files '{hist1_path}' or '{hist2_path}' not found.")
+
+    qa_bar, qa_annot, _ = faqcs_len_histogram.length_histogram(hist1_path, "Input Length", "Count (millions)")
+    main_bar, main_annot, _ = faqcs_len_histogram.length_histogram(hist2_path, "Trimmed Length", "Count (millions)")
+    hist_fig = faqcs_len_histogram.combine_length_histogram(qa_bar, main_bar, qa_annot, main_annot)
+    hist_fig.write_html(args.hist_out)
+    
+    if os.path.exists(args.hist_out):
+        merge_html_plots(args.html_out, args.hist_out, args.final_out)
 
 if __name__ == "__main__":
     main()
