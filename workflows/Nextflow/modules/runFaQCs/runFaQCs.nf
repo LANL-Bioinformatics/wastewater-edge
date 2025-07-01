@@ -38,8 +38,8 @@ process qc {
     path "QC.{1,2}.trimmed.fastq", optional:true, emit: pairedQC
     path "QC.unpaired.trimmed.fastq", optional:true, emit: unpairedQC
     path "QC_qc_report.pdf", optional: true, emit: qcReport
+    path "QC.stats.txt", optional: true, emit: qcStatsTxt
     path "QC.*.{txt,matrix}", optional: true, emit: qcStats
-    path "QC.stats.txt", emit: qcStatsTxt
     path "QC.log", emit: log
     path "qa*",optional: true, emit: qaStats
 
@@ -196,12 +196,12 @@ workflow FAQCS {
     paired = qc.out.pairedQC
     unpaired = qc.out.unpairedQC
     qcReport = qc.out.qcReport
-    qcStatsTxt = qc.out.qcStatsTxt
-
+    qcStats = qc.out.qcStatsTxt
+    
     emit:
     paired
     unpaired
     qcReport
-    qcStatsTxt
+    qcStats
 
 }
