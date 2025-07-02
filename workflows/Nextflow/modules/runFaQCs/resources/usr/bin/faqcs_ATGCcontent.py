@@ -1,7 +1,7 @@
 #!/usr/bin/env python3
 # -*- coding: utf-8 -*-
 """
-This script reads base content data from a specified file, computes statistics for each base (A, T, C, G, and GC), and generates a multi-panel plot using Plotly.
+This script reads base content data from a specified file, computes statistics for each base ratio (A, T, C, G, and GC), and generates a multi-panel plot using Plotly.
 It supports reading data before and after trimming, allowing for comparison of base content distributions.
 """
 import pandas as pd
@@ -80,25 +80,19 @@ def main():
     parser = argparse.ArgumentParser(description="Plot base content distributions from QC output.")
     parser.add_argument("--input1", required=True, help="Input base content file before trimming (e.g., qa.QC.base_content.txt)")
     parser.add_argument("--input2", required=True, help="Input base content file after trimming (e.g., QC.base_content.txt)")
-    parser.add_argument("--out1", help="Optional output HTML for the first GC plot")
-    parser.add_argument("--out2", help="Optional output HTML for the second GC plot")
-    
+    parser.add_argument("--out1", required=True, help="Output HTML for the first GC plot")
+    parser.add_argument("--out2", required=True, help="Output HTML for the second GC plot")
+
     args = parser.parse_args()
 
     fig1 = read_gc_plot(args.input1, title_prefix="Input Reads")
     fig2 = read_gc_plot(args.input2, title_prefix="Trimmed Reads")
 
-    if args.out1:
-        fig1.write_html(args.out1)
-        print(f"Saved: {args.out1}")
-    else:
-        fig1.show()
+    fig1.write_html(args.out1)
+    print(f"Saved: {args.out1}")
 
-    if args.out2:
-        fig2.write_html(args.out2)
-        print(f"Saved: {args.out2}")
-    else:
-        fig2.show()
+    fig2.write_html(args.out2)
+    print(f"Saved: {args.out2}")
 
 if __name__ == "__main__":
     main()
