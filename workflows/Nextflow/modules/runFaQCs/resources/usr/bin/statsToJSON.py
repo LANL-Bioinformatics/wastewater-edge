@@ -6,9 +6,11 @@ import argparse
 import os
 import plotly.graph_objects as go
 from plotly.subplots import make_subplots
+
 import faqcs_len_histogram
 import faqcs_ATGCcontent
 import faqcs_ATGCcomposition
+import faqcs_quality_histogram
 
 def parse_qc_file(input_path):
     json_dict = {}
@@ -195,6 +197,8 @@ def main():
     parser.add_argument("--atcg_out", default="QC_ATCG_composition.html", help="ATCG composition plot")
     parser.add_argument("--N_composition_out", default="QC_N_composition.html", help="N composition plot")
     parser.add_argument("--trim5", type=int, default=0, help="Trim adjustment for 5' trimming (default: 0)")
+    parser.add_argument("--qual_out", default="QC_quality_histogram.html", help="Path to output quality histogram plot")
+
     parser.add_argument("--final_out", default="QC_final_report.html", help="Path to merged final HTML output")
 
 
@@ -253,6 +257,17 @@ def main():
             n_combined.write_html(args.N_composition_out)
             print(f"[✓] N base plot saved to {args.N_composition_out}")
 
+    # Quality histogram files
+    qual1 = os.path.join(qc_stats_dir, "qa.QC.for_qual_histogram.txt")
+    qual2 = os.path.join(qc_stats_dir, "QC.for_qual_histogram.txt")
+
+    if os.path.isfile(qual1) and os.path.isfile(qual2):
+        qh_fig1, qa_annotation, qh_min1, qh_max1 = faqcs_quality_histogram.quality_histogram(qual1, "Input Reads Avg Score")
+        qh_fig2, main_annotation, qc_min2, qc_max2 = faqcs_quality_histogram.quality_histogram(qual2, "Trimmed Reads Avg Score")
+        combined_qual = faqcs_quality_histogram.combine_quality_histograms(qh_fig1, qh_fig2, qa_annotation, main_annotation, qh_min1, qh_max1, qc_min2, qc_max2)
+        combined_qual.write_html(args.qual_out)
+        print(f"[✓] Quality histogram written to {args.qual_out}")
+ 
     # Merge into final report
     sections = [("QC Summary Plots", args.html_out)]
     if os.path.isfile(args.hist_out):
@@ -264,6 +279,8 @@ def main():
         sections.append(("ATCG Composition", args.atcg_out))
     if os.path.isfile(args.N_composition_out):
         sections.append(("N Composition", args.N_composition_out))
+    if os.path.isfile(args.qual_out):
+        sections.append(("Average Quality Histogram", args.qual_out))
 
     merge_html_plots(sections, args.final_out)
 
