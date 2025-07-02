@@ -7,7 +7,7 @@ import os
 import plotly.graph_objects as go
 from plotly.subplots import make_subplots
 import faqcs_len_histogram
-
+import faqcs_ATGCcontent
 
 def parse_qc_file(input_path):
     json_dict = {}
@@ -134,18 +134,22 @@ def create_qc_plot(json_dict, criteria_labels, output_html):
 
     fig.write_html(output_html)
 
-def merge_html_plots(summary_path, histogram_path, output_path="final.html"):
-    with open(summary_path, "r") as f:
-        summary_html = f.read()
-    with open(histogram_path, "r") as f:
-        histogram_html = f.read()
-
+def merge_html_plots(html_sections, output_path="QC_final_report.html"):
     def extract_body_content(html):
         match = re.search(r"<body.*?>(.*)</body>", html, re.DOTALL)
         return match.group(1).strip() if match else html
 
-    summary_content = extract_body_content(summary_html)
-    histogram_content = extract_body_content(histogram_html)
+    wrapped_sections = []
+    for title, html_path in html_sections:
+        with open(html_path, "r") as f:
+            section_body = extract_body_content(f.read())
+        wrapped = f"""
+<details open>
+    <summary>{title}</summary>
+    {section_body}
+</details>
+"""
+        wrapped_sections.append(wrapped)
 
     final_html = f"""
 <!DOCTYPE html>
@@ -168,21 +172,15 @@ def merge_html_plots(summary_path, histogram_path, output_path="final.html"):
     </style>
 </head>
 <body>
-    <details open>
-        <summary>QC Summary Plots</summary>
-        {summary_content}
-    </details>
-
-    <details open>
-        <summary>Length Histogram Plots</summary>
-        {histogram_content}
-    </details>
+    {''.join(wrapped_sections)}
 </body>
 </html>
 """
     with open(output_path, "w") as f:
         f.write(final_html)
-    print(f"[✓] Final merged report saved to: {output_path}")
+    print(f"[✓] Final QC report written to: {output_path}")
+
+
 
 def main(): 
     parser = argparse.ArgumentParser(description="Parse QC stats and generate plots.")
@@ -190,7 +188,10 @@ def main():
     parser.add_argument("--json_out", default="QC.stats.json", help="Path to output JSON summary")
     parser.add_argument("--html_out", default="QC_summary_plots.html", help="Path to output HTML plot")
     parser.add_argument("--hist_out", default="QC_length_histogram.html", help="Path to output length histogram plot")
+    parser.add_argument("--gc1_out", default="QC_input_GC_content.html", help="GC plot for input reads")
+    parser.add_argument("--gc2_out", default="QC_trimmed_GC_content.html", help="GC plot for trimmed reads")
     parser.add_argument("--final_out", default="QC_final_report.html", help="Path to merged final HTML output")
+
 
 
     args = parser.parse_args()
@@ -206,18 +207,40 @@ def main():
 
     # Check for histogram inputs
     qc_stats_dir = os.path.dirname(os.path.abspath(args.input_file))
-    hist1_path = os.path.join(qc_stats_dir, "qa.QC.length_count.txt")
-    hist2_path = os.path.join(qc_stats_dir, "QC.length_count.txt")
-    if not (os.path.exists(hist1_path) and os.path.exists(hist2_path)):
-        print(f"Skipping histogram generation: required files '{hist1_path}' or '{hist2_path}' not found.")
+    # Histogram files
+    hist1 = os.path.join(qc_stats_dir, "qa.QC.length_count.txt")
+    hist2 = os.path.join(qc_stats_dir, "QC.length_count.txt")
+    if os.path.isfile(hist1) and os.path.isfile(hist2):
+        qa_bar, qa_annot, _ = faqcs_len_histogram.length_histogram(hist1, "Input Length", "Count (millions)")
+        main_bar, main_annot, _ = faqcs_len_histogram.length_histogram(hist2, "Trimmed Length", "Count (millions)")
+        hist_fig = faqcs_len_histogram.combine_length_histogram(qa_bar, main_bar, qa_annot, main_annot)
+        hist_fig.write_html(args.hist_out)
+    else:
+        print("[!] Skipping histogram section — required length_count.txt files not found.")
+        args.hist_out = None
 
-    qa_bar, qa_annot, _ = faqcs_len_histogram.length_histogram(hist1_path, "Input Length", "Count (millions)")
-    main_bar, main_annot, _ = faqcs_len_histogram.length_histogram(hist2_path, "Trimmed Length", "Count (millions)")
-    hist_fig = faqcs_len_histogram.combine_length_histogram(qa_bar, main_bar, qa_annot, main_annot)
-    hist_fig.write_html(args.hist_out)
-    
-    if os.path.exists(args.hist_out):
-        merge_html_plots(args.html_out, args.hist_out, args.final_out)
+    # GC content files
+    base1 = os.path.join(qc_stats_dir, "qa.QC.base_content.txt")
+    base2 = os.path.join(qc_stats_dir, "QC.base_content.txt")
+    if os.path.isfile(base1) and os.path.isfile(base2):
+        gc_fig1 = faqcs_ATGCcontent.read_gc_plot(base1, "Input Reads")
+        gc_fig2 = faqcs_ATGCcontent.read_gc_plot(base2, "Trimmed Reads")
+        gc_fig1.write_html(args.gc1_out)
+        gc_fig2.write_html(args.gc2_out)
+    else:
+        print("[!] Skipping GC content section — required base_content.txt files not found.")
+        args.gc1_out = None
+        args.gc2_out = None
+
+    # Merge into final report
+    sections = [("QC Summary Plots", args.html_out)]
+    if os.path.isfile(args.hist_out):
+        sections.append(("Length Histogram", args.hist_out))
+    if os.path.isfile(args.gc1_out) and os.path.isfile(args.gc2_out):
+        sections.append(("GC Content - Input", args.gc1_out))
+        sections.append(("GC Content - Trimmed", args.gc2_out))
+
+    merge_html_plots(sections, args.final_out)
 
 if __name__ == "__main__":
     main()

@@ -158,6 +158,7 @@ process jsonQCstats {
     output:
     path "QC.stats.json", emit: qcStatsJson
     path "QC_summary_plots.html", emit: qcSummaryHtml
+    path "QC_final_report.html", emit: qcFinalReportHtml
 
     script:
     def statsTXTfile = (stats instanceof List) ? stats.find { it.name == "QC.stats.txt" } : stats
