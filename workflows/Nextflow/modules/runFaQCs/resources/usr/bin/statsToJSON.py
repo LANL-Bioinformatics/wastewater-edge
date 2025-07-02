@@ -8,6 +8,7 @@ import plotly.graph_objects as go
 from plotly.subplots import make_subplots
 import faqcs_len_histogram
 import faqcs_ATGCcontent
+import faqcs_ATGCcomposition
 
 def parse_qc_file(input_path):
     json_dict = {}
@@ -133,6 +134,7 @@ def create_qc_plot(json_dict, criteria_labels, output_html):
     )
 
     fig.write_html(output_html)
+    print(f"[✓] QC summary plot saved to: {output_html}")
 
 def merge_html_plots(html_sections, output_path="QC_final_report.html"):
     def extract_body_content(html):
@@ -190,6 +192,9 @@ def main():
     parser.add_argument("--hist_out", default="QC_length_histogram.html", help="Path to output length histogram plot")
     parser.add_argument("--gc1_out", default="QC_input_GC_content.html", help="GC plot for input reads")
     parser.add_argument("--gc2_out", default="QC_trimmed_GC_content.html", help="GC plot for trimmed reads")
+    parser.add_argument("--atcg_out", default="QC_ATCG_composition.html", help="ATCG composition plot")
+    parser.add_argument("--N_composition_out", default="QC_N_composition.html", help="N composition plot")
+    parser.add_argument("--trim5", type=int, default=0, help="Trim adjustment for 5' trimming (default: 0)")
     parser.add_argument("--final_out", default="QC_final_report.html", help="Path to merged final HTML output")
 
 
@@ -232,6 +237,22 @@ def main():
         args.gc1_out = None
         args.gc2_out = None
 
+    # ATCG composition plots
+    base_matrix1 = os.path.join(qc_stats_dir, "qa.QC.base.matrix")
+    base_matrix2 = os.path.join(qc_stats_dir, "QC.base.matrix")
+    if os.path.isfile(base_matrix1) and os.path.isfile(base_matrix2):
+        atcg_fig1, qa_n_base, qa_total_reads = faqcs_ATGCcomposition.atcg_composition_plot(base_matrix1, "Input Reads Base", "Base content (%)", args.trim5)
+        atcg_fig2, n_base, total_reads = faqcs_ATGCcomposition.atcg_composition_plot(base_matrix2, "Trimmed Reads Base", args.trim5)
+        combined_atcg = faqcs_ATGCcomposition.combine_atcg_plots(atcg_fig1, atcg_fig2)
+        combined_atcg.write_html(args.atcg_out)
+        print(f"[✓] ATCG plot saved to {args.atcg_out}")
+        if qa_n_base.sum() > 0:
+            n_fig1 = faqcs_ATGCcomposition.n_composition_plot(qa_n_base, "Input Reads Position", "N Base count per million reads", int(json_dict["inputReads"]), args.trim5)
+            n_fig2 = faqcs_ATGCcomposition.n_composition_plot(n_base, "Trimmed Reads Position", "", int(json_dict["inputReads"]), args.trim5)
+            n_combined = faqcs_ATGCcomposition.combine_n_plots(n_fig1, n_fig2)
+            n_combined.write_html(args.N_composition_out)
+            print(f"[✓] N base plot saved to {args.N_composition_out}")
+
     # Merge into final report
     sections = [("QC Summary Plots", args.html_out)]
     if os.path.isfile(args.hist_out):
@@ -239,6 +260,10 @@ def main():
     if os.path.isfile(args.gc1_out) and os.path.isfile(args.gc2_out):
         sections.append(("GC Content - Input", args.gc1_out))
         sections.append(("GC Content - Trimmed", args.gc2_out))
+    if os.path.isfile(args.atcg_out):
+        sections.append(("ATCG Composition", args.atcg_out))
+    if os.path.isfile(args.N_composition_out):
+        sections.append(("N Composition", args.N_composition_out))
 
     merge_html_plots(sections, args.final_out)
 

@@ -163,7 +163,7 @@ process jsonQCstats {
     script:
     def statsTXTfile = (stats instanceof List) ? stats.find { it.name == "QC.stats.txt" } : stats
     """
-    statsToJSON.py --json_out ./QC.stats.json --html_out ./QC_summary_plots.html $statsTXTfile 
+    statsToJSON.py --trim5 ${settings["trim5end"]} --json_out ./QC.stats.json --html_out ./QC_summary_plots.html $statsTXTfile 
     """
 }
 
