@@ -44,7 +44,15 @@ def quality_histogram(qual_histogram_file, xlab, ylab="Reads Number (millions)")
         title=dict(text="Reads Average Quality Histogram", x=0.5),
         xaxis=dict(title=xlab, autorange="reversed", range=[df_sorted['Score'].min(), df_sorted['Score'].max()]),
         yaxis=dict(title=ylab),
-        yaxis2=dict(title="Cumulative Percentage", range=[0, 100], showgrid=False, tickfont=dict(color="blue"), titlefont=dict(color="blue")),
+        yaxis2=dict(
+            title=dict(
+                text="Cumulative Percentage",
+                font=dict(color="blue")
+            ),
+            range=[0, 100],
+            showgrid=False,
+            tickfont=dict(color="blue")
+        ),
         showlegend=False
     )
 
@@ -86,11 +94,11 @@ def combine_quality_histograms(fig1, fig2, qa_annotation, main_annotation, min1=
 
     combined.update_xaxes(title_text="Input Reads Avg Score", row=1, col=1, autorange="reversed", autorangeoptions=dict(minallowed=min1, maxallowed=max1))
     combined.update_yaxes(title_text="Reads Number (millions)", row=1, col=1, secondary_y=False)
-    combined.update_yaxes(title_text="Cumulative Percentage", row=1, col=1, titlefont=dict(color="blue"), tickfont=dict(color="blue"),secondary_y=True)
+    combined.update_yaxes(title_text="Cumulative Percentage", row=1, col=1, title_font=dict(color="blue"), tickfont=dict(color="blue"),secondary_y=True)
 
     combined.update_xaxes(title_text="Trimmed Reads Avg Score", row=1, col=2, autorange="reversed", autorangeoptions=dict(minallowed=min2, maxallowed=max2))
     combined.update_yaxes(title_text="Reads Number (millions)", row=1, col=2, secondary_y=False)
-    combined.update_yaxes(title_text="Cumulative Percentage", row=1, col=2, titlefont=dict(color="blue"), tickfont=dict(color="blue"),secondary_y=True)
+    combined.update_yaxes(title_text="Cumulative Percentage", row=1, col=2, title_font=dict(color="blue"), tickfont=dict(color="blue"),secondary_y=True)
 
     return combined
 
