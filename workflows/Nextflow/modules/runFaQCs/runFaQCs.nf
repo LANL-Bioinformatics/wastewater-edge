@@ -41,7 +41,7 @@ process qc {
     path "QC.stats.txt", optional: true, emit: qcStatsTxt
     path "QC.*.{txt,matrix}", optional: true, emit: qcStats
     path "QC.log", emit: log
-    path "qa*",optional: true, emit: qaStats
+    path "qa*.{txt,matrix}",optional: true, emit: qaStats
 
     script:
     //adjust minLength
