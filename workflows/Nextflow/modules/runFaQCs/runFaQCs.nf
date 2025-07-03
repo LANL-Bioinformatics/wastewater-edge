@@ -65,6 +65,7 @@ process qc {
         adapterArg = "--adapter --artifactFile $adapter"
     } 
 
+    def filesforhtmlreport = settings["htmlreport"] ? "--debug" : ""
     polyA = settings["trimPolyA"] ? "--polyA" : ""
     phiX = settings["filtPhiX"] ? "--phiX" : ""
 
@@ -82,7 +83,7 @@ process qc {
     $trim \
     $adapterArg \
     $phiX \
-    --debug \
+    $filesforhtmlreport \
     1>QC.log 2>&1
     """
 }
