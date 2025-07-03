@@ -65,7 +65,7 @@ process qc {
         adapterArg = "--adapter --artifactFile $adapter"
     } 
 
-    def filesforhtmlreport = settings["htmlreport"] ? "--debug" : ""
+    filesforhtmlreport = settings["htmlreport"] ? "--debug" : ""
     polyA = settings["trimPolyA"] ? "--polyA" : ""
     phiX = settings["filtPhiX"] ? "--phiX" : ""
 
