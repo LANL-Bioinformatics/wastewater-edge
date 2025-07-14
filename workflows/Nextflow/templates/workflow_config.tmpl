@@ -29,7 +29,7 @@ params {
         readsTaxonomyOutDir = <% if(typeof readTax !== 'undefined') { %>"<%= projOutdir %>"<% } else { %>""<%} %>
         annotationOutDir = <% if(workflow === 'annotation') { %>"<%= projOutdir %>"<% } else { %>""<%} %>
         smaOutDir = <% if(workflow === 'antiSmash') { %>"<%= projOutdir %>"<% } else { %>""<%} %>
-        refBasedOutDir = <% if(workflow === 'referenceBased') { %>"<%= projOutdir %>"<% } else { %>""<%} %>
+        refBasedOutDir = <% if(workflow === 'refBased') { %>"<%= projOutdir %>"<% } else { %>""<%} %>
         phylogenyOutDir = <% if(workflow === 'phylogeny') { %>"<%= projOutdir %>"<% } else { %>""<%} %>
         reportOutDir = "<%= projOutdir %>"
     }
