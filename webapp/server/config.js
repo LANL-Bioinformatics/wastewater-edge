@@ -117,8 +117,6 @@ const config = {
     NUM_JOBS_MAX: makeIntIfDefined(process.env.LOCAL_NUM_JOBS_MAX) || 2,
   },
   CRON: {
-    // monitor workflow requests on every minute
-    LOCAL_WORKFLOW_MONITOR: process.env.CRON_LOCAL_WORKFLOW_MONITOR_SCHEDULE || '*/1 * * * *',
     // Port number on which the cron web server will listen for HTTP requests.
     SERVER_PORT: makeIntIfDefined(process.env.CRON_SERVER_PORT) || 5555,
     // Number of days for which the system will preserve a project after a user opts to delete it.
@@ -126,6 +124,8 @@ const config = {
     // Cron job schedules:
     // Reference: https://crontab.guru/ (cron schedule decoder)
     SCHEDULES: {
+      // monitor workflow requests on every minute
+      LOCAL_WORKFLOW_MONITOR: process.env.CRON_LOCAL_WORKFLOW_MONITOR_SCHEDULE || '*/1 * * * *',
       // monitor workflow requests on every 2 minutes
       CROMWELL_WORKFLOW_MONITOR: process.env.CRON_CROMWELL_WORKFLOW_MONITOR_SCHEDULE || '0-59/2 * * * *',
       // monitor cromwell jobs on every 2 minutes
