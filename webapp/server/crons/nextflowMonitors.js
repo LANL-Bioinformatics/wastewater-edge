@@ -1,6 +1,8 @@
+
 const fs = require('fs');
 const Project = require('../edge-api/models/project');
 const Job = require('../edge-api/models/job');
+const { abortJob, updateJobStatus } = require('../utils/nextflow');
 const common = require('../utils/common');
 const logger = require('../utils/logger');
 const { nextflowWorkflows, workflowList } = require('../utils/workflow');
@@ -8,7 +10,7 @@ const { generateInputs, submitWorkflow } = require('../utils/nextflow');
 
 const config = require('../config');
 
-module.exports = async function nextflowWorkflowMonitor() {
+const nextflowWorkflowMonitor = async () => {
   logger.debug('Nextflow workflow monitor');
   try {
     // only process one job at each time based on job updated time
@@ -72,3 +74,42 @@ module.exports = async function nextflowWorkflowMonitor() {
     logger.error(`nextflowWorkflowMonitor failed:${err}`);
   }
 };
+
+const nextflowJobMonitor = async () => {
+  logger.debug('nextflow job monitor');
+  try {
+    // only process one job at each time based on job updated time
+    const jobs = await Job.find({ 'queue': 'nextflow', 'status': { $in: ['Submitted', 'Running'] } }).sort({ updated: 1 });
+    const job = jobs[0];
+    if (!job) {
+      logger.debug('No nextflow job to process');
+      return;
+    }
+    logger.debug(`nextflow ${job.id}`);
+    // find related project
+    const proj = await Project.findOne({ 'code': job.project });
+    if (proj) {
+      if (proj.status === 'delete') {
+        // abort job
+        abortJob(proj, job);
+      } else {
+        await updateJobStatus(job, proj);
+      }
+    } else {
+      // delete from database
+      Job.deleteOne({ project: job.project }, (err) => {
+        if (err) {
+          logger.error(`Failed to delete job from DB ${job.project}:${err}`);
+        }
+      });
+    }
+  } catch (err) {
+    logger.error(`nextflowJobMonitor failed:${err}`);
+  }
+};
+
+module.exports = {
+  nextflowWorkflowMonitor,
+  nextflowJobMonitor,
+};
+

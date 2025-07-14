@@ -1,10 +1,17 @@
 const { exec } = require('child_process');
 const moment = require('moment');
+const findRemoveSync = require('find-remove');
 
 const logger = require('../utils/logger');
 const config = require('../config');
 
-module.exports = function dbBackup() {
+const dbBackupClean = () => {
+  logger.debug('Clean up DB backup');
+  const result = findRemoveSync(config.DATABASE.BACKUP_DIR, { dir: '^db-backup_', regex: true, age: { seconds: config.DATABASE.BACKUP_LIFETIME_SECONDS } });
+  logger.info(result);
+};
+
+const dbBackup = () => {
   logger.debug('DB backup');
   // mongodump
   const dateStringWithTime = moment(new Date()).format('YYYY-MM-DD:HH:mm');
@@ -20,4 +27,9 @@ module.exports = function dbBackup() {
       logger.error(stderr);
     }
   });
+};
+
+module.exports = {
+  dbBackup,
+  dbBackupClean,
 };

@@ -113,7 +113,12 @@ const config = {
     TEMPLATE_DIR: process.env.CROMWELL_TEMPLATE_DIR || path.join(CROMWELL_BASE_DIR, 'templates'),
     CONF: process.env.CROMWELL_CONF || path.join(CROMWELL_BASE_DIR, 'conf.json'),
   },
+  LOCAL: {
+    NUM_JOBS_MAX: makeIntIfDefined(process.env.LOCAL_NUM_JOBS_MAX) || 2,
+  },
   CRON: {
+    // monitor workflow requests on every minute
+    LOCAL_WORKFLOW_MONITOR: process.env.CRON_LOCAL_WORKFLOW_MONITOR_SCHEDULE || '*/1 * * * *',
     // Port number on which the cron web server will listen for HTTP requests.
     SERVER_PORT: makeIntIfDefined(process.env.CRON_SERVER_PORT) || 5555,
     // Number of days for which the system will preserve a project after a user opts to delete it.
