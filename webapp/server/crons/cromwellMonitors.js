@@ -1,14 +1,15 @@
 const fs = require('fs');
 const Project = require('../edge-api/models/project');
 const Job = require('../edge-api/models/job');
-const common = require('../utils/common');
+const { abortJob, updateJobStatus } = require('../utils/cromwell');
 const logger = require('../utils/logger');
+const common = require('../utils/common');
 const { cromwellWorkflows, workflowList } = require('../utils/workflow');
 const { generateWDL, generateInputs, submitWorkflow } = require('../utils/cromwell');
 
 const config = require('../config');
 
-module.exports = async function cromWellWorkflowMonitor() {
+const cromWellWorkflowMonitor = async () => {
   logger.debug('Cromwell workflow monitor');
   try {
     // only process one job at each time based on job updated time
@@ -107,4 +108,39 @@ module.exports = async function cromWellWorkflowMonitor() {
   } catch (err) {
     logger.error(`cromWellWorkflowMonitor failed:${err}`);
   }
+};
+
+const cromWellJobMonitor = async () => {
+  logger.debug('cromwell job monitor');
+  try {
+    // only process one job at each time based on job updated time
+    const jobs = await Job.find({ 'queue': 'cromwell', 'status': { $in: ['Submitted', 'Running'] } }).sort({ updated: 1 });
+
+    const job = jobs[0];
+    if (!job) {
+      logger.debug('No cromwell job to process');
+      return;
+    }
+    logger.debug(`cromwell ${job}`);
+    // find related project
+    const proj = await Project.findOne({ 'code': job.project });
+    if (proj) {
+      if (proj.status === 'delete') {
+        // abort job
+        abortJob(job);
+      } else {
+        updateJobStatus(job, proj);
+      }
+    } else {
+      // delete from database
+      await Job.deleteOne({ project: job.project });
+    }
+  } catch (err) {
+    logger.error(`cromwellJobMonitor failed:${err}`);
+  }
+};
+
+module.exports = {
+  cromWellWorkflowMonitor,
+  cromWellJobMonitor,
 };

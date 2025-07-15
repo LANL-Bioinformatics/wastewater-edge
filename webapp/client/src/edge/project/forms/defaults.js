@@ -15,7 +15,17 @@ export const components = {
     validForm: true,
     rangeInput: 0,
   },
+  range2Input: {
+    validForm: true,
+    start: 0,
+    end: 1,
+  },
   rangeTextInput: {
+    validForm: false,
+    start: 0,
+    end: 1,
+  },
+  rangeTextInputSingle: {
     validForm: false,
     start: 0,
     end: 1,
@@ -32,6 +42,10 @@ export const components = {
     validForm: false,
     selection: null,
   },
+  asyncSelectInput: {
+    validForm: false,
+    selections: [],
+  },
   multSelectInput: {
     validForm: false,
     selections: [],
@@ -39,6 +53,11 @@ export const components = {
   treeSelectInput: {
     validForm: false,
     selections: [],
+  },
+  configFileInput: {
+    validForm: false,
+    fileInput: null,
+    fileInput_display: null,
   },
   fileUpload: {
     file: '',

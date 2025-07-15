@@ -13,6 +13,7 @@ include {ANNOTATION} from './modules/runAnnotation/runAnnotation.nf'
 include {PHAGEFINDER} from './modules/phageFinder/phageFinder.nf'
 include {ANTISMASH} from './modules/runAntiSmash/runAntiSmash.nf'
 include {BINNING} from './modules/contigBinning/contigBinning.nf'
+include {REFERENCEBASEDANALYSIS} from './modules/referenceBasedAnalysis/refBasedAnalysis.nf'
 include {PHYLOGENETICANALYSIS} from './modules/SNPtree/SNPtree.nf'
 include {GENEFAMILYANALYSIS} from './modules/geneFamilyAnalysis/geneFamilyAnalysis.nf'
 include {REPORT} from './modules/report/report.nf'
@@ -111,7 +112,7 @@ workflow {
         }
         //run validation alignment if reads were provided
         if(params.shared.inputFastq.size() != 0 || params.sra2fastq.accessions.size() == 0) {
-            READSTOCONTIGS(baseSettings.plus(params.r2c), platform, paired, unpaired, contigs)
+            READSTOCONTIGS(baseSettings.plus(params.r2c).plus(params.refBased), platform, paired, unpaired, contigs)
             alnStats= READSTOCONTIGS.out.alnStats
             coverageTable = READSTOCONTIGS.out.covTable
             contigStatsReport = READSTOCONTIGS.out.contigStatsReport
@@ -120,6 +121,11 @@ workflow {
                 abundances = READSTOCONTIGS.out.magnitudes
             }
         }
+    }
+
+    //Reference-based analysis
+    if(params.modules.refBasedAnalysis) {
+        REFERENCEBASEDANALYSIS(baseSettings.plus(params.refBased).plus(params.contigsToRef), platform, paired, unpaired, contigs.ifEmpty("${projectDir}/nf_assets/NO_FILE3"))
     }
 
     //Reads-based taxonomic classification
@@ -133,7 +139,7 @@ workflow {
     //Contig-based taxonomic classification
     ctaReport = channel.empty()
     if(params.modules.contigsTaxonomyAssignment) {
-        CONTIGSTAXONOMYASSIGNMENT(baseSettings.plus(params.contigsTaxonomy), contigs, coverageTable.ifEmpty{"DNE"})
+        CONTIGSTAXONOMYASSIGNMENT(baseSettings.plus(params.contigsTaxonomy), contigs, coverageTable.ifEmpty{file("DNE")})
         ctaReport = CONTIGSTAXONOMYASSIGNMENT.out.ctaReport
     }
 
@@ -165,7 +171,7 @@ workflow {
         BINNING(baseSettings.plus(params.binning), contigs, abundances)
     }
 
-    //phylogeny analysis
+    //Phylogenetic analysis
     if(params.modules.snpTree) {
         PHYLOGENETICANALYSIS(baseSettings.plus(params.snpTree).plus(params.annotation), paired.ifEmpty(["${projectDir}/nf_assets/NO_FILE"]), unpaired.ifEmpty("${projectDir}/nf_assets/NO_FILE2"), contigs.ifEmpty("${projectDir}/nf_assets/NO_FILE3"))
     }

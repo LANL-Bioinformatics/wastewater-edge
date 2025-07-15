@@ -9,7 +9,7 @@ import { IntegerInput } from 'src/edge/project/forms/IntegerInput'
 import { OptionSelector } from 'src/edge/project/forms/OptionSelector'
 import { SelectInput } from 'src/edge/project/forms/SelectInput'
 import { Switcher } from 'src/edge/project/forms/Switcher'
-import { TreeSelectInput } from 'src/edge/project/forms/TreeSelectInput'
+import { AsyncSelectInput } from 'src/edge/project/forms/AsyncSelectInput'
 import { workflows } from '../defaults'
 
 export const Phylogeny = (props) => {
@@ -84,7 +84,7 @@ export const Phylogeny = (props) => {
     setDoValidation(doValidation + 1)
   }
 
-  const SetTreeSelectInput = (inForm, name) => {
+  const SetAsyncSelectInput = (inForm, name) => {
     if (validInputs[name]) {
       validInputs[name].isValid = inForm.validForm
     }
@@ -224,21 +224,21 @@ export const Phylogeny = (props) => {
                 are recommended.
               </span>
               <br></br>
-              <TreeSelectInput
+              <AsyncSelectInput
                 name={'snpGenomes'}
                 text={workflows[workflowName].genomeInputs['snpGenomes'].text}
                 tooltip={workflows[workflowName].genomeInputs['snpGenomes'].tooltip}
                 placeholder={
-                  workflows[workflowName].genomeInputs['snpGenomes']['treeSelectInput'].placeholder
+                  workflows[workflowName].genomeInputs['snpGenomes']['asyncSelectInput'].placeholder
                 }
-                mode={workflows[workflowName].genomeInputs['snpGenomes']['treeSelectInput'].mode}
-                min={workflows[workflowName].genomeInputs['snpGenomes']['treeSelectInput'].min}
-                max={workflows[workflowName].genomeInputs['snpGenomes']['treeSelectInput'].max}
-                data={props.refGenomeOptions}
-                setParams={SetTreeSelectInput}
+                isMulti={true}
+                min={workflows[workflowName].genomeInputs['snpGenomes']['asyncSelectInput'].min}
+                max={workflows[workflowName].genomeInputs['snpGenomes']['asyncSelectInput'].max}
+                maxOptions={workflows[workflowName].genomeInputs['snpGenomes']['asyncSelectInput'].maxOptions}
+                options={props.refGenomeOptions}
+                setParams={SetAsyncSelectInput}
                 showSelections={true}
                 showSelectionsText={'genome(s) selected'}
-                reset={resetGenomeSelect}
               />
               <br></br>
               <SelectInput
