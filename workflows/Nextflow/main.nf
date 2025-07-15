@@ -165,16 +165,33 @@ workflow {
         BINNING(baseSettings.plus(params.binning), contigs, abundances)
     }
 
+    //phylogeny analysis
     if(params.modules.snpTree) {
         PHYLOGENETICANALYSIS(baseSettings.plus(params.snpTree).plus(params.annotation), paired.ifEmpty(["${projectDir}/nf_assets/NO_FILE"]), unpaired.ifEmpty("${projectDir}/nf_assets/NO_FILE2"), contigs.ifEmpty("${projectDir}/nf_assets/NO_FILE3"))
     }
 
+    //gene family analysis
     if(params.modules.geneFamilyAnalysis) {
+        geneFamilyFAA = channel.empty()
+        geneFamilyGFF = channel.empty()
+        if(params.geneFamily.inputFAA.endsWith("NO_FILE3")) {
+            geneFamilyFAA = annFAA.ifEmpty("${projectDir}/nf_assets/NO_FILE3")
+        }
+        else {
+            geneFamilyFAA = channel.fromPath(params.geneFamily.inputFAA)
+        }
+        if(params.geneFamily.inputGFF.endsWith("NO_FILE4")) {
+            geneFamilyGFF = annGFF.ifEmpty("${projectDir}/nf_assets/NO_FILE4")
+        }
+        else {
+            geneFamilyGFF = channel.fromPath(params.geneFamily.inputGFF)
+        }
         GENEFAMILYANALYSIS(baseSettings.plus(params.geneFamily), 
             paired.ifEmpty(["${projectDir}/nf_assets/NO_FILE"]), 
             unpaired.ifEmpty("${projectDir}/nf_assets/NO_FILE2"),
-            annFAA.ifEmpty("${projectDir}/nf_assets/NO_FILE3"), 
-            annGFF.ifEmpty("${projectDir}/nf_assets/NO_FILE4")
+            geneFamilyFAA,
+            geneFamilyGFF,
+            contigs.ifEmpty("${projectDir}/nf_assets/NO_FILE5")
         )
     }
 
