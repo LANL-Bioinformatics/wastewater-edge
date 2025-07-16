@@ -209,48 +209,61 @@ process virulenceFactorPF2 {
     """
 }
 
-
-workflow GENEFAMILYANALYSIS {
+workflow CONTIGSGENEFAMILYANALYSIS {
     take:
     settings
-    paired
-    unpaired
     faa
     gff
     contigs
 
     main:
-    //filter out unused inputs
-    paired = paired.flatten().filter{name -> !name.contains("NO_FILE")}.collect()
-    unpaired = unpaired.filter{name -> !name.contains("NO_FILE")}
+    //filter unused inputs
     faa = faa.filter{name -> !name.contains("NO_FILE")}
     gff = gff.filter{name -> !name.contains("NO_FILE")}
     contigs = contigs.filter{name -> !name.contains("NO_FILE")}
+
+    //Do contig-based gene family analysis
+
+    //AR genes using RGI
+    antibioticResistanceContigs(settings, faa)
+    processRGIcontigResults(settings, antibioticResistanceContigs.out.json, gff, faa)
+
+    //choice of MetaVF Toolkit or PathoFact2
+    if(settings["virulenceFactorTool"].equalsIgnoreCase("MetaVF Toolkit")) {
+        virulenceFactorContigs(settings, contigs)
+    }
+    else if(settings["virulenceFactorTool"].equalsIgnoreCase("PathoFact2")) {
+        virulenceFactorPF2(settings, contigs)
+    }
+    
+
+
+}
+
+workflow READSGENEFAMILYANALYSIS {
+    take:
+    settings
+    paired
+    unpaired
+
+
+    main:
+    //filter out unused inputs
+    paired = paired.flatten().filter{name -> !name.contains("NO_FILE")}.collect()
+    unpaired = unpaired.filter{name -> !name.contains("NO_FILE")}
+
     //use PE reads first. If not available, use SE reads.
     //if paired channel (should be 1 item, list of files) is empty, use unpaired channel. If both empty, no reads provided. 
     reads = paired.concat(unpaired).first()
 
     //Do read-based gene family analysis
-    if(settings["readsGeneFamily"].toBoolean()) {
-        //AR genes using RGI
-        antibioticResistanceReads(settings, reads)
-        //PathoFact2 only takes contigs as input
-        if(settings["virulenceFactorTool"].equalsIgnoreCase("MetaVF Toolkit")) {
-            virulenceFactorReads(settings, paired)
-        }
+    //AR genes using RGI
+    antibioticResistanceReads(settings, reads)
+    //PathoFact2 only takes contigs as input, so not available here
+    //MetaVF Toolkit only takes PE reads
+    if(settings["virulenceFactorTool"].equalsIgnoreCase("MetaVF Toolkit")) {
+        virulenceFactorReads(settings, paired)
     }
-    //Do contig-based gene family analysis
-    if(settings["contigsGeneFamily"].toBoolean()) {
-        //AR genes using RGI
-        antibioticResistanceContigs(settings, faa)
-        processRGIcontigResults(settings, antibioticResistanceContigs.out.json, gff, faa)
 
-        //choice of MetaVF Toolkit or PathoFact2
-        if(settings["virulenceFactorTool"].equalsIgnoreCase("MetaVF Toolkit")) {
-            virulenceFactorContigs(settings, contigs)
-        }
-        else if(settings["virulenceFactorTool"].equalsIgnoreCase("PathoFact2")) {
-            virulenceFactorPF2(settings, contigs)
-        }
-    }
+
 }

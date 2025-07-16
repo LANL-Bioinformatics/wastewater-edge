@@ -15,7 +15,8 @@ include {ANTISMASH} from './modules/runAntiSmash/runAntiSmash.nf'
 include {BINNING} from './modules/contigBinning/contigBinning.nf'
 include {REFERENCEBASEDANALYSIS} from './modules/referenceBasedAnalysis/refBasedAnalysis.nf'
 include {PHYLOGENETICANALYSIS} from './modules/SNPtree/SNPtree.nf'
-include {GENEFAMILYANALYSIS} from './modules/geneFamilyAnalysis/geneFamilyAnalysis.nf'
+include {READSGENEFAMILYANALYSIS} from './modules/geneFamilyAnalysis/geneFamilyAnalysis.nf'
+include {CONTIGSGENEFAMILYANALYSIS} from './modules/geneFamilyAnalysis/geneFamilyAnalysis.nf'
 include {REPORT} from './modules/report/report.nf'
 
 workflow {
@@ -177,7 +178,14 @@ workflow {
     }
 
     //gene family analysis
-    if(params.modules.geneFamilyAnalysis) {
+        if(params.modules.readsGeneFamilyAnalysis) {
+        READSGENEFAMILYANALYSIS(baseSettings.plus(params.geneFamily), 
+            paired.ifEmpty(["${projectDir}/nf_assets/NO_FILE"]), 
+            unpaired.ifEmpty("${projectDir}/nf_assets/NO_FILE2"),
+        )
+    }
+
+    if(params.modules.contigsGeneFamilyAnalysis) {
         geneFamilyFAA = channel.empty()
         geneFamilyGFF = channel.empty()
         if(params.geneFamily.inputFAA.endsWith("NO_FILE3")) {
@@ -192,9 +200,7 @@ workflow {
         else {
             geneFamilyGFF = channel.fromPath(params.geneFamily.inputGFF)
         }
-        GENEFAMILYANALYSIS(baseSettings.plus(params.geneFamily), 
-            paired.ifEmpty(["${projectDir}/nf_assets/NO_FILE"]), 
-            unpaired.ifEmpty("${projectDir}/nf_assets/NO_FILE2"),
+        CONTIGSGENEFAMILYANALYSIS(baseSettings.plus(params.geneFamily), 
             geneFamilyFAA,
             geneFamilyGFF,
             contigs.ifEmpty("${projectDir}/nf_assets/NO_FILE5")

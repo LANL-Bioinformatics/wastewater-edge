@@ -14,7 +14,8 @@ params {
         secondaryMetaboliteAnalysis =  <% if(workflow === 'antiSmash') { %>true<% } else { %>false<%} %>
         refBasedAnalysis = <% if(workflow === 'refBased') { %>true<% } else { %>false<%} %>
         snpTree = <% if(workflow === 'phylogeny') { %>true<% } else { %>false<%} %>
-        geneFamilyAnalysis = <% if(workflow === 'geneFamilyAnalysis') { %>true<% } else { %>false<%} %>
+        readsGeneFamilyAnalysis = <% if(typeof readGeneFamily !== 'undefined') { %><%= readGeneFamily %><% } else { %>false<%} %>
+        contigsGeneFamilyAnalysis =  <% if(typeof contigGeneFamily !== 'undefined') { %><%= contigGeneFamily %><% } else { %>false<%} %> //contig-based requires annotation output as well (GFF,FAA).
     }
 
     outputLocations {

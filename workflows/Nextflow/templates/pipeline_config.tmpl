@@ -14,6 +14,9 @@ params {
         secondaryMetaboliteAnalysis =  <%= antiSmash %>
         refBasedAnalysis = <%= refBasedAnalysis %>
         snpTree = <%= phylogeny %>
+        readsGeneFamilyAnalysis = <% if(typeof readGeneFamily !== 'undefined') { %><%= readGeneFamily %><% } else { %>false<%} %>
+        contigsGeneFamilyAnalysis =  <% if(typeof contigGeneFamily !== 'undefined') { %><%= contigGeneFamily %><% } else { %>false<%} %> //contig-based requires annotation output as well (GFF,FAA).
+        geneFamilyAnalysis = 
     }
 
     outputLocations {
