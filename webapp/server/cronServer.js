@@ -5,7 +5,7 @@ const mongoose = require('mongoose');
 const cron = require('node-cron');
 const logger = require('./utils/logger');
 const { uploadMonitor } = require('./crons/uploadMonitor');
-const { localWorkflowMonitor } = require('./crons/localMonitors');
+const { localWorkflowMonitor, localJobMonitor } = require('./crons/localMonitors');
 const { cromwellJobMonitor, cromwellWorkflowMonitor } = require('./crons/cromwellMonitors');
 const { nextflowJobMonitor, nextflowWorkflowMonitor } = require('./crons/nextflowMonitors');
 const { projectDeletionMonitor, projectStatusMonitor } = require('./crons/projectMonitors');
@@ -19,9 +19,13 @@ app.use(express.json());
 app.use(cors());
 
 // cron jobs
-// monitor local workflow on every 1 minute
+// monitor local workflow on every 2 minutes
 cron.schedule(config.CRON.SCHEDULES.LOCAL_WORKFLOW_MONITOR, async () => {
   await localWorkflowMonitor();
+});
+// monitor local job on every 2 minutes
+cron.schedule(config.CRON.SCHEDULES.LOCAL_JOB_MONITOR, async () => {
+  await localJobMonitor();
 });
 // monitor cromwell jobs on every 2 minutes
 cron.schedule(config.CRON.SCHEDULES.CROMWELL_JOB_MONITOR, async () => {

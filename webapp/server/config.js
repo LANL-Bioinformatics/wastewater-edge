@@ -124,8 +124,10 @@ const config = {
     // Cron job schedules:
     // Reference: https://crontab.guru/ (cron schedule decoder)
     SCHEDULES: {
-      // monitor workflow requests on every minute
-      LOCAL_WORKFLOW_MONITOR: process.env.CRON_LOCAL_WORKFLOW_MONITOR_SCHEDULE || '*/1 * * * *',
+      // monitor workflow requests on every 2 minutes
+      LOCAL_WORKFLOW_MONITOR: process.env.CRON_LOCAL_WORKFLOW_MONITOR_SCHEDULE || '0-59/2 * * * *',
+      // monitor local jobs on every 2 minutes
+      LOCAL_JOB_MONITOR: process.env.CRON_LOCALJOB_MONITOR_SCHEDULE || '0-59/2 * * * *',
       // monitor workflow requests on every 2 minutes
       CROMWELL_WORKFLOW_MONITOR: process.env.CRON_CROMWELL_WORKFLOW_MONITOR_SCHEDULE || '0-59/2 * * * *',
       // monitor cromwell jobs on every 2 minutes

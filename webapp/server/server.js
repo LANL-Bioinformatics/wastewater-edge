@@ -13,7 +13,7 @@ const swaggerSpec = require('./edge-api/swagger/swaggerSpec');
 const logger = require('./utils/logger');
 const indexRouter = require('./indexRouter');
 const { uploadMonitor } = require('./crons/uploadMonitor');
-const { localWorkflowMonitor } = require('./crons/localMonitors');
+const { localWorkflowMonitor, localJobMonitor } = require('./crons/localMonitors');
 const { cromwellWorkflowMonitor } = require('./crons/cromwellMonitors');
 const { nextflowJobMonitor, nextflowWorkflowMonitor } = require('./crons/nextflowMonitors');
 const { projectDeletionMonitor, projectStatusMonitor } = require('./crons/projectMonitors');
@@ -63,9 +63,13 @@ if (config.NODE_ENV === 'production') {
   });
 } else {
   // cron jobs
-  // monitor local workflow on every 1 minute
+  // monitor local workflow on every 2 minutes
   cron.schedule(config.CRON.SCHEDULES.LOCAL_WORKFLOW_MONITOR, async () => {
     await localWorkflowMonitor();
+  });
+  // monitor local job on every 2 minutes
+  cron.schedule(config.CRON.SCHEDULES.LOCAL_JOB_MONITOR, async () => {
+    await localJobMonitor();
   });
   // monitor workflow requests on every 2 minutes
   cron.schedule(config.CRON.SCHEDULES.CROMWELL_WORKFLOW_MONITOR, async () => {

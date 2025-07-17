@@ -3,7 +3,7 @@ const ejs = require('ejs');
 const Papa = require('papaparse');
 const Job = require('../edge-api/models/job');
 const { nextflowConfigs, workflowList, generateWorkflowResult } = require('./workflow');
-const { write2log, execCmd, sleep } = require('./common');
+const { write2log, execCmd, sleep, pidIsRunning } = require('./common');
 const logger = require('./logger');
 const config = require('../config');
 
@@ -58,17 +58,18 @@ const getJobStatus = (statusStr) => {
   // parse output from 'nextflow log <run name> -f name,status
   const lines = statusStr.split(/\n/);
   let i = 0;
-  let statuses ={};
-  //Use lastest status for retries
+  const statuses = {};
+  // Use lastest status for retries
   for (i = 0; i < lines.length; i += 1) {
-    const [name, status]= lines[i].trim().split('\t');
+    const [name, status] = lines[i].trim().split('\t');
     // skip empty line
-    if(name) {
+    if (name) {
       statuses[name] = status;
     }
   }
   let completeCnt = 0;
-  for (const key in statuses) {
+  // eslint-disable-next-line consistent-return
+  Object.keys(statuses).forEach(key => {
     const status = statuses[key];
     if (status === 'COMPLETED') {
       completeCnt += 1;
@@ -76,7 +77,7 @@ const getJobStatus = (statusStr) => {
     if (status === 'ABORTED') {
       return 'Aborted';
     }
-  }
+  });
   if (completeCnt === Object.keys(statuses).length) {
     return 'Succeeded';
   }
@@ -251,16 +252,6 @@ const getPid = async (proj) => {
     }
   }
   return null;
-};
-// check pid
-const pidIsRunning = (pid) => {
-  try {
-    // a signal of 0 can be used to test for the existence of a process.
-    process.kill(pid, 0);
-    return true;
-  } catch (e) {
-    return false;
-  }
 };
 
 const abortJobLocal = async (proj) => {

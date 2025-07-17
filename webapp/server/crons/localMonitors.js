@@ -1,9 +1,9 @@
 const fs = require('fs');
-const { exec } = require('child_process');
 const Project = require('../edge-api/models/project');
 const Job = require('../edge-api/models/job');
 const common = require('../utils/common');
 const logger = require('../utils/logger');
+const { abortJob, updateJobStatus } = require('../utils/local');
 const { localWorkflows, workflowList } = require('../utils/workflow');
 
 const config = require('../config');
@@ -15,6 +15,7 @@ const localWorkflowMonitor = async () => {
     const jobs = await Job.find({ 'queue': 'local', 'status': { $in: ['Submitted', 'Running'] } }).sort({ updated: 1 });
     // submit request only when the current local running jobs less than the max allowed jobs
     if (jobs.length >= config.LOCAL.NUM_JOBS_MAX) {
+      logger.debug('Local server is busy.');
       return;
     }
     // only process one request at each time
@@ -31,64 +32,85 @@ const localWorkflowMonitor = async () => {
     // create output directory
     const outDir = `${projHome}/${workflowList[projectConf.workflow.name].outdir}`;
     fs.mkdirSync(outDir, { recursive: true });
-    // in case nextflow needs permission to write to the output directory
+    // in case local needs permission to write to the output directory
     fs.chmodSync(outDir, '777');
-    const newJob = new Job({
-      id: proj.code,
-      project: proj.code,
-      type: proj.type,
-      queue: 'local',
-      status: 'Running'
-    });
-    newJob.save();
-    // set project status to 'running'
-    proj.status = 'running';
-    proj.updated = Date.now();
-    proj.save();
-    common.write2log(`${projHome}/log.txt`, 'Running...');
+    const runTime = `${projHome}/run_time.txt`;
+    let cmd = `date > ${runTime}`;
+    const log = `${projHome}/log.txt`;
+
     if (proj.type === 'assayDesign') {
       logger.info('Run bioAI...');
       // create bioaiConf.json
       const conf = `${projHome}/bioaiConf.json`;
       fs.writeFileSync(conf, JSON.stringify({ pipeline: 'bioai', params: { ...projectConf.workflow.input, ...projectConf.genomes } }));
-      const outJson = `${outDir}/bioai_out.json`;
-      const log = `${projHome}/log.txt`;
-      const cmd = `${config.WORKFLOW.BIOAI_EXEC} -i ${conf} -o ${outDir} >> ${log} 2>&1`;
-
-      common.write2log(`${config.IO.PROJECT_BASE_DIR}/${proj.code}/log.txt`, cmd);
-      logger.info(cmd);
-      // run local
-      exec(cmd, (error, stdout, stderr) => {
-        let status = 'complete';
-        let jobStatus = 'Complete';
-        if (error) {
-          status = 'failed';
-          common.write2log(`${config.IO.PROJECT_BASE_DIR}/${proj.code}/log.txt`, error.message);
-          logger.error(error.message);
-        }
-        if (stderr) {
-          status = 'failed';
-          jobStatus = 'Failed';
-          logger.error(stderr);
-        }
-        if (!fs.existsSync(outJson)) {
-          status = 'failed';
-          jobStatus = 'Failed';
-          logger.error('Failed.');
-        }
-        newJob.status = jobStatus;
-        newJob.updated = Date.now();
-        newJob.save();
-        proj.status = status;
-        proj.updated = Date.now();
-        proj.save();
+      cmd += ` && ${config.WORKFLOW.BIOAI_EXEC} -i ${conf} -o ${outDir}`;
+    }
+    cmd += `  && date >> ${runTime} &`;
+    logger.info(cmd);
+    // run local
+    const pid = common.spawnCmd(cmd, log);
+    // run local
+    if (pid) {
+      logger.info(`Started local job with PID: ${pid}`);
+      const newJob = new Job({
+        pid: pid + 1,
+        id: `local-${proj.code}`,
+        project: proj.code,
+        type: proj.type,
+        queue: 'local',
+        status: 'Running'
       });
+      newJob.save();
+      proj.status = 'running';
+      proj.updated = Date.now();
+      proj.save();
+    } else {
+      logger.error('Failed to start local job.');
+      proj.status = 'failed';
+      proj.updated = Date.now();
+      proj.save();
     }
   } catch (err) {
     logger.error(`localMonitor failed:${err}`);
   }
 };
 
+const localJobMonitor = async () => {
+  logger.debug('local job monitor');
+  try {
+    // only process one job at each time based on job updated time
+    const jobs = await Job.find({ 'queue': 'local', 'status': { $in: ['Submitted', 'Running'] } }).sort({ updated: 1 });
+    const job = jobs[0];
+    if (!job) {
+      logger.debug('No local job to process');
+      return;
+    }
+    logger.debug(`local job ${job.id}`);
+    // find related project
+    const proj = await Project.findOne({ 'code': job.project });
+    if (proj) {
+      if (proj.status === 'delete') {
+        // abort job
+        abortJob(job);
+      } else {
+        updateJobStatus(job, proj);
+      }
+    } else {
+      // abort job
+      abortJob(job);
+      // delete from database
+      Job.deleteOne({ project: job.project }, (err) => {
+        if (err) {
+          logger.error(`Failed to delete job from DB ${job.project}:${err}`);
+        }
+      });
+    }
+  } catch (err) {
+    logger.error(`localJobMonitor failed:${err}`);
+  }
+};
+
 module.exports = {
   localWorkflowMonitor,
+  localJobMonitor,
 };
