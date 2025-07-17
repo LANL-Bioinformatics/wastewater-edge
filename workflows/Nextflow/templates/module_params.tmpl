@@ -200,3 +200,13 @@
         phameBootstrap = <% if(typeof phameBootstrap !== 'undefined') { %><%= phameBootstrap %><% } else { %>false<%} %>
         phameBootstrapNum = <% if(typeof phameBootstrapNum !== 'undefined') { %><%= phameBootstrapNum %><% } else { %>100<%} %>
     }
+
+    geneFamily{
+        inputFAA = <% if(typeof inputFAA !== 'undefined' && inputFAA) { %>"<%= inputFAA %>"<% } else { %>"${projectDir}/nf_assets/NO_FILE3"<%} %> //input for contig-based single-workflow version--needs annotation output
+        inputGFF = <% if(typeof inputGFF !== 'undefined' && inputGFF) { %>"<%= inputGFF %>"<% } else { %>"${projectDir}/nf_assets/NO_FILE4"<%} %> //input for contig-based single-workflow version--needs annotation output
+        virulenceFactorTool = <% if(typeof virulenceFactorTool !== 'undefined') { %>"<%= virulenceFactorTool %>"<% } else { %>"MetaVF Toolkit"<%} %> //"MetaVF Toolkit" or "PathoFact2" 
+        rgiDB = "/project/refdata/nextflow/database/RGI"
+        pf2DB = "/project/refdata/nextflow/database/PathoFact2"
+        genomadDB = "/project/refdata/nextflow/database/genomad"
+        pf2Config = "${projectDir}/modules/geneFamilyAnalysis/resources/usr/bin/EDGE_PF2_Config.yaml"
+    }

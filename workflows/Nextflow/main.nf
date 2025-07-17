@@ -15,6 +15,8 @@ include {ANTISMASH} from './modules/runAntiSmash/runAntiSmash.nf'
 include {BINNING} from './modules/contigBinning/contigBinning.nf'
 include {REFERENCEBASEDANALYSIS} from './modules/referenceBasedAnalysis/refBasedAnalysis.nf'
 include {PHYLOGENETICANALYSIS} from './modules/SNPtree/SNPtree.nf'
+include {READSGENEFAMILYANALYSIS} from './modules/geneFamilyAnalysis/geneFamilyAnalysis.nf'
+include {CONTIGSGENEFAMILYANALYSIS} from './modules/geneFamilyAnalysis/geneFamilyAnalysis.nf'
 include {REPORT} from './modules/report/report.nf'
 
 workflow {
@@ -145,12 +147,16 @@ workflow {
     //Annotation and PhageFinder
     antismashInput = contigs
     annStats = channel.empty()
+    annGFF = channel.empty()
+    annFAA = channel.empty()
     if(params.modules.annotation) {
         ANNOTATION(baseSettings.plus(params.annotation), annContigs)
         annStats = ANNOTATION.out.annStats
+        annGFF = ANNOTATION.out.gff
+        annFAA = ANNOTATION.out.faa
 
         if(params.modules.phageFinder && (params.annotation.taxKingdom == null || !(params.annotation.taxKingdom.equalsIgnoreCase("viruses")))) {
-            PHAGEFINDER(baseSettings, ANNOTATION.out.gff, ANNOTATION.out.faa, ANNOTATION.out.fna)
+            PHAGEFINDER(baseSettings, annGFF, annFAA, ANNOTATION.out.fna)
         }
 
         antismashInput = ANNOTATION.out.gbk
@@ -169,6 +175,36 @@ workflow {
     //Phylogenetic analysis
     if(params.modules.snpTree) {
         PHYLOGENETICANALYSIS(baseSettings.plus(params.snpTree).plus(params.annotation), paired.ifEmpty(["${projectDir}/nf_assets/NO_FILE"]), unpaired.ifEmpty("${projectDir}/nf_assets/NO_FILE2"), contigs.ifEmpty("${projectDir}/nf_assets/NO_FILE3"))
+    }
+
+    //gene family analysis
+        if(params.modules.readsGeneFamilyAnalysis) {
+        READSGENEFAMILYANALYSIS(baseSettings.plus(params.geneFamily), 
+            paired.ifEmpty(["${projectDir}/nf_assets/NO_FILE"]), 
+            unpaired.ifEmpty("${projectDir}/nf_assets/NO_FILE2"),
+        )
+    }
+
+    if(params.modules.contigsGeneFamilyAnalysis) {
+        geneFamilyFAA = channel.empty()
+        geneFamilyGFF = channel.empty()
+        if(params.geneFamily.inputFAA.endsWith("NO_FILE3")) {
+            geneFamilyFAA = annFAA.ifEmpty("${projectDir}/nf_assets/NO_FILE3")
+        }
+        else {
+            geneFamilyFAA = channel.fromPath(params.geneFamily.inputFAA)
+        }
+        if(params.geneFamily.inputGFF.endsWith("NO_FILE4")) {
+            geneFamilyGFF = annGFF.ifEmpty("${projectDir}/nf_assets/NO_FILE4")
+        }
+        else {
+            geneFamilyGFF = channel.fromPath(params.geneFamily.inputGFF)
+        }
+        CONTIGSGENEFAMILYANALYSIS(baseSettings.plus(params.geneFamily), 
+            geneFamilyFAA,
+            geneFamilyGFF,
+            contigs.ifEmpty("${projectDir}/nf_assets/NO_FILE5")
+        )
     }
 
     //report generation
