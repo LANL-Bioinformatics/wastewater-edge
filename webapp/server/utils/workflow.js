@@ -151,6 +151,15 @@ const generateWorkflowResult = (proj) => {
       if (fs.existsSync(reportFile)) {
         result.report = `${workflowList[projectConf.workflow.name].outdir}/final_report.pdf`;
       }
+    } else if (projectConf.workflow.name === 'phylogeny') {
+      const treeAllHtml = `${outdir}/SNPphyloTree.all.html`;
+      if (fs.existsSync(treeAllHtml)) {
+        result.treeAllHtml = `${workflowList[projectConf.workflow.name].outdir}/SNPphyloTree.all.html`;
+      }
+      const treeCdsHtml = `${outdir}/SNPphyloTree.cds.html`;
+      if (fs.existsSync(treeCdsHtml)) {
+        result.treeCdsHtml = `${workflowList[projectConf.workflow.name].outdir}/SNPphyloTree.cds.html`;
+      }
     }
 
     fs.writeFileSync(resultJson, JSON.stringify(result));
