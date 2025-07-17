@@ -130,9 +130,17 @@ const generateWorkflowResult = (proj) => {
       if (fs.existsSync(statsJsonFile)) {
         result.stats = JSON.parse(fs.readFileSync(statsJsonFile));
       }
-      const reportFile = `${outdir}/final_report.pdf`;
+      const summaryPlotsFile = `${outdir}/QC_summary_plots.html`;
+      if (fs.existsSync(summaryPlotsFile)) {
+        result.summaryPlots = `${workflowList[projectConf.workflow.name].outdir}/QC_summary_plots.html`;
+      }
+      const reportFile = `${outdir}/QC_final_report.html`;
       if (fs.existsSync(reportFile)) {
-        result.report = `${workflowList[projectConf.workflow.name].outdir}/final_report.pdf`;
+        result.report = `${workflowList[projectConf.workflow.name].outdir}/QC_final_report.html`;
+      }
+      const reportLongReadsFile = `${outdir}/NanoPlot-report.html`;
+      if (fs.existsSync(reportLongReadsFile)) {
+        result.report = `${workflowList[projectConf.workflow.name].outdir}/NanoPlot-report.html`;
       }
     } else if (projectConf.workflow.name === 'assembly') {
       const statsFile = `${outdir}/contigs_stats.txt`;

@@ -32,18 +32,26 @@ export const RunFaQCs = (props) => {
       />
       <Collapse isOpen={!collapseCard}>
         <CardBody>
-          {props.result.report && (
-            <>
-              <a href={url + props.result.report} target="_blank" rel="noreferrer">
-                [QC Report]
-              </a>
-              <br></br>
-              <br></br>
-            </>
-          )}
           {props.result.stats && (
             <>
               <StatsTable data={props.result.stats} headers={[]} />
+            </>
+          )}
+          {props.result.report && (
+            <>
+              <a href={`${url}${props.result.report}`} target="_blank" rel="noreferrer">
+                [Detailed QC Report]
+              </a>
+              <div key={'readsQC-summary'}>
+                <embed
+                  key={'readsQC-summary-report'}
+                  src={`${url}${props.result.summaryPlots}`}
+                  className="edge-iframe"
+                  title={'qc summary'}
+                />
+              </div>
+              <br></br>
+              <br></br>
             </>
           )}
         </CardBody>
