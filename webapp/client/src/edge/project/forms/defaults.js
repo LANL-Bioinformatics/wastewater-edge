@@ -86,6 +86,11 @@ export const components = {
     option: '',
     display: '',
   },
+  radioSelector: {
+    validForm: true,
+    option: '',
+    display: '',
+  },
   fastqInput: {
     params: {
       paired: {
