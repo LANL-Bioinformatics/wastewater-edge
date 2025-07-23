@@ -117,7 +117,7 @@ process prepareXMLphylogeny {
     path ann
 
     output:
-    path "*.nwk"
+    path "*.nwk", emit: nwk
     path "*.xml"
 
     script:
@@ -138,7 +138,7 @@ process visualizePhylogenyHTML {
 
     input:
     val settings
-    path treeFiles from prepareXMLphylogeny.out.filter { it.name.endsWith(".nwk") }
+    path treeFiles
 
     output:
     path "*.html", emit: treeHTML
@@ -183,6 +183,6 @@ workflow PHYLOGENETICANALYSIS {
                         resultTree,
                         prepareSNPphylogeny.out.phyloAnn)
 
-    visualizePhylogenyHTML(settings, prepareXMLphylogeny.out)
+    visualizePhylogenyHTML(settings, prepareXMLphylogeny.out.nwk)
 
 }
