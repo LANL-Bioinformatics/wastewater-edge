@@ -20,6 +20,7 @@ import { AntiSmash } from './forms/AntiSmash'
 import { Taxonomy } from './forms/Taxonomy'
 import { Phylogeny } from './forms/Phylogeny'
 import { RefBased } from './forms/RefBased'
+import { GeneFamily } from './forms/GeneFamily'
 
 const Main = (props) => {
   const navigate = useNavigate()
@@ -161,6 +162,25 @@ const Main = (props) => {
           : {}),
       }
     }
+    //add optional inputs to main inputs
+    if (workflow === 'geneFamily') {
+      // eslint-disable-next-line prettier/prettier
+      if (selectedWorkflows[workflow].inputs['readsGeneFamily'].value) {
+        // eslint-disable-next-line prettier/prettier
+        selectedWorkflows[workflow].inputs = {
+          ...selectedWorkflows[workflow].inputs,
+          // eslint-disable-next-line prettier/prettier
+          ...selectedWorkflows[workflow].readsInputs
+        }
+      } else {
+        // eslint-disable-next-line prettier/prettier
+        selectedWorkflows[workflow].inputs = {
+          ...selectedWorkflows[workflow].inputs,
+          // eslint-disable-next-line prettier/prettier
+          ...selectedWorkflows[workflow].contigsInputs
+        }
+      }
+    }
 
     Object.keys(selectedWorkflows[workflow].inputs).forEach((key) => {
       myWorkflow.input[key] = selectedWorkflows[workflow].inputs[key].value
@@ -283,7 +303,6 @@ const Main = (props) => {
           <h4 className="pt-3">Run a Single Workflow</h4>
           <hr />
           <Project setParams={setProject} />
-
           <br></br>
           <b>Workflow</b>
           <MySelect
@@ -537,7 +556,6 @@ const Main = (props) => {
               />
             </>
           )}
-          <br></br>
           {workflow === 'phylogeny' && (
             <>
               <InputRawReads
@@ -574,7 +592,6 @@ const Main = (props) => {
               />
             </>
           )}
-          <br></br>
           {workflow === 'refBased' && (
             <>
               <InputRawReads
@@ -611,9 +628,43 @@ const Main = (props) => {
               />
             </>
           )}
-          <br></br>
+          {workflow === 'geneFamily' && (
+            <>
+              <InputRawReads
+                setParams={setRawData}
+                isValidFileInput={isValidFileInput}
+                source={workflows[workflow]['rawReadsInput'].source}
+                sourceDisplay={workflows[workflow]['rawReadsInput'].text}
+                sourceOptionsOn={true}
+                text={workflows[workflow]['rawReadsInput'].text}
+                tooltip={workflows[workflow]['rawReadsInput'].tooltip}
+                title={'Input Raw Reads'}
+                fastqSettings={workflows[workflow]['rawReadsInput'].fastq}
+                fastaSettings={workflows[workflow]['rawReadsInput'].fasta}
+                isValid={rawDataParams ? rawDataParams.validForm : false}
+                errMessage={rawDataParams ? rawDataParams.errMessage : null}
+                allExpand={allExpand}
+                allClosed={allClosed}
+              />
+              <GeneFamily
+                name={workflow}
+                full_name={workflow}
+                title={workflowList[workflow].label}
+                setParams={setWorkflowParams}
+                isValid={
+                  selectedWorkflows[workflow] ? selectedWorkflows[workflow].validForm : false
+                }
+                errMessage={
+                  selectedWorkflows[workflow] ? selectedWorkflows[workflow].errMessage : null
+                }
+                source={rawDataParams.inputs.source.value}
+                pairedReads={rawDataParams.inputs.paired.value}
+                allExpand={allExpand}
+                allClosed={allClosed}
+              />
+            </>
+          )}
         </div>
-
         <div className="edge-center">
           <Button
             color="primary"
