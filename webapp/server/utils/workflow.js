@@ -5,7 +5,18 @@ const Upload = require('../edge-api/models/upload');
 const config = require('../config');
 
 const cromwellWorkflows = [];
-const nextflowWorkflows = ['sra2fastq', 'runFaQCs', 'assembly', 'annotation', 'binning', 'antiSmash', 'taxonomy', 'phylogeny', 'refBased'];
+const nextflowWorkflows = [
+  'sra2fastq',
+  'runFaQCs',
+  'assembly',
+  'annotation',
+  'binning',
+  'antiSmash',
+  'taxonomy',
+  'phylogeny',
+  'refBased',
+  'geneFamily'
+];
 const nextflowConfigs = {
   executor_config: {
     slurm: 'slurm.config',
@@ -69,6 +80,11 @@ const workflowList = {
   },
   refBased: {
     outdir: 'output/RefBased',
+    nextflow_main: 'main.nf',
+    config_tmpl: 'workflow_config.tmpl',
+  },
+  geneFamily: {
+    outdir: 'output/GeneFamily',
     nextflow_main: 'main.nf',
     config_tmpl: 'workflow_config.tmpl',
   },

@@ -48,4 +48,9 @@ export const workflowList = {
     category: 'metagenomics',
     info: 'Reference-Based Analysis workflow ',
   },
+  geneFamily: {
+    label: 'Gene Family Analysis',
+    category: 'metagenomics',
+    info: 'Gene Family Analysis workflow ',
+  },
 }

@@ -9,6 +9,7 @@ export const workflowOptions = [
   { value: 'taxonomy', label: workflowList['taxonomy'].label },
   { value: 'phylogeny', label: workflowList['phylogeny'].label },
   { value: 'refBased', label: workflowList['refBased'].label },
+  { value: 'geneFamily', label: workflowList['geneFamily'].label },
 ]
 
 export const taxClassificationOptions = {
@@ -1858,6 +1859,124 @@ export const workflows = {
       r2gConsensusMaxCov: {
         isValid: true,
         error: 'Maximum Coverage error. Invalid integer input. Range: 1 - 10000',
+      },
+    },
+  },
+  geneFamily: {
+    validForm: true,
+    errMessage: 'input error',
+    paramsOn: true,
+    files: [],
+    rawReadsInput: {
+      source: 'fastq',
+      fastq: {
+        enableInput: true,
+        placeholder: 'Select a file or enter a file http(s) url',
+        dataSources: ['upload', 'public', 'project'],
+        fileTypes: ['fastq', 'fq', 'fastq.gz', 'fq.gz'],
+        projectTypes: ['runFaQCs'],
+        projectScope: ['self+shared'],
+        viewFile: false,
+        isOptional: false,
+        cleanupInput: true,
+        maxInput: 1000,
+      },
+      fasta: {
+        enableInput: true,
+        placeholder: 'Select a file or enter a file http(s) url',
+        dataSources: ['upload', 'public', 'project'],
+        fileTypes: ['fasta', 'fa', 'fna', 'contigs'],
+        projectTypes: ['assembly', 'annotation'],
+        projectScope: ['self+shared'],
+        viewFile: false,
+        isOptional: false,
+        cleanupInput: true,
+        maxInput: 1,
+      },
+    },
+    inputs: {
+      readsGeneFamily: {
+        text: 'Reads Gene Family Analysis',
+        value: true,
+        switcher: {
+          trueText: 'Yes',
+          falseText: 'No',
+          defaultValue: true,
+        },
+      },
+      contigsGeneFamily: {
+        text: 'Contigs Gene Family Analysis',
+        value: false,
+        switcher: {
+          trueText: 'Yes',
+          falseText: 'No',
+          defaultValue: false,
+        },
+      },
+    },
+    readsInputs: {
+      virulenceFactorTool: {
+        text: 'Virulence Factor (VF) Detection Tool',
+        tooltip: `MetaVF Toolkit will identify VFs in PE reads through sequence similarity search using
+        VFDB 2.0 <a href="https://pmc.ncbi.nlm.nih.gov/articles/PMC11402979/" target="_blank" rel="noopener noreferrer"><span style="color:yellow;">[here]</span></a>`,
+        value: 'MetaVF Toolkit',
+        display: 'MetaVF Toolkit',
+        options: [
+          { text: 'MetaVF Toolkit', value: 'MetaVF Toolkit' },
+          { text: 'PathoFact2', value: 'PathoFact2', disabled: true },
+        ],
+      },
+    },
+    contigsInputs: {
+      inputFAA: {
+        text: 'Input FAA File',
+        value: null,
+        display: null,
+        fileInput: {
+          enableInput: true,
+          placeholder: '(Required) Select a file or enter a file http(s) url',
+          dataSources: ['upload', 'public', 'project'],
+          fileTypes: ['faa'],
+          projectTypes: ['annotation'],
+          projectScope: ['self+shared'],
+          viewFile: false,
+          isOptional: false,
+          cleanupInput: true,
+        },
+      },
+      inputGFF: {
+        text: 'Input GFF File',
+        value: null,
+        display: null,
+        fileInput: {
+          enableInput: true,
+          placeholder: '(Required) Select a file or enter a file http(s) url',
+          dataSources: ['upload', 'public', 'project'],
+          fileTypes: ['gff'],
+          projectTypes: ['annotation'],
+          projectScope: ['self+shared'],
+          viewFile: false,
+          isOptional: false,
+          cleanupInput: true,
+        },
+      },
+      virulenceFactorTool: {
+        text: 'Virulence Factor (VF) Detection Tool',
+        tooltip: `MetaVF Toolkit will identify VFs in contigs through sequence similarity search using
+        VFDB 2.0 <a href="https://pmc.ncbi.nlm.nih.gov/articles/PMC11402979/" target="_blank" rel="noopener noreferrer"><span style="color:yellow;">[here]</span></a>; PathoFact2.`,
+        value: 'MetaVF Toolkit',
+        display: 'MetaVF Toolkit',
+        options: [
+          { text: 'MetaVF Toolkit', value: 'MetaVF Toolkit' },
+          { text: 'PathoFact2', value: 'PathoFact2' },
+        ],
+      },
+    },
+    // only for input with validation method
+    validInputs: {
+      contigsInputs: {
+        inputFAA: { isValid: false, error: 'Input FAA File error. Required' },
+        inputGFF: { isValid: false, error: 'Input GFF File error. Required' },
       },
     },
   },
