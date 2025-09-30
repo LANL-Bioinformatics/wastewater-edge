@@ -1,43 +1,31 @@
 workDir="<%= nextflowOutDir %>/work"
+conda.enabled=true
+//cleanup = true
+
+process {
+    cpus = 12            // default CPU threads for processes
+    time = "100h"       // default max runtime
+    container = null    // can override in individual processes
+}
+
+docker {
+    enabled = true 
+    runOptions = "-v /Users/L367238/Desktop/dtra/dbs:/dbs"
+}
+
 params {
-    //which modules are run
-    modules {
-        sra2fastq = <% if(typeof source !== 'undefined' && source === 'sra') { %>true<% } else { %>false<%} %>
-        faqcs = <% if(workflow === 'runFaQCs') { %>true<% } else { %>false<%} %>
-        hostRemoval = false
-        runAssembly = <% if(workflow === 'assembly') { %>true<% } else { %>false<%} %>
-        annotation = <% if(workflow === 'annotation') { %>true<% } else { %>false<%} %>
-        readsBinning = <% if(workflow === 'binning') { %>true<% } else { %>false<%} %>
-        phageFinder = true //true by default -- will run if non-viral reads are annotated
-        readsTaxonomyAssignment = <% if(typeof readTax !== 'undefined') { %><%= readTax %><% } else { %>false<%} %>
-        contigsTaxonomyAssignment = <% if(typeof contigTax !== 'undefined') { %><%= contigTax %><% } else { %>false<%} %>
-        secondaryMetaboliteAnalysis =  <% if(workflow === 'antiSmash') { %>true<% } else { %>false<%} %>
-        refBasedAnalysis = <% if(workflow === 'refBased') { %>true<% } else { %>false<%} %>
-        snpTree = <% if(workflow === 'phylogeny') { %>true<% } else { %>false<%} %>
-        readsGeneFamilyAnalysis = <% if(typeof readsGeneFamily !== 'undefined') { %><%= readsGeneFamily %><% } else { %>false<%} %>
-        contigsGeneFamilyAnalysis =  <% if(typeof contigsGeneFamily !== 'undefined') { %><%= contigsGeneFamily %><% } else { %>false<%} %> //contig-based requires annotation output as well (GFF,FAA).
-    }
-
-    outputLocations {
-        //everything in its separate output for the moment
-        sra2fastqOutDir =  "<%= sraOutdir %>"
-        processProvidedContigsOutDir = "<%= projOutdir %>"
-        qcOutDir = <% if(workflow === 'runFaQCs') { %>"<%= projOutdir %>"<% } else { %>""<%} %>
-        hostRemovalOutDir = ""
-        assemblyOutDir = <% if(workflow === 'assembly') { %>"<%= projOutdir %>"<% } else { %>""<%} %>
-        contigsTaxonomyOutDir = <% if(typeof contigTax !== 'undefined') { %>"<%= projOutdir %>"<% } else { %>""<%} %>
-        phageFinderOutDir = <% if(workflow === 'annotation') { %>"<%= projOutdir %>"<% } else { %>""<%} %>
-        readBinningOutDir = <% if(workflow === 'binning') { %>"<%= projOutdir %>"<% } else { %>""<%} %>
-        readsTaxonomyOutDir = <% if(typeof readTax !== 'undefined') { %>"<%= projOutdir %>"<% } else { %>""<%} %>
-        annotationOutDir = <% if(workflow === 'annotation') { %>"<%= projOutdir %>"<% } else { %>""<%} %>
-        smaOutDir = <% if(workflow === 'antiSmash') { %>"<%= projOutdir %>"<% } else { %>""<%} %>
-        refBasedOutDir = <% if(workflow === 'refBased') { %>"<%= projOutdir %>"<% } else { %>""<%} %>
-        phylogenyOutDir = <% if(workflow === 'phylogeny') { %>"<%= projOutdir %>"<% } else { %>""<%} %>
-        geneFamilyOutDir = <% if(workflow === 'geneFamily') { %>"<%= projOutdir %>"<% } else { %>""<%} %>
-        reportOutDir = "<%= projOutdir %>"
-    }
-
-<%- include (moduleParams) %>
+	read_type="<%= read_type %>"
+	time="100h"
+	threads=12
+	read_dir="<%= read_dir %>"
+	output_dir="<%= output_dir %>"
+	rrna_db="/dbs/riboKmers20fused.fa.gz"
+	human_db="/dbs/abundant_humkmers.fasta"
+	checkm_parse_script="/Users/L367238/Desktop/dtra/nextflow/scripts/bin_selector.py"
+	gunc_db="/Users/L367238/Desktop/dtra/dbs/gunc_db/gunc_db_progenomes2.1.dmnd"
+	gtdbtk_data="/dbs/gtdb-tk_db/release226"
+	checkv_db="/dbs/checkv_db/checkv-db-v1.5"
+    genomad_db="/Users/L367238/Desktop/dtra/dbs/genomad_db"
 }
 
 <%- include (containerConfig) %>

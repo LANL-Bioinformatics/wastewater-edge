@@ -168,4 +168,85 @@ export const components = {
       accessions_display: '',
     },
   },
+  inputRawReads: {
+    validForm: false,
+    errMessage: 'input error',
+    files: [],
+    inputs: {
+      source: {
+        text: 'Input Source',
+        value: 'fastq',
+        display: 'READS/FASTQ',
+        options: [
+          { text: 'READS/FASTQ', value: 'fastq' },
+          { text: 'CONTIGS/FASTA', value: 'fasta' },
+          { text: 'NCBI SRA', value: 'sra' },
+        ],
+      },
+      seqPlatform: {
+        text: 'Sequencing Platform',
+        value: 'Illumina',
+        display: 'Illumina',
+        tooltip:
+          'Illumina: high-throughput, short-read sequencing with high accuracy. Nanopore and Pacbio: long reads sequencing technologies.',
+        options: [
+          { text: 'Nanopore', value: 'Nanopore' },
+          { text: 'Illumina', value: 'Illumina' },
+          { text: 'PacBio', value: 'PacBio' },
+        ],
+      },
+      paired: {
+        text: 'Paired-End?',
+        value: true,
+      },
+      inputFiles: {
+        text: ' Files',
+        value: [],
+        display: [],
+      },
+    },
+    fastqInput: {
+      text: 'Fastq File',
+      tooltip:
+        'Either paired-end Illumina data or single-end data from various sequencing platforms in FASTQ format as the input; the file can be becompressed. <br/>Acceptable file name extensions: .fastq, .fq, .fastq.gz, .fq.gz<br />Note: The file size limit for the URL input is 10GB',
+      enableInput: true,
+      placeholder: 'Select a file or enter a file http(s) url',
+      dataSources: ['upload', 'public'],
+      fileTypes: ['fastq', 'fq', 'fastq.gz', 'fq.gz'],
+      projectTypes: [],
+      projectScope: ['self+shared'],
+      viewFile: false,
+      isOptional: false,
+      cleanupInput: true,
+      maxInput: 1000,
+    },
+    fastaInput: {
+      text: 'Contig Fasta File',
+      tooltip:
+        'Acceptable file name extensions: .fasta, .fa, .fna, .contigs<br />Note: The file size limit for the URL input is 10GB',
+      enableInput: true,
+      placeholder: 'Select a file or enter a file http(s) url',
+      dataSources: ['upload', 'public'],
+      fileTypes: ['fasta', 'fa', 'fna', 'contigs'],
+      projectTypes: [],
+      projectScope: ['self+shared'],
+      viewFile: false,
+      isOptional: false,
+      cleanupInput: true,
+      maxInput: 1000,
+    },
+    sraInput: {
+      text: 'SRA Accession(s)',
+      isOptional: false,
+      note: '<span className="text-muted edge-text-size-small"> \
+    (Internet required) Input SRA accessions (comma separate for &gt; 1 input) support studies (SRP*/ERP*/DRP*), \
+    experiments (SRX*/ERX*/DRX*), samples (SRS*/ERS*/DRS*), runs (SRR*/ERR*/DRR*), or submissions (SRA*/ERA*/DRA*). \
+    ex: <a target="_blank" href="https://www.ncbi.nlm.nih.gov/sra/?term=SRR1553609" rel="noopener noreferrer">SRR1553609</a> \
+    </span>',
+    },
+    // only for input with validation method
+    validInputs: {
+      inputFiles: { isValid: false, error: 'Data input error.' },
+    },
+  },
 }

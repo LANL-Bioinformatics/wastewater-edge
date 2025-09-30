@@ -11,8 +11,7 @@ const AdminUsers = React.lazy(() => import('src/edge/um/admin/Users'))
 const AdminUploads = React.lazy(() => import('src/edge/um/admin/Uploads'))
 const AdminProjects = React.lazy(() => import('src/edge/um/admin/Projects'))
 const AdminProjectPage = React.lazy(() => import('src/workflows/project/projectPage/Admin'))
-const SRAWorkflow = React.lazy(() => import('src//workflows/sra/Main'))
-const MetaGWorkflow = React.lazy(() => import('src//workflows/metagenomics/Main'))
+const WasteWaterWorkflow = React.lazy(() => import('src//workflows/wastewater/Main'))
 
 const privateRoutes = [
   { path: '/user/profile', exact: true, name: 'Profile', element: UserProfile },
@@ -21,13 +20,12 @@ const privateRoutes = [
   { path: '/user/project', name: 'ProjectPage', element: UserProjectPage },
   { path: '/user/uploadFiles', name: 'UploadFiles', element: UserUploadFiles },
   { path: '/user/uploads', name: 'UserUploads', element: UserUploads },
-  { path: '/user/sradata', name: 'Data', element: SRAWorkflow },
   { path: '/user/jobQueue', name: 'JobQueue', element: UserJobQueue },
   { path: '/admin/users', name: 'Users', element: AdminUsers },
   { path: '/admin/uploads', name: 'AdminUploads', element: AdminUploads },
   { path: '/admin/projects', exact: true, name: 'AdminProjects', element: AdminProjects },
   { path: '/admin/project', name: 'AdminProjectPage', element: AdminProjectPage },
-  { path: '/workflow/metagenomics', name: 'MetaG', element: MetaGWorkflow },
+  { path: '/workflow/wastewater', name: 'WasteWater', element: WasteWaterWorkflow },
 ]
 
 export default privateRoutes

@@ -2,7 +2,7 @@ const fs = require('fs');
 const ejs = require('ejs');
 const Papa = require('papaparse');
 const Job = require('../edge-api/models/job');
-const { nextflowConfigs, workflowList, generateWorkflowResult } = require('./workflow');
+const { nextflowConfigs, workflowList, linkCopyFile, generateWorkflowResult } = require('./workflow');
 const { write2log, execCmd, sleep, pidIsRunning } = require('./common');
 const logger = require('./logger');
 const config = require('../config');
@@ -43,6 +43,24 @@ const generateInputs = async (projHome, projectConf, proj) => {
     } else {
       params.inputFastq = projectConf.rawReads.inputFiles;
     }
+  }
+
+  if (projectConf.workflow.name === 'wastewater') {
+    // create input dir and link input files
+    const inputDir = `${projHome}/input`;
+    if (projectConf.rawReads.paired) {
+      // if fastq input is paired-end
+      projectConf.rawReads.inputFiles.forEach((item) => {
+        linkCopyFile(item.f1, inputDir, 'link');
+        linkCopyFile(item.f2, inputDir, 'link');
+      });
+    } else {
+      projectConf.rawReads.inputFiles.forEach((file) => {
+        linkCopyFile(file, inputDir, 'link');
+      });
+    }
+    params.read_dir = inputDir;
+    params.output_dir = `${projHome}/${workflowSettings.outdir}`;
   }
 
   // render input template and write to nextflow_params.json

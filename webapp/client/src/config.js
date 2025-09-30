@@ -91,6 +91,8 @@ const config = {
   APP: {
     // The user-facing name of the application.
     NAME: import.meta.env.VITE_NAME || 'EDGE',
+    // user/password authentication
+    USER_AUTH_IS_ENABLED: makeBoolean(import.meta.env.VITE_USER_AUTH_IS_ENABLED) || true,
     // Boolean flag indicating whether the client will request that the server send emails to the user.
     EMAIL_IS_ENABLED: makeBoolean(import.meta.env.VITE_EMAIL_NOTIFICATION_ENABLED) || false,
     // Boolean flag indicating whether the client will allow user to upload files.

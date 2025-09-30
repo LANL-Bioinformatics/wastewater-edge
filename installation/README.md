@@ -11,9 +11,9 @@ https://docs.mongodb.com/manual/installation/#mongodb-community-edition-installa
 
 ## INSTALL webapp
 
-1. Move/copy EDGEv3 folder to the installation directory
+1. Move/copy wastewater-edge folder to the installation directory
 
-2. Inside EDGEv3/installation folder, run the installation script 
+2. Inside wastewater/installation folder, run the installation script 
 
     `./install.sh`
 
@@ -52,7 +52,7 @@ https://docs.mongodb.com/manual/installation/#mongodb-community-edition-installa
 
 1. Start MongoDB if it's not started yet
 
-2. Inside EDGEv3 folder, run the pm2 start command 
+2. Inside wastewater-edge folder, run the pm2 start command 
 
     `pm2 start pm2.config.js`
     

@@ -1,5 +1,5 @@
 #!/bin/bash
-echo "Install LANL EDGE webapp..."
+echo "Install LANL wastewater-edge webapp..."
 pwd=$PWD
 app_home="$(dirname "$pwd")"
 
@@ -60,10 +60,10 @@ echo "install server..."
 cd $app_home/webapp/server
 npm install
 
-echo "LANL EDGE webapp successfully installed!"
+echo "LANL wastewater-edge webapp successfully installed!"
 echo "Next steps:"
 echo "1. copy webapp/client/.env.example to webapp/client/.env and update settings in the .env file"
 echo "2. inside webapp/client, run command: npm run build"
 echo "3. copy webapp/server/.env.example to webapp/server/.env and update settings in the .env file"
 echo "4. start MongoDB if it's not started yet"
-echo "5. start the webapp in EDGEv3's root directory: pm2 start pm2.config.js"
+echo "5. start the webapp in wastewater-edge's root directory: pm2 start pm2.config.js"
