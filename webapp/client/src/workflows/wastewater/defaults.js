@@ -11,7 +11,7 @@ export const workflows = {
     rawReadsInput: {
       source: 'fastq',
       text: 'READS/FASTQ',
-      note: 'Enter either paired-end Illumina data or single-end data from various sequencing platforms in FASTQ format as the input; the file must be becompressed. <br/> Acceptable file name extensions: .fastq.gz, .fq.gz',
+      note: 'Enter either paired-end Illumina data or single-end data from various sequencing platforms in FASTQ format as the input; the file must be compressed. <br/> Acceptable file name extensions: .fastq.gz, .fq.gz',
       sourceOptions: [
         { text: 'READS/FASTQ', value: 'fastq' },
         { text: 'NCBI SRA', value: 'sra' },
