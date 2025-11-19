@@ -1,33 +1,45 @@
 workDir="<%= nextflowWorkDir %>"
+
+env {
+    APPTAINER_CACHEDIR = '/panfs/biopan04/wastewater/wastewater-sra/data/dtra_ww_analysis/nextflow/apptainer'
+    APPTAINER_TMPDIR   = '/panfs/biopan04/wastewater/wastewater-sra/data/dtra_ww_analysis/nextflow/apptainer'
+}
+
 params {
-    read_type= <% if(typeof readType !== 'undefined') { %>"<%= readType %>"<% } else { %>null<%} %> //for the workflow version that specifies read type
-    metadata = <% if(typeof metadata !== 'undefined') { %>"<%= metadata %>"<% } else { %>null<%} %> //for the workflow version that uses a metadata file instead of specifying read type
+    metadata = <% if(typeof metadata !== 'undefined') { %>"<%= metadata %>"<% } else { %>null<%} %> //input metadata csv
 	time='100h' //resources need parameter specification for the moment, since it's used in the main script
 	threads=12
 	read_dir="<%= inputDir %>"
 	output_dir="<%= projOutdir %>"
-	gunc_db='/dbs/gunc_db/gunc_db_progenomes2.1.dmnd' //container bind (below) should put all databases in /dbs/
-	gtdbtk_data='/dbs/gtdb-tk_226/release226'
-	checkv_db='/dbs/checkv-db-v1.5'
-    genomad_db='/dbs/genomad_db_v1.9'
-    chimeracutter_db=null //not available in installation
-    rrna_db=null
-	human_db=null
+	gunc_db='/refdb/gunc_db/gunc_db_progenomes2.1.dmnd' //container bind (below) should put all databases in /dbs/
+	gtdbtk_data='/refdb/gtdb-tk_226/release226'
+	checkv_db='/refdb/checkv-db-v1.5'
+    genomad_db='/refdb/genomad_db_v1.9'
+    chimeracutter_db='/panfs/biopan04/refdb/refseq_07112025/virus/virus_blast_db/virus_blast_db'
+    rrna_db='/refdb/bbtools_db/ribokmers/riboKmers20fused.fa'
+	human_db='/refdb/bbtools_db/human_genome/abundant_humkmers.fasta'
    
 }
 
-apptainer { 
-    enabled = true 
-    runOptions = '-v /panfs/biopan04/refdb:/dbs'
+apptainer {
+    enabled     = true
+    autoMounts  = true
+    useCache    = true
+    cacheDir    = '/panfs/biopan04/wastewater/wastewater-sra/data/dtra_ww_analysis/nextflow/apptainer'
+    runOptions  = "--B /panfs/biopan04/refdb:/refdb:ro"
 }
 
 
+//slurm and local profiles
 <%- include (profiles) %>
 
-process {
-    cpus = 12            // default CPU threads for processes
-    time = '100h'       // default max runtime
-    errorStrategy = { (task.attempt <= 3) ? 'retry' : 'ignore' } //allow workflow to continue if some processes don't complete
+process { //for all profiles
+    cpus = 12
+    time = '100h'
+    container = null
+    beforeScript = '''
+        module load apptainer
+    '''
 }
 
 <%- include (nfReports) %>
