@@ -9,6 +9,9 @@ export const workflowList = {
     label: 'WasteWater',
     category: 'wastewater',
     info: 'Processes short-read and long-read ONT sequencing data to characterize the background microbiome of wastewater. This Nextflow pipeline will provide holistic recovery and classification of all microbial sequences (bacteria, viruses, archaea, fungi), using read-based and MAG-based classification techniques. <a href="https://github.com/LANL-Bioinformatics/Standardized_Wastewater_Workflow" target="_blank" >Learn more</a>',
+    bulk_submission_template:
+      import.meta.env.VITE_BULK_SUBMISSION_TEMPLATE || 'WasteWater-EDGE-BulkSubmission.xlsx',
+    bulk_file_tip: 'Required',
   },
 }
 
