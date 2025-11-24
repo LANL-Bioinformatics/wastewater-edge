@@ -4,7 +4,7 @@ import { useNavigate } from 'react-router-dom'
 import { ToastContainer } from 'react-toastify'
 import 'react-toastify/dist/ReactToastify.css'
 
-import { workflowList } from '../common/util'
+import { workflowList } from 'src/util'
 import { postData, getData, notify, apis, isValidFileInput } from 'src/edge/common/util'
 import { LoaderDialog, MessageDialog } from 'src/edge/common/Dialogs'
 import { Project } from 'src/edge/project/forms/Project'

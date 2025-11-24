@@ -4,7 +4,7 @@ function Home() {
   return (
     <div className="animated fadeIn">
       <Row className="justify-content-center">
-        <Col xs="12" sm="10" md="10">
+        <Col xs="12" sm="12" md="12">
           <div className="clearfix">
             <br></br>
             <div className="edge-text-font edge-text-size-large float-left">
@@ -29,8 +29,8 @@ function Home() {
               <img
                 src="/ww-workflow-overview.png"
                 alt="ww workflow overview"
-                width="90%"
-                height="90%"
+                width="80%"
+                height="80%"
               />
             </center>
           </div>
