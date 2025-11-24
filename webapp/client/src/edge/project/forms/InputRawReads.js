@@ -95,8 +95,8 @@ export const InputRawReads = (props) => {
       let inputFiles = []
       if (form.inputs['source'].value === 'fastq' && form.inputs['paired'].value) {
         form.inputs['inputFiles'].value.forEach((item) => {
-          inputFiles.push(item.f1)
-          inputFiles.push(item.f2)
+          inputFiles.push(item.R1)
+          inputFiles.push(item.R2)
         })
       } else {
         inputFiles = form.inputs['inputFiles'].value

@@ -27,45 +27,45 @@ export const PairedFileInputArray = (props) => {
     if ((props.isOptional && !key) || props.isValidFileInput(key, path)) {
       if (type === 'pairedFileInput1') {
         if (form.fileInput[index]) {
-          form.fileInput[index].f1 = path
-          form.fileInput_display[index].f1 = key
-          form.fileInput_isValid[index].f1 = true
+          form.fileInput[index].R1 = path
+          form.fileInput_display[index].R1 = key
+          form.fileInput_isValid[index].R1 = true
         } else {
-          form.fileInput[index] = { f1: path }
-          form.fileInput_display[index] = { f1: key }
-          form.fileInput_isValid[index] = { f1: true }
+          form.fileInput[index] = { R1: path }
+          form.fileInput_display[index] = { R1: key }
+          form.fileInput_isValid[index] = { R1: true }
         }
       } else if (type === 'pairedFileInput2') {
         if (form.fileInput[index]) {
-          form.fileInput[index].f2 = path
-          form.fileInput_display[index].f2 = key
-          form.fileInput_isValid[index].f2 = true
+          form.fileInput[index].R2 = path
+          form.fileInput_display[index].R2 = key
+          form.fileInput_isValid[index].R2 = true
         } else {
-          form.fileInput[index] = { f2: path }
-          form.fileInput_display[index] = { f2: key }
-          form.fileInput_isValid[index] = { f2: true }
+          form.fileInput[index] = { R2: path }
+          form.fileInput_display[index] = { R2: key }
+          form.fileInput_isValid[index] = { R2: true }
         }
       }
     } else {
       if (type === 'pairedFileInput1') {
         if (form.fileInput[index]) {
-          form.fileInput[index].f1 = null
-          form.fileInput_display[index].f1 = null
-          form.fileInput_isValid[index].f1 = false
+          form.fileInput[index].R1 = null
+          form.fileInput_display[index].R1 = null
+          form.fileInput_isValid[index].R1 = false
         } else {
-          form.fileInput[index] = { f1: null }
-          form.fileInput_display[index] = { f1: null }
-          form.fileInput_isValid[index] = { f1: false }
+          form.fileInput[index] = { R1: null }
+          form.fileInput_display[index] = { R1: null }
+          form.fileInput_isValid[index] = { R1: false }
         }
       } else if (type === 'pairedFileInput2') {
         if (form.fileInput[index]) {
-          form.fileInput[index].f2 = null
-          form.fileInput_display[index].f2 = null
-          form.fileInput_isValid[index].f2 = false
+          form.fileInput[index].R2 = null
+          form.fileInput_display[index].R2 = null
+          form.fileInput_isValid[index].R2 = false
         } else {
-          form.fileInput[index] = { f2: null }
-          form.fileInput_display[index] = { f2: null }
-          form.fileInput_isValid[index] = { f2: false }
+          form.fileInput[index] = { R2: null }
+          form.fileInput_display[index] = { R2: null }
+          form.fileInput_isValid[index] = { R2: false }
         }
       }
     }
@@ -79,7 +79,7 @@ export const PairedFileInputArray = (props) => {
       valid = false
     } else {
       form.fileInput_isValid.forEach((item) => {
-        if (!item.f1 || !item.f2) {
+        if (!item.R1 || !item.R2) {
           valid = false
         }
       })
@@ -162,7 +162,7 @@ export const PairedFileInputArray = (props) => {
                     cleanupInput={props.cleanupInput}
                     placeholder={props.placeholder}
                     isValidFileInput={
-                      form.fileInput_isValid[index] ? form.fileInput_isValid[index].f1 : false
+                      form.fileInput_isValid[index] ? form.fileInput_isValid[index].R1 : false
                     }
                     dataSources={props.dataSources}
                     fileTypes={props.fileTypes}
@@ -174,7 +174,7 @@ export const PairedFileInputArray = (props) => {
                     onChange={handleFileSelection}
                   />
                 )}
-                name={`fileInput[${index}].f1`}
+                name={`fileInput[${index}].R1`}
                 control={control}
               />
             </Col>
@@ -199,7 +199,7 @@ export const PairedFileInputArray = (props) => {
                     cleanupInput={props.cleanupInput}
                     placeholder={props.placeholder}
                     isValidFileInput={
-                      form.fileInput_isValid[index] ? form.fileInput_isValid[index].f2 : false
+                      form.fileInput_isValid[index] ? form.fileInput_isValid[index].R2 : false
                     }
                     dataSources={props.dataSources}
                     fileTypes={props.fileTypes}
@@ -210,7 +210,7 @@ export const PairedFileInputArray = (props) => {
                     onChange={handleFileSelection}
                   />
                 )}
-                name={`fileInput[${index}].f2`}
+                name={`fileInput[${index}].R2`}
                 control={control}
               />
             </Col>
