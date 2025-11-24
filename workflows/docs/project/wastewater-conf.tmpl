@@ -1,0 +1,27 @@
+{
+  "category":"wastewater",
+  "rawReads":
+  {
+    "source":"fastq",
+    "seqPlatform":"<%= seqPlatform %>",
+    "paired":<%= paired %>,
+    "inputFiles":<%- JSON.stringify(inputFiles) %>
+  },
+  "workflow":
+  {
+    "name":"wastewater",
+    "input":{
+      "read_type":"<%= readType %>",
+      "pipeline":"<%= pipeline %>"
+    }
+  },
+  "inputDisplay":{
+    "Raw Reads":{
+      "Input Source":"READS/FASTQ",
+      "Sequencing Platform":"<%= seqPlatformDisplay %>",
+      "Paired-End?":<%= paired %>,
+      "Files":<%- JSON.stringify(inputFilesDisplay) %>
+    }
+  },
+  "files":<%- JSON.stringify(files) %>
+}

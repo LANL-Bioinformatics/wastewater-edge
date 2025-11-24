@@ -33,10 +33,21 @@ const _nav = [
     name: 'Workflows',
   },
   {
-    component: CNavItem,
-    name: 'Wastewater Workflow',
-    to: '/workflow/wastewater',
-    icon: <CIcon icon={cilCloudUpload} customClassName="nav-icon" />,
+    component: CNavGroup,
+    name: 'Wastewater',
+    icon: <CIcon icon={cilLayers} customClassName="nav-icon" />,
+    items: [
+      {
+        component: CNavItem,
+        name: 'Run a Single Workflow',
+        to: '/workflow/wastewater',
+      },
+      {
+        component: CNavItem,
+        name: 'Bulk Submission',
+        to: '/user/wastewater/bulk',
+      },
+    ],
   },
 ]
 
