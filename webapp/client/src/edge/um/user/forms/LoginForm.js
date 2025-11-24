@@ -1,4 +1,3 @@
-import React from 'react'
 import { Form, Input, Button, Col, InputGroup, InputGroupText, Row } from 'reactstrap'
 
 import { useForm } from 'react-hook-form'

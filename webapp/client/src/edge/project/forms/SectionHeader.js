@@ -2,7 +2,8 @@ import React, { useState } from 'react'
 import { Button, ButtonGroup, CardHeader } from 'reactstrap'
 import { cilChevronBottom, cilChevronTop } from '@coreui/icons'
 import CIcon from '@coreui/icons-react'
-import { colors, defaults } from '../../common/util'
+import { colors } from 'src/util'
+import { defaults } from '../../common/util'
 import { ErrorTooltip } from '../../common/MyTooltip'
 
 export const Header = (props) => {

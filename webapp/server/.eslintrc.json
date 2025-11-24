@@ -1,41 +1,14 @@
 {
-  "env": {
-    "browser": true,
-    "commonjs": true,
-    "es2021": true,
-    "jest": true
-  },
   "extends": ["airbnb-base", "prettier"],
-  "overrides": [],
+  "plugins": ["prettier"],
   "parserOptions": {
-    "ecmaVersion": "latest",
-    "sourceType": "module"
-  },
-  "settings": {
-    "import/resolver": {
-      "node": {
-        "extensions": [".js", ".jsx", ".ts", ".tsx"]
-      }
-    }
+      "project": "./tsconfig.json"
   },
   "rules": {
-    // enable additional rules
-    "indent": ["error", 2],
-    "linebreak-style": ["error", "unix"],
-    "quotes": ["error", "single"],
-    "semi": ["error", "always"],
-    "no-param-reassign": 0,
-    "import/no-extraneous-dependencies": ["error", { "devDependencies": true }],
-    "import/extensions": [
-      "error",
-      "ignorePackages",
-      {
-        "": "never",
-        "js": "never",
-        "jsx": "never",
-        "ts": "never",
-        "tsx": "never"
-      }
-    ]
+      //We can specify more rules that we need here
+    "prefer-destructuring": ["error", {"object": false, "array": false}],
+    "no-param-reassign": "off",
+    "prettier/prettier": ["error"],
+    "import/extensions": ["error", "ignorePackages", { "js": "never", "jsx": "never", "ts": "never", "tsx": "never" }]
   }
 }

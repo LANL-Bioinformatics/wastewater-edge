@@ -1,9 +1,9 @@
-const router = require('express').Router();
-const { validationRules: updateValidationRules, validate: updateValidate } = require('../validations/upload-update-validator');
+const router = require('express').Router()
 const {
-  updateOne,
-  getAll,
-} = require('../controllers/admin-upload-controller');
+  validationRules: updateValidationRules,
+  validate: updateValidate,
+} = require('../validations/upload-update-validator')
+const { updateOne, getAll } = require('../controllers/admin-upload-controller')
 
 /**
  * @swagger
@@ -34,8 +34,8 @@ const {
  *               $ref: '#/components/models/serverError'
  */
 router.get('/uploads', async (req, res) => {
-  await getAll(req, res);
-});
+  await getAll(req, res)
+})
 
 /**
  * @swagger
@@ -78,8 +78,13 @@ router.get('/uploads', async (req, res) => {
  *             schema:
  *               $ref: '#/components/models/serverError'
  */
-router.put('/uploads/:code', updateValidationRules(), updateValidate, async (req, res) => {
-  await updateOne(req, res);
-});
+router.put(
+  '/uploads/:code',
+  updateValidationRules(),
+  updateValidate,
+  async (req, res) => {
+    await updateOne(req, res)
+  },
+)
 
-module.exports = router;
+module.exports = router

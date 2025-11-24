@@ -6,7 +6,7 @@ import 'react-keyed-file-browser/dist/react-keyed-file-browser.css'
 import startCase from 'lodash.startcase'
 import parse from 'html-react-parser'
 import { FcFolder, FcOpenedFolder } from 'react-icons/fc'
-import { colors } from './util'
+import { colors } from 'src/util'
 
 export const ConfirmDialog = (props) => {
   return (

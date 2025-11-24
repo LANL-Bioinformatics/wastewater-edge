@@ -97,10 +97,17 @@ const config = {
     USER_AUTH_IS_ENABLED: makeBoolean(import.meta.env.VITE_USER_AUTH_ENABLED, 'USER'),
     // Boolean flag indicating whether the client will request that the server send emails to the user.
     EMAIL_IS_ENABLED: makeBoolean(import.meta.env.VITE_EMAIL_NOTIFICATION_ENABLED),
+    // Boolean flag indicating whether the client has bulk submission features enabled.
+    BULK_SUBMISSIONS_IS_ENABLED: makeBoolean(import.meta.env.VITE_BULK_SUBMISSIONS_ENABLED),
     // Boolean flag indicating whether the client will allow user to upload files.
     UPLOAD_IS_ENABLED: makeBoolean(import.meta.env.VITE_FILEUPLOAD_ENABLED),
+    // Boolean flag indicating whether the client will allow user to upload files into folders.
+    UPLOAD_FOLDER_IS_DISABLED: makeBoolean(import.meta.env.VITE_FILEUPLOAD_FOLDER_DISABLED),
     // Boolean flag indicating whether the client will allow user to download SRA Data.
     SRADATA_IS_ENABLED: makeBoolean(import.meta.env.VITE_SRADATA_ENABLED),
+    // Boolean flag indicating whether the client will offer support.
+    SUPPORT_IS_ENABLED: makeBoolean(import.meta.env.VITE_SUPPORT_ENABLED),
+    SUPPORT_EMAIL: import.meta.env.VITE_SUPPORT_EMAIL || 'edge@lanl.gov',
     // Base URI at which visitors can access the application.
     // Note: This is written under the assumption that the client and API server share a domain.
     BASE_URI: makeLocalUri(),

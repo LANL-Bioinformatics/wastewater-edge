@@ -18,6 +18,7 @@ if [ ! -d  $io_home ]; then
     "sra"
     "db"
     "nextflow"
+    "bulksubmissions"
   )
 
   for dir in "${dirs[@]}"
@@ -55,10 +56,10 @@ done
 files=(
   # client files
   "webapp/client/src/_nav.js"
+  "webapp/client/src/util.js"
   "webapp/client/src/workflows/common/ProjectResult.js"
   "webapp/client/src/workflows/common/private-routes.js"
   "webapp/client/src/workflows/common/routes.js"
-  "webapp/client/src/workflows/common/util.js"
   # server files
   "webapp/server/workflow/config.js"
   "webapp/server/workflow/indexRouter.js"

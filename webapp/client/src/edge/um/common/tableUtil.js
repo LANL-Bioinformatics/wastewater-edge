@@ -1,5 +1,5 @@
 import { createTheme } from '@mui/material'
-import { colors } from '../../common/util'
+import { colors } from 'src/util'
 
 export const theme = createTheme({
   palette: {
@@ -51,6 +51,28 @@ export const userTypeColors = {
 export const userTypeNames = {
   user: 'User',
   admin: 'Admin',
+}
+
+export const bulkSubmissionStatusColors = {
+  running: 'warning',
+  'in queue': 'secondary',
+  failed: 'danger',
+  complete: 'success',
+  rerun: 'info',
+  processing: 'info',
+  submitted: 'info',
+  delete: 'danger',
+}
+
+export const bulkSubmissionStatusNames = {
+  running: 'Running',
+  'in queue': 'In queue',
+  failed: 'Failed',
+  complete: 'Complete',
+  rerun: 'Re-run',
+  processing: 'Processing',
+  submitted: 'Submitted',
+  delete: 'Deleted',
 }
 
 const strongPassword = new RegExp('(?=.*[a-z])(?=.*[A-Z])(?=.*[0-9])(?=.*[^A-Za-z0-9])(?=.{8,})')

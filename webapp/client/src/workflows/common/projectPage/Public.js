@@ -56,7 +56,7 @@ const Public = (props) => {
         </div>
       ) : (
         <>
-          <ProjectSummary project={project} />
+          <ProjectSummary project={project} type={'public'} />
           <br></br>
           <ProjectResult project={project} type={'public'} />
         </>

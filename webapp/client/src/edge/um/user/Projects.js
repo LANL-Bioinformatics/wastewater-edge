@@ -1,4 +1,3 @@
-import React from 'react'
 import { Button } from 'reactstrap'
 import { useNavigate } from 'react-router-dom'
 import ProjectTable from '../common/ProjectTable'

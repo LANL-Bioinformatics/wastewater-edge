@@ -66,4 +66,4 @@ module.exports = {
     email: 'my@edge.lanl',
     oauth: 'orcid',
   },
-};
+}

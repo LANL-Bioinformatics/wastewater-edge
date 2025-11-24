@@ -1,8 +1,8 @@
-const mongoose = require('mongoose');
-const { MongoMemoryServer } = require('mongodb-memory-server');
+const mongoose = require('mongoose')
+const { MongoMemoryServer } = require('mongodb-memory-server')
 
 // Define a new instance of "MongoMemoryServer" to automatically start server
-let mongoServer;
+let mongoServer
 
 // For mongodb-memory-server's old version (< 7) use this instead:
 // const mongoServer = new MongoMemoryServer();
@@ -10,42 +10,42 @@ let mongoServer;
 const opts = {
   useNewUrlParser: true,
   useUnifiedTopology: true,
-};
-mongoose.set('strictQuery', false);
+}
+mongoose.set('strictQuery', false)
 // Provide connection to a new in-memory database server.
 const connect = async () => {
   // Prevent MongooseError: Can't call `openUri()` on
   // an active connection with different connection strings
-  await mongoose.disconnect();
+  await mongoose.disconnect()
 
   // Spin up an actual/real MongoDB server programmatically from node, for testing
-  mongoServer = await MongoMemoryServer.create();
+  mongoServer = await MongoMemoryServer.create()
 
-  const mongoUri = await mongoServer.getUri();
-  await mongoose.connect(mongoUri, opts, (err) => {
+  const mongoUri = await mongoServer.getUri()
+  await mongoose.connect(mongoUri, opts, err => {
     if (err) {
       // console.error(err);
     }
-  });
-};
+  })
+}
 
 // Remove and close the database and server.
 const close = async () => {
-  await mongoose.disconnect();
-  await mongoServer.stop();
-};
+  await mongoose.disconnect()
+  await mongoServer.stop()
+}
 
 /// Remove all data from collections.
 const clear = async () => {
-  const { collections } = mongoose.connection;
-  Object.keys(collections).forEach((key) => {
-    const collection = collections[key];
-    collection.deleteMany({});
-  });
-};
+  const { collections } = mongoose.connection
+  Object.keys(collections).forEach(key => {
+    const collection = collections[key]
+    collection.deleteMany({})
+  })
+}
 
 module.exports = {
   connect,
   close,
   clear,
-};
+}

@@ -1,13 +1,19 @@
-const router = require('express').Router();
-const { validationRules: addValidationRules, validate: addValidate } = require('../validations/upload-validator');
-const { validationRules: updateValidationRules, validate: updateValidate } = require('../validations/upload-update-validator');
+const router = require('express').Router()
+const {
+  validationRules: addValidationRules,
+  validate: addValidate,
+} = require('../validations/upload-validator')
+const {
+  validationRules: updateValidationRules,
+  validate: updateValidate,
+} = require('../validations/upload-update-validator')
 const {
   addOne,
   updateOne,
   getOwn,
   getInfo,
   getAll,
-} = require('../controllers/auth-user-upload-controller');
+} = require('../controllers/auth-user-upload-controller')
 
 /**
  * @swagger
@@ -38,8 +44,8 @@ const {
  *               $ref: '#/components/models/serverError'
  */
 router.get('/uploads', async (req, res) => {
-  await getOwn(req, res);
-});
+  await getOwn(req, res)
+})
 
 /**
  * @swagger
@@ -70,8 +76,8 @@ router.get('/uploads', async (req, res) => {
  *               $ref: '#/components/models/serverError'
  */
 router.post('/uploads/files', async (req, res) => {
-  await getAll(req, res);
-});
+  await getAll(req, res)
+})
 
 /**
  * @swagger
@@ -102,8 +108,8 @@ router.post('/uploads/files', async (req, res) => {
  *               $ref: '#/components/models/serverError'
  */
 router.get('/uploads/info', async (req, res) => {
-  await getInfo(req, res);
-});
+  await getInfo(req, res)
+})
 
 /**
  * @swagger
@@ -147,8 +153,8 @@ router.get('/uploads/info', async (req, res) => {
  *               $ref: '#/components/models/serverError'
  */
 router.post('/uploads', addValidationRules(), addValidate, async (req, res) => {
-  await addOne(req, res);
-});
+  await addOne(req, res)
+})
 
 /**
  * @swagger
@@ -191,8 +197,13 @@ router.post('/uploads', addValidationRules(), addValidate, async (req, res) => {
  *             schema:
  *               $ref: '#/components/models/serverError'
  */
-router.put('/uploads/:code', updateValidationRules(), updateValidate, async (req, res) => {
-  await updateOne(req, res);
-});
+router.put(
+  '/uploads/:code',
+  updateValidationRules(),
+  updateValidate,
+  async (req, res) => {
+    await updateOne(req, res)
+  },
+)
 
-module.exports = router;
+module.exports = router

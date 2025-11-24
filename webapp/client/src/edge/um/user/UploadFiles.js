@@ -14,6 +14,7 @@ import 'react-toastify/dist/ReactToastify.css'
 
 import { LoaderDialog } from '../../common/Dialogs'
 import { MyCreatableSelect } from '../../common/MySelect'
+import config from 'src/config'
 
 const UploadFiles = (props) => {
   const defaultFolder = 'main'
@@ -203,20 +204,24 @@ const UploadFiles = (props) => {
         Allowed file extensions are: {allowedExtensions.join(', ')}
         <br></br>
         <br></br>
-        Folder to store the uploaded files, default folder is &lsquo;{defaultFolder}&rsquo;
-        <MyCreatableSelect
-          options={folderOptions}
-          onChange={(e) => {
-            if (e) {
-              setFolder(e.value)
-            } else {
-              setFolder(defaultFolder)
-            }
-          }}
-          placeholder="Select a folder or create a new one"
-          isClearable={true}
-        />
-        <br></br>
+        {!config.APP.UPLOAD_FOLDER_IS_DISABLED && (
+          <>
+            Folder to store the uploaded files, default folder is &lsquo;{defaultFolder}&rsquo;
+            <MyCreatableSelect
+              options={folderOptions}
+              onChange={(e) => {
+                if (e) {
+                  setFolder(e.value)
+                } else {
+                  setFolder(defaultFolder)
+                }
+              }}
+              placeholder="Select a folder or create a new one"
+              isClearable={true}
+            />
+            <br></br>
+          </>
+        )}
         Storage space usage: {formatFileSize(uploadedSize)}/{formatFileSize(maxStorageSizeBytes)}
         <br></br>
         Uploading size: {formatFileSize(uploadingSize)}

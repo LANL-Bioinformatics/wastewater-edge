@@ -1,8 +1,8 @@
-const router = require('express').Router();
+const router = require('express').Router()
 const {
   getPublicFiles,
   getGlobusFiles,
-} = require('../controllers/auth-user-data-controller');
+} = require('../controllers/auth-user-data-controller')
 
 /**
  * @swagger
@@ -40,8 +40,8 @@ const {
  */
 
 router.post('/data/public', async (req, res) => {
-  await getPublicFiles(req, res);
-});
+  await getPublicFiles(req, res)
+})
 /**
  * @swagger
  * /api/auth-user/data/globus:
@@ -77,7 +77,7 @@ router.post('/data/public', async (req, res) => {
  *               $ref: '#/components/models/serverError'
  */
 router.post('/data/globus', async (req, res) => {
-  await getGlobusFiles(req, res);
-});
+  await getGlobusFiles(req, res)
+})
 
-module.exports = router;
+module.exports = router

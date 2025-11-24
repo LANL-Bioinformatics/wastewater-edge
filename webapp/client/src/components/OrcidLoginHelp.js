@@ -1,4 +1,3 @@
-import React from 'react'
 import { Card, CardBody, CardText, CardTitle } from 'reactstrap'
 
 const OrcidLoginHelp = (props) => {

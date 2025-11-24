@@ -2,9 +2,10 @@ import React, { useState, useEffect } from 'react'
 import { Input, InputGroup } from 'reactstrap'
 import { Box } from '@mui/material'
 import Fab from '@mui/material/Fab'
-import { List, Visibility, DeleteForever } from '@mui/icons-material'
-import { FolderBrowserDialog, FileViewerDialog, LoaderDialog } from '../../common/Dialogs'
-import { postData, fetchFile, colors, defaults, apis } from '../../common/util'
+import { List, DeleteForever } from '@mui/icons-material'
+import { colors } from 'src/util'
+import { FolderBrowserDialog, LoaderDialog } from '../../common/Dialogs'
+import { postData, defaults, apis } from '../../common/util'
 
 export const FolderSelector = (props) => {
   const inputStyle = defaults.inputStyle

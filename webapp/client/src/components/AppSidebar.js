@@ -1,14 +1,8 @@
 import React from 'react'
 import { useSelector, useDispatch } from 'react-redux'
-import { setSidebar, setSidebarUnfoldable } from '../redux/reducers/coreuiSlice'
+import { setSidebar } from '../redux/reducers/coreuiSlice'
 
-import {
-  CSidebar,
-  CSidebarBrand,
-  CSidebarFooter,
-  CSidebarHeader,
-  CSidebarToggler,
-} from '@coreui/react'
+import { CSidebar, CSidebarBrand, CSidebarFooter, CSidebarHeader } from '@coreui/react'
 
 import { AppSidebarNav } from './AppSidebarNav'
 

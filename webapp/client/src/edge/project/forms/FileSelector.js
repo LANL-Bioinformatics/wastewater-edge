@@ -3,8 +3,9 @@ import { Input, InputGroup } from 'reactstrap'
 import { Box } from '@mui/material'
 import Fab from '@mui/material/Fab'
 import { List, Visibility, DeleteForever } from '@mui/icons-material'
+import { colors } from 'src/util'
 import { FileBrowserDialog, FileViewerDialog, LoaderDialog } from '../../common/Dialogs'
-import { postData, fetchFile, colors, defaults, apis } from '../../common/util'
+import { postData, fetchFile, defaults, apis } from '../../common/util'
 
 export const FileSelector = (props) => {
   const inputStyle = defaults.inputStyle

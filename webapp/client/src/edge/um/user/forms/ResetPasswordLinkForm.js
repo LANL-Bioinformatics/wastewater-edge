@@ -1,4 +1,3 @@
-import React from 'react'
 import { Form, Input, Button, InputGroup, InputGroupText } from 'reactstrap'
 import { useForm } from 'react-hook-form'
 import CIcon from '@coreui/icons-react'

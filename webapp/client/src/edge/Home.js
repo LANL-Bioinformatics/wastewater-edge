@@ -1,6 +1,5 @@
-import React from 'react'
 import { Col, Row } from 'reactstrap'
-import { colors } from './common/util'
+import { colors } from 'src/util'
 
 const Home = () => {
   return (

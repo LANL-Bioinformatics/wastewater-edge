@@ -1,13 +1,22 @@
-const router = require('express').Router();
-const { validationRules: registerValidationRules, validate: registerValidate } = require('../validations/user-validator');
-const { validationRules: updateValidationRules, validate: updateValidate } = require('../validations/user-update-validator');
-const { validationRules: deleteValidationRules, validate: deleteValidate } = require('../validations/admin-user-validator');
+const router = require('express').Router()
+const {
+  validationRules: registerValidationRules,
+  validate: registerValidate,
+} = require('../validations/user-validator')
+const {
+  validationRules: updateValidationRules,
+  validate: updateValidate,
+} = require('../validations/user-update-validator')
+const {
+  validationRules: deleteValidationRules,
+  validate: deleteValidate,
+} = require('../validations/admin-user-validator')
 const {
   addOne,
   updateOne,
   removeOne,
   getAll,
-} = require('../controllers/admin-user-controller');
+} = require('../controllers/admin-user-controller')
 
 /**
  * @swagger
@@ -38,8 +47,8 @@ const {
  *               $ref: '#/components/models/serverError'
  */
 router.get('/users', async (req, res) => {
-  await getAll(req, res);
-});
+  await getAll(req, res)
+})
 
 /**
  * @swagger
@@ -75,9 +84,14 @@ router.get('/users', async (req, res) => {
  *             schema:
  *               $ref: '#/components/models/serverError'
  */
-router.post('/users', registerValidationRules(), registerValidate, async (req, res) => {
-  await addOne(req, res);
-});
+router.post(
+  '/users',
+  registerValidationRules(),
+  registerValidate,
+  async (req, res) => {
+    await addOne(req, res)
+  },
+)
 
 /**
  * @swagger
@@ -120,9 +134,14 @@ router.post('/users', registerValidationRules(), registerValidate, async (req, r
  *             schema:
  *               $ref: '#/components/models/serverError'
  */
-router.put('/users/:user', updateValidationRules(), updateValidate, async (req, res) => {
-  await updateOne(req, res);
-});
+router.put(
+  '/users/:user',
+  updateValidationRules(),
+  updateValidate,
+  async (req, res) => {
+    await updateOne(req, res)
+  },
+)
 
 /**
  * @swagger
@@ -159,8 +178,13 @@ router.put('/users/:user', updateValidationRules(), updateValidate, async (req, 
  *             schema:
  *               $ref: '#/components/models/serverError'
  */
-router.delete('/users/:user', deleteValidationRules(), deleteValidate, async (req, res) => {
-  await removeOne(req, res);
-});
+router.delete(
+  '/users/:user',
+  deleteValidationRules(),
+  deleteValidate,
+  async (req, res) => {
+    await removeOne(req, res)
+  },
+)
 
-module.exports = router;
+module.exports = router

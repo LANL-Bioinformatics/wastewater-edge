@@ -26,6 +26,7 @@ import { ConfirmDialog } from '../../common/Dialogs'
 import { notify, getData, formatFileSize, apis, isValidFolder } from '../../common/util'
 import { theme, validateRequired, validateBoolean } from './tableUtil'
 import UserSelector from './UserSelector'
+import config from 'src/config'
 
 const actionDialogs = {
   '': { message: 'This action is not undoable.' },
@@ -161,6 +162,7 @@ const UploadTable = (props) => {
       {
         header: 'Folder',
         accessorKey: 'folder',
+        enableEditing: config.APP.UPLOAD_FOLDER_IS_DISABLED ? false : true,
         muiTableBodyCellEditTextFieldProps: ({ cell }) => ({
           ...getCommonEditTextFieldProps(cell),
         }),

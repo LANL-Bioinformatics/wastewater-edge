@@ -2,7 +2,7 @@ import React, { useState, useRef } from 'react'
 import { Input, InputGroup, InputGroupAddon } from 'reactstrap'
 import Fab from '@material-ui/core/Fab'
 import ListIcon from '@material-ui/icons/List'
-import { colors } from '../../common/util'
+import { colors } from 'src/util'
 
 export const FileUploader = (props) => {
   const inputFile = useRef(null)

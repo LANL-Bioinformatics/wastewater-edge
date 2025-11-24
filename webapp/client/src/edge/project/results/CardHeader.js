@@ -2,7 +2,7 @@ import React, { useState } from 'react'
 import { Button, ButtonGroup, CardHeader, Badge } from 'reactstrap'
 import CIcon from '@coreui/icons-react'
 import { cilChevronTop, cilChevronBottom } from '@coreui/icons'
-import { colors } from '../../common/util'
+import { colors } from 'src/util'
 
 export const Header = (props) => {
   const [headerColor, setHeaderColor] = useState(colors.light)

@@ -19,6 +19,7 @@ const Login = (props) => {
   useEffect(() => {
     dispatch(cleanMessage())
     dispatch(cleanError())
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [])
 
   useEffect(() => {

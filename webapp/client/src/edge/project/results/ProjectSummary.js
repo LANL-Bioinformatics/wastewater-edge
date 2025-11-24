@@ -1,11 +1,13 @@
-import React from 'react'
 import { Badge } from 'reactstrap'
 import Moment from 'react-moment'
 
+import { useSelector } from 'react-redux'
 import { projectStatusColors, projectStatusNames } from '../../um/common/tableUtil'
-import { workflowList } from 'src/workflows/common/util'
+import { workflowList } from 'src/util'
+import config from 'src/config'
 
 const ProjectSummary = (props) => {
+  const user = useSelector((state) => state.user)
   return (
     <>
       {!props.project ? (
@@ -37,6 +39,17 @@ const ProjectSummary = (props) => {
             {projectStatusNames[props.project.status]}
           </Badge>
           <br></br>
+          {config.APP.SUPPORT_IS_ENABLED && props.project.status === 'failed' && (
+            <span className="edge-help-text">
+              {props.type === 'user' && props.project.owner === user.profile.email && (
+                <>
+                  If you need assistance with this failed project, please contact{' '}
+                  {config.APP.SUPPORT_EMAIL} and include the project code '{props.project.code}'.
+                  <br></br>
+                </>
+              )}
+            </span>
+          )}
           <b>Type:</b> {props.project.type ? workflowList[props.project.type].label : ''}
           <br></br>
         </div>

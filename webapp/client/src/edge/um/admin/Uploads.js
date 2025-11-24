@@ -1,4 +1,3 @@
-import React from 'react'
 import { Badge } from 'reactstrap'
 import UploadTable from '../common/UploadTable'
 

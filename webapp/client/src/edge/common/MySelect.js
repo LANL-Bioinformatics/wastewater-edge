@@ -1,10 +1,11 @@
-import React, { useState, useEffect } from 'react'
+import { useState, useEffect } from 'react'
 import { default as ReactSelect, components } from 'react-select'
 import AsyncSelect from 'react-select/async'
 import CreatableSelect from 'react-select/creatable'
 import { WindowedMenuList } from 'react-windowed-select'
 import { clone } from 'lodash'
-import { colors, isValidFolder, postData } from './util'
+import { colors } from 'src/util'
+import { isValidFolder, postData } from './util'
 
 const selectStyles = {
   control: (provided) => ({

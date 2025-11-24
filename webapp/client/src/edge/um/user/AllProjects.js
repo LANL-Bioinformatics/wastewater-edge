@@ -1,4 +1,3 @@
-import React from 'react'
 import ProjectTableViewOnly from '../common/ProjectTableViewOnly'
 import { apis } from '../../common/util'
 

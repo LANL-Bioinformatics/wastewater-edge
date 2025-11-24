@@ -5,7 +5,7 @@ import { Badge } from 'reactstrap'
 import { ThemeProvider } from '@mui/material'
 import { theme, projectStatusColors, projectStatusNames } from '../common/tableUtil'
 import { getData, apis } from '../../common/util'
-import { workflowList } from 'src/workflows/common/util'
+import { workflowList } from 'src/util'
 
 const JobQueue = () => {
   //should be memoized or stable

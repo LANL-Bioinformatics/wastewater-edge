@@ -1,5 +1,5 @@
-const router = require('express').Router();
-const { getReflist } = require('../controllers/data-controller');
+const router = require('express').Router()
+const { getReflist } = require('../controllers/data-controller')
 
 /**
  * @swagger
@@ -28,7 +28,7 @@ const { getReflist } = require('../controllers/data-controller');
  *               $ref: '#/components/models/serverError'
  */
 router.get('/reflist', async (req, res) => {
-  await getReflist(req, res);
-});
+  await getReflist(req, res)
+})
 
-module.exports = router;
+module.exports = router

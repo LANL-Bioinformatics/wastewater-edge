@@ -5,8 +5,8 @@ import { Row, Col } from 'reactstrap'
 
 import PrivateRoute from 'src/edge/common/PrivateRoute'
 // routes config
-import routes from 'src/routes'
-import privateRoutes from 'src/private-routes'
+import routes from 'src/edge/common/routes'
+import privateRoutes from 'src/edge/common/private-routes'
 import workflowRoutes from 'src/workflows/common/routes'
 import workflowPrivateRoutes from 'src/workflows/common/private-routes'
 

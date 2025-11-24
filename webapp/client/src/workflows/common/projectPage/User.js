@@ -56,7 +56,7 @@ const User = (props) => {
         </div>
       ) : (
         <>
-          <ProjectSummary project={project} />
+          <ProjectSummary project={project} type={'user'} />
           <br></br>
           <ProjectResult project={project} type={'user'} />
         </>

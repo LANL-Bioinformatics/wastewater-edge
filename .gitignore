@@ -10,3 +10,13 @@ io
 node_modules
 webapp/server/package-lock.json
 imports.zip
+
+# Ignore all files copied from .core
+webapp/client/src/_nav.js
+webapp/client/src/util.js
+webapp/client/src/workflows/common/private-routes.js
+webapp/client/src/workflows/common/routes.js
+webapp/client/src/workflows/common/ProjectResult.js
+webapp/server/workflow/config.js
+webapp/server/workflow/indexRouter.js
+webapp/server/workflow/util.js

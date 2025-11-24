@@ -1,10 +1,28 @@
-const router = require('express').Router();
-const { validationRules: registerValidationRules, validate: registerValidate } = require('../validations/user-validator');
-const { validationRules: activateValidationRules, validate: activateValidate } = require('../validations/user-activate-validator');
-const { validationRules: getActionLinkValidationRules, validate: getActionLinkValidate } = require('../validations/get-action-link-validator');
-const { validationRules: resetPasswordValidationRules, validate: resetPasswordValidate } = require('../validations/reset-password-validator');
-const { validationRules: loginValidationRules, validate: loginValidate } = require('../validations/login-validator');
-const { validationRules: oauthLoginValidationRules, validate: oauthLoginValidate } = require('../validations/oauth-login-validator');
+const router = require('express').Router()
+const {
+  validationRules: registerValidationRules,
+  validate: registerValidate,
+} = require('../validations/user-validator')
+const {
+  validationRules: activateValidationRules,
+  validate: activateValidate,
+} = require('../validations/user-activate-validator')
+const {
+  validationRules: getActionLinkValidationRules,
+  validate: getActionLinkValidate,
+} = require('../validations/get-action-link-validator')
+const {
+  validationRules: resetPasswordValidationRules,
+  validate: resetPasswordValidate,
+} = require('../validations/reset-password-validator')
+const {
+  validationRules: loginValidationRules,
+  validate: loginValidate,
+} = require('../validations/login-validator')
+const {
+  validationRules: oauthLoginValidationRules,
+  validate: oauthLoginValidate,
+} = require('../validations/oauth-login-validator')
 const {
   register,
   activate,
@@ -13,7 +31,7 @@ const {
   getResetPasswordLink,
   login,
   oauthLogin,
-} = require('../controllers/user-controller');
+} = require('../controllers/user-controller')
 
 /**
  * @swagger
@@ -47,9 +65,14 @@ const {
  *             schema:
  *               $ref: '#/components/models/serverError'
  */
-router.post('/register', registerValidationRules(), registerValidate, async (req, res) => {
-  await register(req, res);
-});
+router.post(
+  '/register',
+  registerValidationRules(),
+  registerValidate,
+  async (req, res) => {
+    await register(req, res)
+  },
+)
 
 /**
  * @swagger
@@ -84,9 +107,14 @@ router.post('/register', registerValidationRules(), registerValidate, async (req
  *             schema:
  *               $ref: '#/components/models/serverError'
  */
-router.put('/activate', activateValidationRules(), activateValidate, async (req, res) => {
-  await activate(req, res);
-});
+router.put(
+  '/activate',
+  activateValidationRules(),
+  activateValidate,
+  async (req, res) => {
+    await activate(req, res)
+  },
+)
 
 /**
  * @swagger
@@ -121,9 +149,14 @@ router.put('/activate', activateValidationRules(), activateValidate, async (req,
  *             schema:
  *               $ref: '#/components/models/serverError'
  */
-router.post('/getActivationLink', getActionLinkValidationRules(), getActionLinkValidate, async (req, res) => {
-  await getActivationLink(req, res);
-});
+router.post(
+  '/getActivationLink',
+  getActionLinkValidationRules(),
+  getActionLinkValidate,
+  async (req, res) => {
+    await getActivationLink(req, res)
+  },
+)
 
 /**
  * @swagger
@@ -158,9 +191,14 @@ router.post('/getActivationLink', getActionLinkValidationRules(), getActionLinkV
  *             schema:
  *               $ref: '#/components/models/serverError'
  */
-router.put('/resetPassword', resetPasswordValidationRules(), resetPasswordValidate, async (req, res) => {
-  await resetPassword(req, res);
-});
+router.put(
+  '/resetPassword',
+  resetPasswordValidationRules(),
+  resetPasswordValidate,
+  async (req, res) => {
+    await resetPassword(req, res)
+  },
+)
 
 /**
  * @swagger
@@ -195,9 +233,14 @@ router.put('/resetPassword', resetPasswordValidationRules(), resetPasswordValida
  *             schema:
  *               $ref: '#/components/models/serverError'
  */
-router.post('/getResetPasswordLink', getActionLinkValidationRules(), getActionLinkValidate, async (req, res) => {
-  await getResetPasswordLink(req, res);
-});
+router.post(
+  '/getResetPasswordLink',
+  getActionLinkValidationRules(),
+  getActionLinkValidate,
+  async (req, res) => {
+    await getResetPasswordLink(req, res)
+  },
+)
 
 /**
  * @swagger
@@ -232,9 +275,14 @@ router.post('/getResetPasswordLink', getActionLinkValidationRules(), getActionLi
  *             schema:
  *               $ref: '#/components/models/serverError'
  */
-router.post('/login', loginValidationRules(), loginValidate, async (req, res) => {
-  await login(req, res);
-});
+router.post(
+  '/login',
+  loginValidationRules(),
+  loginValidate,
+  async (req, res) => {
+    await login(req, res)
+  },
+)
 
 /**
  * @swagger
@@ -269,8 +317,13 @@ router.post('/login', loginValidationRules(), loginValidate, async (req, res) =>
  *             schema:
  *               $ref: '#/components/models/serverError'
  */
-router.post('/oauthLogin', oauthLoginValidationRules(), oauthLoginValidate, async (req, res) => {
-  await oauthLogin(req, res);
-});
+router.post(
+  '/oauthLogin',
+  oauthLoginValidationRules(),
+  oauthLoginValidate,
+  async (req, res) => {
+    await oauthLogin(req, res)
+  },
+)
 
-module.exports = router;
+module.exports = router

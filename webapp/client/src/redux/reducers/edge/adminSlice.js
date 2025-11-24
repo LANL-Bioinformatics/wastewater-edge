@@ -78,6 +78,25 @@ const deleteUserAsync = createAsyncThunk('admin/deleteUser', async (userData, { 
   }
 })
 
+const updateBulkSubmissionAsync = createAsyncThunk(
+  'admin/updateBulkSubmission',
+  async (bulkSubmissionData, { dispatch }) => {
+    try {
+      await putData(`${apis.adminBulkSubmissions}/${bulkSubmissionData.code}`, bulkSubmissionData)
+    } catch (err) {
+      if (typeof err === 'string') {
+        dispatch(addError({ [bulkSubmissionData.code]: err }))
+      } else {
+        if (err.error) {
+          dispatch(addError({ [bulkSubmissionData.code]: JSON.stringify(err.error) }))
+        } else {
+          dispatch(addError({ [bulkSubmissionData.code]: 'API server error' }))
+        }
+      }
+    }
+  },
+)
+
 export const updateProjectAdmin = (projData) => (dispatch, getState) => {
   dispatch(updateProjectAsync(projData))
 }
@@ -98,4 +117,8 @@ export const deleteUserAdmin = (userData) => (dispatch, getState) => {
   dispatch(cleanError())
   dispatch(setSubmittingForm(true))
   dispatch(deleteUserAsync(userData))
+}
+
+export const updateBulkSubmissionAdmin = (bulkSubmissionData) => (dispatch, getState) => {
+  dispatch(updateBulkSubmissionAsync(bulkSubmissionData))
 }

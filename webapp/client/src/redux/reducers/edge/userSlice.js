@@ -236,6 +236,25 @@ const updateProjectAsync = createAsyncThunk(
   },
 )
 
+const updateBulkSubmissionAsync = createAsyncThunk(
+  'user/updateBulkSubmission',
+  async (bulkData, { dispatch }) => {
+    try {
+      await putData(`${apis.userBulkSubmissions}/${bulkData.code}`, bulkData)
+    } catch (err) {
+      if (typeof err === 'string') {
+        dispatch(addError({ [bulkData.code]: err }))
+      } else {
+        if (err.error) {
+          dispatch(addError({ [bulkData.code]: JSON.stringify(err.error) }))
+        } else {
+          dispatch(addError({ [bulkData.code]: 'API server error' }))
+        }
+      }
+    }
+  },
+)
+
 const updateUploadAsync = createAsyncThunk(
   'user/updateUpload',
   async (uploadData, { dispatch }) => {
@@ -307,6 +326,10 @@ export const getResetPasswordLink = (userData) => (dispatch, getState) => {
 
 export const updateProject = (projData) => (dispatch, getState) => {
   dispatch(updateProjectAsync(projData))
+}
+
+export const updateBulkSubmission = (bulkData) => (dispatch, getState) => {
+  dispatch(updateBulkSubmissionAsync(bulkData))
 }
 
 export const updateUpload = (uploadData) => (dispatch, getState) => {

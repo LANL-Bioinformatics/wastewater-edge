@@ -1,10 +1,5 @@
-import React from 'react'
-import { NavLink } from 'react-router-dom'
 import {
-  CAvatar,
-  CBadge,
   CDropdown,
-  CDropdownDivider,
   CDropdownHeader,
   CDropdownItem,
   CDropdownMenu,
@@ -22,7 +17,7 @@ import {
 } from '@coreui/icons'
 import CIcon from '@coreui/icons-react'
 import { FaUserCircle } from 'react-icons/fa'
-import { colors } from 'src/edge/common/util'
+import { colors } from 'src/util'
 import config from 'src/config'
 
 const AppHeaderDropdown = (props) => {
@@ -76,6 +71,12 @@ const AppHeaderDropdown = (props) => {
               <CIcon icon={cilList} className="me-2" />
               Manage Projects
             </CDropdownItem>
+            {config.APP.BULK_SUBMISSIONS_IS_ENABLED && (
+              <CDropdownItem href="/admin/bulkSubmissions">
+                <CIcon icon={cilFile} className="me-2" />
+                Manage Bulk Submissions
+              </CDropdownItem>
+            )}
             {config.APP.UPLOAD_IS_ENABLED && (
               <CDropdownItem href="/admin/uploads">
                 <CIcon icon={cilFile} className="me-2" />

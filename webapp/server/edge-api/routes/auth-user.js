@@ -1,10 +1,13 @@
-const router = require('express').Router();
-const { validationRules: updateValidationRules, validate: updateValidate } = require('../validations/user-update-validator');
+const router = require('express').Router()
+const {
+  validationRules: updateValidationRules,
+  validate: updateValidate,
+} = require('../validations/user-update-validator')
 const {
   info,
   updateOne,
   getUsers,
-} = require('../controllers/auth-user-controller');
+} = require('../controllers/auth-user-controller')
 
 /**
  * @swagger
@@ -35,8 +38,8 @@ const {
  *               $ref: '#/components/models/serverError'
  */
 router.get('/info', async (req, res) => {
-  await info(req, res);
-});
+  await info(req, res)
+})
 
 /**
  * @swagger
@@ -73,8 +76,8 @@ router.get('/info', async (req, res) => {
  *               $ref: '#/components/models/serverError'
  */
 router.put('/', updateValidationRules(), updateValidate, async (req, res) => {
-  await updateOne(req, res);
-});
+  await updateOne(req, res)
+})
 
 /**
  * @swagger
@@ -105,6 +108,6 @@ router.put('/', updateValidationRules(), updateValidate, async (req, res) => {
  *               $ref: '#/components/models/serverError'
  */
 router.get('/users', async (req, res) => {
-  await getUsers(req, res);
-});
-module.exports = router;
+  await getUsers(req, res)
+})
+module.exports = router

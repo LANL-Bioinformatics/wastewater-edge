@@ -1,10 +1,10 @@
-const { email, vars } = require('./config');
-const logger = require('../utils/logger');
+const { email, vars } = require('./config')
+const logger = require('../utils/logger')
 
 const userActionSender = (recipient, action, userName, link) => {
-  const { subject } = vars[action];
-  const { actionName } = vars[action];
-  const { actionMessage } = vars[action];
+  const { subject } = vars[action]
+  const { actionName } = vars[action]
+  const { actionMessage } = vars[action]
 
   email
     .send({
@@ -20,15 +20,17 @@ const userActionSender = (recipient, action, userName, link) => {
         actionMessage,
       },
     })
-    .then((res) => {
-      logger.info(res);
+    .then(res => {
+      logger.info(res)
     })
-    .catch((err) => { logger.error(`${action} mail sent to ${recipient}: failed: ${err}`); });
-};
+    .catch(err => {
+      logger.error(`${action} mail sent to ${recipient}: failed: ${err}`)
+    })
+}
 
 const projectStatusSender = (recipient, data) => {
-  const action = 'projectStatusNotification';
-  const { subject } = vars[action];
+  const action = 'projectStatusNotification'
+  const { subject } = vars[action]
 
   email
     .send({
@@ -37,16 +39,19 @@ const projectStatusSender = (recipient, data) => {
         to: recipient,
       },
       locals: {
-        subject, ...data
+        subject,
+        ...data,
       },
     })
-    .then((res) => {
-      logger.info(res);
+    .then(res => {
+      logger.info(res)
     })
-    .catch((err) => { logger.error(`${action} mail sent to ${recipient}: failed: ${err}`); });
-};
+    .catch(err => {
+      logger.error(`${action} mail sent to ${recipient}: failed: ${err}`)
+    })
+}
 
 module.exports = {
   userActionSender,
-  projectStatusSender
-};
+  projectStatusSender,
+}

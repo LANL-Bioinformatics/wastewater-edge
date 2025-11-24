@@ -1,6 +1,6 @@
-const swaggerJSDoc = require('swagger-jsdoc');
-const swaggerSchemas = require('./swaggerSchemas');
-const swaggerModels = require('./swaggerModels');
+const swaggerJSDoc = require('swagger-jsdoc')
+const swaggerSchemas = require('./swaggerSchemas')
+const swaggerModels = require('./swaggerModels')
 
 const options = {
   definition: {
@@ -21,9 +21,10 @@ const options = {
           bearerFormat: 'JWT',
           name: 'Authorization',
           in: 'header',
-          description: 'Enter the token with the `Bearer: ` prefix, e.g. "Bearer abcde12345".'
-        }
-      }
+          description:
+            'Enter the token with the `Bearer: ` prefix, e.g. "Bearer abcde12345".',
+        },
+      },
     },
     servers: [
       {
@@ -52,8 +53,8 @@ const options = {
   },
   // Path to the API docs
   apis: ['./routes/*.js'],
-};
+}
 
-const swaggerSpec = swaggerJSDoc(options);
+const swaggerSpec = swaggerJSDoc(options)
 
-module.exports = swaggerSpec;
+module.exports = swaggerSpec

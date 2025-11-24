@@ -62,6 +62,14 @@ export default defineConfig(({ mode }) => {
           target: API_URL,
           changeOrigin: true,
         },
+        '/bulksubmissions': {
+          target: API_URL,
+          changeOrigin: true,
+        },
+        '/workflow-docs': {
+          target: API_URL,
+          changeOrigin: true,
+        },
       },
     },
   }
