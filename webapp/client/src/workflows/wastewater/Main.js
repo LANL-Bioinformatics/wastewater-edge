@@ -7,6 +7,7 @@ import 'react-toastify/dist/ReactToastify.css'
 import { workflowList } from 'src/util'
 import { postData, getData, notify, apis, isValidFileInput } from 'src/edge/common/util'
 import { LoaderDialog, MessageDialog } from 'src/edge/common/Dialogs'
+import MySelect from 'src/edge/common/MySelect'
 import { Project } from 'src/edge/project/forms/Project'
 import { InputRawReads } from 'src/edge/project/forms/InputRawReads'
 import { HtmlText } from 'src/edge/common/HtmlText'
@@ -182,12 +183,32 @@ const Main = (props) => {
       >
         <div className="clearfix">
           <h4 className="pt-3">WasteWater Workflow</h4>
-          <span className="pt-3 text-muted edge-text-size-small">
-            <HtmlText text={workflowList[workflow].info} />
-            <br></br>
-          </span>
           <hr />
           <Project setParams={setProject} />
+          <br></br>
+          <b>Workflow</b>
+          <MySelect
+            //defaultValue={workflowOptions[0]}
+            options={workflowOptions}
+            value={workflowOptions[0]}
+            onChange={(e) => {
+              setAllExpand(0)
+              setAllClosed(0)
+              if (e) {
+                setWorkflow(e.value)
+              } else {
+                setWorkflow()
+              }
+            }}
+            placeholder="Select a Workflow..."
+            isClearable={true}
+          />
+          {workflow && workflowList[workflow].info && (
+            <div className="pt-3 text-muted edge-text-size-small">
+              <HtmlText text={workflowList[workflow].info} />
+              <br></br>
+            </div>
+          )}
           <br></br>
           {!disableExpandClose && (
             <>
@@ -217,35 +238,31 @@ const Main = (props) => {
               <br></br>
             </>
           )}
-          {workflow === 'wastewater' && (
-            <>
-              <InputRawReads
-                note={workflows[workflow]['rawReadsInput'].note}
-                setParams={setRawData}
-                isValidFileInput={isValidFileInput}
-                source={workflows[workflow]['rawReadsInput'].source}
-                sourceDisplay={workflows[workflow]['rawReadsInput'].text}
-                sourceOptionsOn={false}
-                sourceOptions={workflows[workflow]['rawReadsInput'].sourceOptions}
-                seqPlatformOptions={workflows[workflow]['rawReadsInput'].seqPlatformOptions}
-                seqPlatformText={workflows[workflow]['rawReadsInput'].seqPlatformText}
-                seqPlatformTooltip={workflows[workflow]['rawReadsInput'].seqPlatformTooltip}
-                disableSwitcher={true}
-                text={workflows[workflow]['rawReadsInput'].text}
-                tooltip={workflows[workflow]['rawReadsInput'].tooltip}
-                title={'Input Raw Reads'}
-                fastqSettings={
-                  workflows[workflow]['rawReadsInput'].fastq
-                    ? workflows[workflow]['rawReadsInput'].fastq
-                    : {}
-                }
-                isValid={rawDataParams ? rawDataParams.validForm : false}
-                errMessage={rawDataParams ? rawDataParams.errMessage : null}
-                allExpand={allExpand}
-                allClosed={allClosed}
-              />
-            </>
-          )}
+          <InputRawReads
+            note={workflows[workflow]['rawReadsInput'].note}
+            setParams={setRawData}
+            isValidFileInput={isValidFileInput}
+            source={workflows[workflow]['rawReadsInput'].source}
+            sourceDisplay={workflows[workflow]['rawReadsInput'].text}
+            sourceOptionsOn={false}
+            sourceOptions={workflows[workflow]['rawReadsInput'].sourceOptions}
+            seqPlatformOptions={workflows[workflow]['rawReadsInput'].seqPlatformOptions}
+            seqPlatformText={workflows[workflow]['rawReadsInput'].seqPlatformText}
+            seqPlatformTooltip={workflows[workflow]['rawReadsInput'].seqPlatformTooltip}
+            disableSwitcher={true}
+            text={workflows[workflow]['rawReadsInput'].text}
+            tooltip={workflows[workflow]['rawReadsInput'].tooltip}
+            title={'Input Raw Reads'}
+            fastqSettings={
+              workflows[workflow]['rawReadsInput'].fastq
+                ? workflows[workflow]['rawReadsInput'].fastq
+                : {}
+            }
+            isValid={rawDataParams ? rawDataParams.validForm : false}
+            errMessage={rawDataParams ? rawDataParams.errMessage : null}
+            allExpand={allExpand}
+            allClosed={allClosed}
+          />
         </div>
         <div className="edge-center">
           <Button

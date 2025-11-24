@@ -2,10 +2,10 @@ const fs = require('fs')
 const xlsx = require('node-xlsx').default
 const Upload = require('../edge-api/models/upload')
 const config = require('../config')
-const workflowConfig = require('../config')
+const workflowConfig = require('./config')
 
 const cromwellWorkflows = []
-const nextflowWorkflows = ['sra2fastq', 'wastewater']
+const nextflowWorkflows = ['sra2fastq', 'metaG', 'metaT']
 const nextflowConfigs = {
   profiles: 'common/profiles.nf',
   nf_reports: 'common/nf_reports.tmpl',
@@ -17,11 +17,20 @@ const workflowList = {
     nextflow_main: 'sra2fastq/nextflow/main.nf -profile local',
     config_tmpl: 'sra2fastq/workflow_config.tmpl',
   },
+  // bukl submission workflows
   wastewater: {
-    outdir: 'output/WasteWater',
+    project_conf_tmpl: 'wastewater-conf.tmpl',
+  },
+  // single submission workflows
+  metaG: {
+    outdir: 'output/MetaG',
     nextflow_main: 'wastewater/nextflow/main.nf -profile local',
     config_tmpl: 'wastewater/workflow_config.tmpl',
-    project_conf_tmpl: 'wastewater-conf.tmpl',
+  },
+  metaT: {
+    outdir: 'output/MetaT',
+    nextflow_main: 'wastewater/nextflow/main.nf -profile local',
+    config_tmpl: 'wastewater/workflow_config.tmpl',
   },
 }
 
@@ -138,9 +147,9 @@ const validateBulkSubmissionInput = async (bulkExcel, type) => {
       }
       // get workflow type, default is metaG
       if (cols[2] && cols[2] === 'metaT') {
-        submission.pipeline = 'metaT'
+        submission.workflow = 'metaT'
       } else {
-        submission.pipeline = 'metaG'
+        submission.workflow = 'metaG'
       }
 
       let r1 = ''

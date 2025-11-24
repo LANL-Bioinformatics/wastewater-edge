@@ -1,10 +1,10 @@
 import BulkSubmission from 'src/edge/BulkSubmission/forms/BulkSubmission'
-import { workflowOptions } from './defaults'
+import { bulkWorkflowOptions } from './defaults'
 
 function Bulk(props) {
   return (
     <BulkSubmission
-      workflowOptions={workflowOptions}
+      workflowOptions={bulkWorkflowOptions}
       tag={'Waste Water | Bulk Submission'}
       {...props}
     />

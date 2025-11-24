@@ -23,12 +23,6 @@ const _nav = [
     icon: <CIcon icon={cilCloudUpload} customClassName="nav-icon" />,
   },
   {
-    component: CNavItem,
-    name: 'Retrieve SRA Data',
-    to: '/user/sradata',
-    icon: <CIcon icon={cilCloudUpload} customClassName="nav-icon" />,
-  },
-  {
     component: CNavTitle,
     name: 'Workflows',
   },
