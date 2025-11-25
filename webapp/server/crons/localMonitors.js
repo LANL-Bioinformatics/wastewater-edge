@@ -65,12 +65,10 @@ const localWorkflowMonitor = async () => {
       })
       newJob.save()
       proj.status = 'running'
-      proj.updated = Date.now()
       proj.save()
     } else {
       logger.error('Failed to start local job.')
       proj.status = 'failed'
-      proj.updated = Date.now()
       proj.save()
     }
   } catch (err) {

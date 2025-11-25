@@ -102,8 +102,6 @@ const updateOne = async (req, res) => {
     if (req.body.jobPriority) {
       user.job.priority = req.body.jobPriority
     }
-
-    user.updated = Date.now()
     if (hashedPassword) {
       user.password = hashedPassword
     }

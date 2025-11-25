@@ -117,12 +117,10 @@ const submitWorkflow = (proj, projectConf, inputsize) => {
         logger.error('falied to save to cromwelljob: ', err)
       })
       proj.status = 'submitted'
-      proj.updated = Date.now()
       proj.save()
     })
     .catch(error => {
       proj.status = 'failed'
-      proj.updated = Date.now()
       proj.save()
       let message = error
       if (error.data) {
@@ -141,7 +139,6 @@ const abortJob = job => {
       logger.debug(response)
       // update job status
       job.status = 'Aborted'
-      job.updated = Date.now()
       job.save()
       write2log(
         `${config.IO.PROJECT_BASE_DIR}/${job.project}/log.txt`,
@@ -158,7 +155,6 @@ const abortJob = job => {
       // not cromwell api server error, job may already complete/fail
       if (error.status !== 500) {
         job.status = 'Aborted'
-        job.updated = Date.now()
         job.save()
         write2log(
           `${config.IO.PROJECT_BASE_DIR}/${job.project}/log.txt`,
@@ -321,11 +317,9 @@ const updateJobStatus = (job, proj) => {
             generateWorkflowResult(proj)
           } catch (e) {
             job.status = response.status
-            job.updated = Date.now()
             job.save()
             // result not as expected
             proj.status = 'failed'
-            proj.updated = Date.now()
             proj.save()
             throw e
           }
@@ -336,7 +330,6 @@ const updateJobStatus = (job, proj) => {
           status = 'in queue'
         }
         proj.status = status
-        proj.updated = Date.now()
         proj.save()
         write2log(
           `${config.IO.PROJECT_BASE_DIR}/${job.project}/log.txt`,
@@ -353,7 +346,6 @@ const updateJobStatus = (job, proj) => {
         })
       } else {
         job.status = response.status
-        job.updated = Date.now()
         job.save()
         getJobMetadata(job)
       }

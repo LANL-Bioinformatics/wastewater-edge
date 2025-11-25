@@ -51,7 +51,6 @@ const fileUploadMonitor = async () => {
           logger.error(`Upload not found ${code}`)
         } else {
           upload.status = 'delete'
-          upload.updated = Date.now()
           upload
             .save()
             .then()

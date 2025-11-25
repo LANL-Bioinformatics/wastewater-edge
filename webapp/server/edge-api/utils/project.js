@@ -64,7 +64,6 @@ const updateProject = async (query, req) => {
       proj.jobPriority = req.body.jobPriority
     }
 
-    proj.updated = Date.now()
     const project = await proj.save()
     return project
   } catch (err) {

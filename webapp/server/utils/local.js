@@ -38,7 +38,6 @@ const abortJob = job => {
     }
     // update job status
     job.status = 'Aborted'
-    job.updated = Date.now()
     job.save()
     logger.info(
       `${config.IO.PROJECT_BASE_DIR}/${job.project}/log.txt`,
@@ -64,10 +63,8 @@ const updateJobStatus = (job, proj) => {
     }
     // update project status
     job.status = jobStatus
-    job.updated = Date.now()
     job.save()
     proj.status = status
-    proj.updated = Date.now()
     proj.save()
   }
 }

@@ -63,7 +63,6 @@ const updateBulkSubmission = async (query, req) => {
       bulk.jobPriority = req.body.jobPriority
     }
 
-    bulk.updated = Date.now()
     const bulkSubmission = await bulk.save()
     return bulkSubmission
   } catch (err) {

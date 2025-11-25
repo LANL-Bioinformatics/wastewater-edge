@@ -26,7 +26,6 @@ const updateUpload = async (query, req) => {
       upload.status = req.body.status
     }
 
-    upload.updated = Date.now()
     return await upload.save()
   } catch (err) {
     return Promise.reject(err)

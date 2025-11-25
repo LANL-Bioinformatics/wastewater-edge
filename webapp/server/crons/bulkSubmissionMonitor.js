@@ -41,7 +41,6 @@ const bulkSubmissionMonitor = async () => {
     logger.info(`Processing bulkSubmission request: ${bulkSubmission.code}`)
     // set bulkSubmissionect status to 'processing'
     bulkSubmission.status = 'processing'
-    bulkSubmission.updated = Date.now()
     await bulkSubmission.save()
     common.write2log(log, 'Validate input bulk excel file')
     logger.info('Validate input bulk excel file')
@@ -53,7 +52,8 @@ const bulkSubmissionMonitor = async () => {
     if (validInput) {
       // submit projects
       const projects = []
-      submissions.forEach(async submission => {
+      // eslint-disable-next-line no-restricted-syntax
+      for await (const submission of submissions) {
         let code = randomize('Aa0', 16)
         let projHome = path.join(config.IO.PROJECT_BASE_DIR, code)
         while (fs.existsSync(projHome)) {
@@ -77,16 +77,15 @@ const bulkSubmissionMonitor = async () => {
         const newProject = new Project({
           name: submission.proj_name,
           desc: submission.proj_desc,
-          type: conf.bulkSubmission.type,
+          type: submission.workflow ? submission.workflow : bulkSubmission.type,
           owner: bulkSubmission.owner,
           code,
         })
         await newProject.save()
-      })
+      }
       // update bulksubmission
       bulkSubmission.status = 'complete'
       bulkSubmission.projects = projects
-      bulkSubmission.updated = Date.now()
       await bulkSubmission.save()
     } else {
       logger.error('Validation failed.')
@@ -95,7 +94,6 @@ const bulkSubmissionMonitor = async () => {
       common.write2log(log, errMsg)
       // set bulkSubmissionect status to 'failed'
       bulkSubmission.status = 'failed'
-      bulkSubmission.updated = Date.now()
       await bulkSubmission.save()
     }
   } catch (err) {
@@ -117,7 +115,6 @@ const bulkSubmissionRerunMonitor = async () => {
       logger.info(`rerun bulkSubmission: ${code}`)
       // update bulkSubmission status to 'in queue'
       bulk.status = 'in queue'
-      bulk.updated = Date.now()
       bulk.save()
     }
   } catch (err) {

@@ -35,7 +35,11 @@ const generateInputs = async (projHome, projectConf, proj) => {
     nfReports: `${config.NEXTFLOW.WORKFLOW_DIR}/${nextflowConfigs.nf_reports}`,
   }
   // get workflow specific params
-  const workflowParams = generateNextflowWorkflowParams(projectConf, projHome)
+  const workflowParams = await generateNextflowWorkflowParams(
+    projHome,
+    projectConf,
+    proj,
+  )
   // render input template and write to nextflow_params.json
   let inputs = ejs.render(template, { ...params, ...workflowParams })
   if (config.NEXTFLOW.SLURM_EDGE_ROOT && config.NEXTFLOW.EDGE_ROOT) {
@@ -113,7 +117,6 @@ const submitWorkflow = async (proj, projectConf, inputsize) => {
   if (!fs.existsSync(nfWorkDir)) {
     logger.error(`Error creating directory ${nfWorkDir}:`)
     proj.status = 'failed'
-    proj.updated = Date.now()
     proj.save()
     return
   }
@@ -125,7 +128,6 @@ const submitWorkflow = async (proj, projectConf, inputsize) => {
   if (!fs.existsSync(nfOutDir)) {
     logger.error(`Error creating directory ${nfOutDir}:`)
     proj.status = 'failed'
-    proj.updated = Date.now()
     proj.save()
     return
   }
@@ -159,7 +161,6 @@ const submitWorkflow = async (proj, projectConf, inputsize) => {
     logger.error('falied to save to nextflowjob: ', err)
   })
   proj.status = 'running'
-  proj.updated = Date.now()
   proj.save()
 }
 
@@ -183,10 +184,8 @@ const updateJobStatus = async (job, proj) => {
   if (!ret || ret.code !== 0) {
     if (ret.message.includes('execution history is empty')) {
       job.status = 'Failed'
-      job.updated = Date.now()
       job.save()
       proj.status = 'failed'
-      proj.updated = Date.now()
       proj.save()
       write2log(`${projHome}/log.txt`, 'Nextflow job status: failed')
     }
@@ -202,10 +201,8 @@ const updateJobStatus = async (job, proj) => {
   }
   if (ret.message.trim() === 'ERR') {
     job.status = 'Failed'
-    job.updated = Date.now()
     job.save()
     proj.status = 'failed'
-    proj.updated = Date.now()
     proj.save()
     write2log(`${projHome}/log.txt`, 'Nextflow job status: failed')
     return
@@ -232,11 +229,9 @@ const updateJobStatus = async (job, proj) => {
         generateWorkflowResult(proj)
       } catch (e) {
         job.status = newStatus
-        job.updated = Date.now()
         job.save()
         // result not as expected
         proj.status = 'failed'
-        proj.updated = Date.now()
         proj.save()
         throw e
       }
@@ -245,7 +240,6 @@ const updateJobStatus = async (job, proj) => {
       status = 'failed'
     }
     proj.status = status
-    proj.updated = Date.now()
     proj.save()
     write2log(`${projHome}/log.txt`, `Nextflow job status: ${newStatus}`)
   }
@@ -259,7 +253,6 @@ const updateJobStatus = async (job, proj) => {
     })
   } else {
     job.status = newStatus
-    job.updated = Date.now()
     job.save()
   }
 }

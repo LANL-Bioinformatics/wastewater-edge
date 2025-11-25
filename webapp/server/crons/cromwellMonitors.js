@@ -52,7 +52,6 @@ const cromWellWorkflowMonitor = async () => {
       logger.debug(`Project ${proj.code} input size exceeded the limit.`)
       // fail project
       proj.status = 'failed'
-      proj.updated = Date.now()
       await proj.save()
       common.write2log(
         `${config.IO.PROJECT_BASE_DIR}/${proj.code}/log.txt`,
@@ -68,7 +67,6 @@ const cromWellWorkflowMonitor = async () => {
     logger.info(`Processing workflow request: ${proj.code}`)
     // set project status to 'processing'
     proj.status = 'processing'
-    proj.updated = Date.now()
     proj
       .save()
       .then(() => {
@@ -131,7 +129,6 @@ const cromWellWorkflowMonitor = async () => {
           })
           .catch(err => {
             proj.status = 'failed'
-            proj.updated = Date.now()
             proj.save()
             common.write2log(
               `${config.IO.PROJECT_BASE_DIR}/${proj.code}/log.txt`,
@@ -142,7 +139,6 @@ const cromWellWorkflowMonitor = async () => {
       })
       .catch(err => {
         proj.status = 'failed'
-        proj.updated = Date.now()
         proj.save()
         common.write2log(
           `${config.IO.PROJECT_BASE_DIR}/${proj.code}/log.txt`,

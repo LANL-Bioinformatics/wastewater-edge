@@ -36,12 +36,10 @@ const projectMonitor = async () => {
               logger.error(err)
             })
           proj.notified = true
-          proj.updated = Date.now()
           proj.save()
         }
       } else {
         proj.notified = true
-        proj.updated = Date.now()
         proj.save()
       }
     })
@@ -142,7 +140,6 @@ const projectRerunMonitor = async () => {
       // update project status to 'in queue'
       proj.status = 'in queue'
       proj.notified = false
-      proj.updated = Date.now()
       proj.save()
     }
   } catch (err) {
