@@ -1,6 +1,8 @@
 const fs = require('fs')
+const path = require('path')
 const xlsx = require('node-xlsx').default
 const Upload = require('../edge-api/models/upload')
+const { linkCopyFile } = require('../utils/common')
 const config = require('../config')
 const workflowConfig = require('./config')
 
@@ -35,11 +37,55 @@ const workflowList = {
 }
 
 // eslint-disable-next-line no-unused-vars
-const generateNextflowWorkflowParams = (projectConf, projHome) => {
+const generateNextflowWorkflowParams = async (projHome, projectConf, proj) => {
   const params = {}
   if (projectConf.workflow.name === 'sra2fastq') {
     // download sra data to shared directory
     params.sraOutdir = config.IO.SRA_BASE_DIR
+  } else if (projectConf.category === 'wastewater') {
+    // link input files to project input directory
+    const inputDir = `${projHome}/input`
+    // set output directory
+    const outputDir = `${projHome}/${workflowList[projectConf.workflow.name].outdir}`
+    // create csv input file
+    const csvFile = `${projHome}/metadata.csv`
+    const csvStream = fs.createWriteStream(csvFile)
+    csvStream.write('sample_id,input_dir,output_dir,r1,r2,read_type,workflow\n')
+    if (projectConf.rawReads.paired) {
+      const r1Linked = path.basename(
+        await linkCopyFile(
+          projectConf.rawReads.inputFiles[0].R1,
+          inputDir,
+          'link',
+          true,
+        ),
+      )
+      const r2Linked = path.basename(
+        await linkCopyFile(
+          projectConf.rawReads.inputFiles[0].R2,
+          inputDir,
+          'link',
+          true,
+        ),
+      )
+      csvStream.write(
+        `${proj.name},${inputDir},${outputDir},${r1Linked},${r2Linked},${projectConf.workflow.input.read_type},${projectConf.workflow.name}\n`,
+      )
+    } else {
+      const r1Linked = path.basename(
+        await linkCopyFile(
+          projectConf.rawReads.inputFiles[0],
+          inputDir,
+          'link',
+          true,
+        ),
+      )
+      csvStream.write(
+        `${proj.name},${inputDir},${outputDir},${r1Linked},,${projectConf.workflow.input.read_type},${projectConf.workflow.name}\n`,
+      )
+    }
+    csvStream.end()
+    params.metadata = csvFile
   }
   return params
 }
