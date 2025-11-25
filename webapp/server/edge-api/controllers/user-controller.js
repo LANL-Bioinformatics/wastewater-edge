@@ -251,7 +251,11 @@ const login = async (req, res) => {
     const data = req.body
     logger.debug(`/api/user/login: ${JSON.stringify(data.email)}`)
     // Find user by email
-    const user = await User.findOne({ email: { $eq: data.email } })
+    const user = await User.findOneAndUpdate(
+      { email: { $eq: data.email } },
+      { $set: { lastLogin: new Date() } },
+      { new: true },
+    )
     // Check if user exists
     if (!user) {
       logger.error(`login: Account ${data.emaill} not found`)
@@ -315,7 +319,11 @@ const oauthLogin = async (req, res) => {
     const data = req.body
     logger.debug(`/api/user/oauthLogin: ${JSON.stringify(data.email)}`)
     // Find user by email
-    let user = await User.findOne({ email: { $eq: data.email } })
+    let user = await User.findOneAndUpdate(
+      { email: { $eq: data.email } },
+      { $set: { lastLogin: new Date() } },
+      { new: true },
+    )
     // Is active user?
     if (user && !user.active) {
       logger.error(`oauthLogin: Account ${data.email} is not active.`)

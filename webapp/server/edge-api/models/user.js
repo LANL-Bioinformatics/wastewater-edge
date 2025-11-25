@@ -67,6 +67,11 @@ const userSchema = new mongoose.Schema(
         default: 0,
       },
     },
+    // Add a field for last login time
+    lastLogin: {
+      type: Date,
+      default: Date.now,
+    },
   },
   {
     timestamps: {
