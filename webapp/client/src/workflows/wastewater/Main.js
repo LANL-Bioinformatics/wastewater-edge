@@ -120,6 +120,8 @@ const Main = (props) => {
     postData(apis.userProjects, formData)
       .then((data) => {
         setSubmitting(false)
+        // prevent multiple submission
+        setRequestSubmit(false)
         notify('success', 'Your workflow request was submitted successfully!', 2000)
         setTimeout(() => navigate('/user/projects'), 2000)
       })

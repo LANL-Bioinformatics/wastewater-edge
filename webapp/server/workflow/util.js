@@ -57,7 +57,7 @@ const generateNextflowWorkflowParams = async (projHome, projectConf, proj) => {
           projectConf.rawReads.inputFiles[0].R1,
           inputDir,
           'link',
-          true,
+          false,
         ),
       )
       const r2Linked = path.basename(
@@ -65,7 +65,7 @@ const generateNextflowWorkflowParams = async (projHome, projectConf, proj) => {
           projectConf.rawReads.inputFiles[0].R2,
           inputDir,
           'link',
-          true,
+          false,
         ),
       )
       csvStream.write(
@@ -77,7 +77,7 @@ const generateNextflowWorkflowParams = async (projHome, projectConf, proj) => {
           projectConf.rawReads.inputFiles[0],
           inputDir,
           'link',
-          true,
+          false,
         ),
       )
       csvStream.write(
