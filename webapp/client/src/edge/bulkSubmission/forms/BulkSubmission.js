@@ -70,6 +70,8 @@ const BulkSubmission = (props) => {
     postData(apis.userBulkSubmissions, formData)
       .then((data) => {
         setSubmitting(false)
+        // prevent multiple submission
+        setRequestSubmit(false)
         notify('success', 'Your bulk submission request was submitted successfully!', 2000)
         setTimeout(() => navigate('/user/bulkSubmissions'), 2000)
       })
