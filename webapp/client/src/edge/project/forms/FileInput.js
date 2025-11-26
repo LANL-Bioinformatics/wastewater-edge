@@ -23,7 +23,7 @@ export const FileInput = (props) => {
 
   useEffect(() => {
     setState({ ...components[componentName] })
-  }, [props.reset]) // eslint-disable-line react-hooks/exhaustive-deps
+  }, [props.reset])
 
   //trigger validation method when input changes
   useEffect(() => {

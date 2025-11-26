@@ -12,10 +12,6 @@ export const AsyncSelectInput = (props) => {
 
   const [doValidation, setDoValidation] = useState(0)
 
-  useEffect(() => {
-    form.selections = props.value ? props.value : []
-  }, []) // eslint-disable-line react-hooks/exhaustive-deps
-
   const handleSelectChange = (selected) => {
     if (selected) {
       form.selections = selected
@@ -94,7 +90,6 @@ export const AsyncSelectInput = (props) => {
           />
         </Col>
       </Row>
-      <br></br>
     </>
   )
 }

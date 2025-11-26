@@ -46,6 +46,10 @@ export const components = {
     validForm: false,
     selections: [],
   },
+  colorPicker: {
+    validForm: true,
+    color: '#000000',
+  },
   multSelectInput: {
     validForm: false,
     selections: [],
