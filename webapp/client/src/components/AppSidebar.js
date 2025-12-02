@@ -6,7 +6,7 @@ import { CSidebar, CSidebarBrand, CSidebarFooter, CSidebarHeader } from '@coreui
 
 import { AppSidebarNav } from './AppSidebarNav'
 
-import logo from 'src/assets/brand/logo.png'
+import logo from 'src/assets/brand/logo-sidebar.png'
 
 // sidebar nav config
 import navigation from '../_nav'

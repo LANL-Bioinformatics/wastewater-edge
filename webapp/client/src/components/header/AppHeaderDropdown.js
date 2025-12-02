@@ -7,7 +7,6 @@ import {
 } from '@coreui/react'
 import {
   cilFile,
-  cilLockLocked,
   cilSettings,
   cilGrid,
   cilListNumbered,
@@ -17,6 +16,7 @@ import {
 } from '@coreui/icons'
 import CIcon from '@coreui/icons-react'
 import { FaUserCircle } from 'react-icons/fa'
+import { MdLogout } from 'react-icons/md'
 import { colors } from 'src/util'
 import config from 'src/config'
 
@@ -95,8 +95,8 @@ const AppHeaderDropdown = (props) => {
           Profile
         </CDropdownItem>
         <CDropdownItem onClick={onLogoutClick}>
-          <CIcon icon={cilLockLocked} className="me-2" />
-          Logout
+          <MdLogout size={18} className="edge-header-orcid-icon" />
+          &nbsp;&nbsp;Logout
         </CDropdownItem>
       </CDropdownMenu>
     </CDropdown>

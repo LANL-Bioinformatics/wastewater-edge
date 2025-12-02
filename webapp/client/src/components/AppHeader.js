@@ -16,7 +16,7 @@ import { cilMenu } from '@coreui/icons'
 import { MdLogout } from 'react-icons/md'
 
 import { AppHeaderDropdown } from './header/index'
-import logo from 'src/assets/brand/logo.png'
+import logo from 'src/assets/brand/logo-header.png'
 import { logout } from 'src/redux/reducers/edge/userSlice'
 import OrcidLoginHelp from './OrcidLoginHelp'
 import config from 'src/config'
