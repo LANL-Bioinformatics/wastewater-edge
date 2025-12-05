@@ -204,7 +204,7 @@ const UploadFiles = (props) => {
         Allowed file extensions are: {allowedExtensions.join(', ')}
         <br></br>
         <br></br>
-        {!config.APP.UPLOAD_FOLDER_IS_DISABLED && (
+        {config.APP.UPLOAD_FOLDER_IS_ENABLED && (
           <>
             Folder to store the uploaded files, default folder is &lsquo;{defaultFolder}&rsquo;
             <MyCreatableSelect
