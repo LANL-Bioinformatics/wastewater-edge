@@ -446,6 +446,37 @@ button:hover {
   display: block;
 }
 
+// edge button styles
+.edge-button  {
+  height: 40px; /* Adjust as needed */
+  font-size: 1rem;
+}
+
+.edge-button .edge-button:active,
+edge-button:active,
+.edge-button:focus,
+edge-button:focus,
+.edge-button:hover,
+edge-button:hover {
+  height: 40px; /* Adjust as needed */
+  font-size: 1rem;
+}
+
+.edge-button-sm  {
+  height: 30px; /* Adjust as needed */
+  font-size: 0.8rem;
+}
+
+.edge-button-sm .edge-button-sm:active,
+edge-button-sm:active,
+.edge-button-sm:focus,
+edge-button-sm:focus,
+.edge-button-sm:hover,
+edge-button-sm:hover {
+  height: 30px; /* Adjust as needed */
+  font-size: 0.8rem;
+}
+
 //hide menu on topbar
 @media screen and (max-width: 450px) {
   .edge-header-nav-link {

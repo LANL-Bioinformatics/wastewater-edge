@@ -122,7 +122,7 @@ export const PairedFileInputArray = (props) => {
           <Col xs="12" md="9">
             <Button
               size="sm"
-              className="btn-pill"
+              className="btn-pill edge-button-sm"
               color="outline-primary"
               onClick={() => {
                 if (props.maxInput && pairedFileInputFields.length >= props.maxInput) {
@@ -221,7 +221,7 @@ export const PairedFileInputArray = (props) => {
               <Col xs="12" md="9">
                 <Button
                   size="sm"
-                  className="btn-pill"
+                  className="btn-pill edge-button-sm"
                   color="ghost-primary"
                   onClick={() => {
                     form.fileInput.splice(index, 1)

@@ -69,7 +69,7 @@ export const TextInputArray = (props) => {
         <Col xs="12" md="9">
           <Button
             size="sm"
-            className="btn-pill"
+            className="btn-pill edge-button-sm"
             color="outline-primary"
             onClick={() => {
               inputAppend({ name: 'input' })
@@ -110,7 +110,7 @@ export const TextInputArray = (props) => {
             <Col xs="12" md="9">
               <Button
                 size="sm"
-                className="btn-pill"
+                className="btn-pill edge-button-sm"
                 color="ghost-primary"
                 onClick={() => {
                   form.textInputs.splice(index, 1)

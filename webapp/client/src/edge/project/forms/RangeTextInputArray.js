@@ -69,7 +69,7 @@ export const RangeTextInputArray = (props) => {
         <Col xs="12" md="9">
           <Button
             size="sm"
-            className="btn-pill"
+            className="btn-pill edge-button-sm"
             color="outline-primary"
             onClick={() => {
               rangeTextInputAppend({ name: 'rangeTextInput' })
@@ -115,7 +115,7 @@ export const RangeTextInputArray = (props) => {
             <Col xs="12" md="9">
               <Button
                 size="sm"
-                className="btn-pill"
+                className="btn-pill edge-button-sm"
                 color="ghost-primary"
                 onClick={() => {
                   form.rangeInputs.splice(index, 1)
