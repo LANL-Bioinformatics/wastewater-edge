@@ -55,15 +55,19 @@ done
 #copy .js.core to .js
 files=(
   # client files
+  "webapp/client/package.json"
   "webapp/client/src/_nav.js"
   "webapp/client/src/util.js"
   "webapp/client/src/workflows/common/ProjectResult.js"
   "webapp/client/src/workflows/common/private-routes.js"
   "webapp/client/src/workflows/common/routes.js"
   # server files
+  "webapp/server/package.json"
   "webapp/server/workflow/config.js"
   "webapp/server/workflow/indexRouter.js"
   "webapp/server/workflow/util.js"
+  # root files
+  ".gitignore"
 )
 for file in "${files[@]}"
 do

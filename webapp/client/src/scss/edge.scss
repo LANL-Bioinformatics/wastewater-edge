@@ -198,6 +198,20 @@ button:hover {
   cursor: pointer;
 }
 
+.edge-link {
+  color: $primary !important;
+  font-size: 1.0em;
+  text-decoration: none;
+  cursor: pointer;
+}
+
+.edge-link-small {
+  color: $primary !important;
+  font-size: 0.85em;
+  text-decoration: none;
+  cursor: pointer;
+}
+
 .edge-link-large {
   color: $primary !important;
   font-size: 1.2em;
