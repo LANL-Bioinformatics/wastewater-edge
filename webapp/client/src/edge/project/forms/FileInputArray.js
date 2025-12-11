@@ -20,7 +20,7 @@ export const FileInputArray = (props) => {
     remove: fileInputRemove,
   } = useFieldArray({
     control,
-    name: 'fileInput',
+    name: 'singleFileInput',
   })
 
   const handleFileSelection = (path, type, index, key) => {
@@ -54,7 +54,7 @@ export const FileInputArray = (props) => {
   //default 1 dataset
   useEffect(() => {
     if (!props.isOptional) {
-      fileInputAppend({ name: 'fileInput' })
+      fileInputAppend({ name: 'singleFileInput' })
     }
     setState({
       ...form,
@@ -106,7 +106,7 @@ export const FileInputArray = (props) => {
                 if (props.maxInput && fileInputFields.length >= props.maxInput) {
                   alert(`Only allows ${props.maxInput} ${props.text} input data set(s).`)
                 } else {
-                  fileInputAppend({ name: 'fileInput' })
+                  fileInputAppend({ name: 'singleFileInput' })
                   setDoValidation(doValidation + 1)
                 }
               }}
