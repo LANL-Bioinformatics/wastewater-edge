@@ -174,7 +174,7 @@ export const PairedFileInputArray = (props) => {
                     onChange={handleFileSelection}
                   />
                 )}
-                name={`fileInput[${index}].R1`}
+                name={`fileInput.${index}.R1`}
                 control={control}
               />
             </Col>
@@ -210,7 +210,7 @@ export const PairedFileInputArray = (props) => {
                     onChange={handleFileSelection}
                   />
                 )}
-                name={`fileInput[${index}].R2`}
+                name={`fileInput.${index}.R2`}
                 control={control}
               />
             </Col>

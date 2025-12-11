@@ -105,7 +105,7 @@ export const RangeTextInputArray = (props) => {
                     maxEnd={props.maxEnd}
                   />
                 )}
-                name={`rangeTextInput[${index}]`}
+                name={`rangeTextInput.${index}.range`}
                 control={control}
               />
             </Col>

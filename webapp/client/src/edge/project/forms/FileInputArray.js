@@ -162,7 +162,7 @@ export const FileInputArray = (props) => {
                     onChange={handleFileSelection}
                   />
                 )}
-                name={`fileInput[${index}]`}
+                name={`fileInput.${index}.R`}
                 control={control}
               />
             </Col>

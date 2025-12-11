@@ -100,7 +100,7 @@ export const TextInputArray = (props) => {
                     errMessage={'Required'}
                   />
                 )}
-                name={`input[${index}]`}
+                name={`input.${index}.text`}
                 control={control}
               />
             </Col>
