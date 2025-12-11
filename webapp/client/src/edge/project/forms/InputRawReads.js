@@ -119,7 +119,7 @@ export const InputRawReads = (props) => {
         toggleParms={toggleParms}
         title={props.title}
         collapseParms={collapseParms}
-        id={'components[componentName]'}
+        id={'inputRawReads'}
         isValid={props.isValid}
         errMessage={props.errMessage}
       />
