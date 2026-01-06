@@ -236,7 +236,11 @@ export const InputRawReads = (props) => {
                     ? props.seqPlatformTooltip
                     : components[componentName].inputs['seqPlatform'].tooltip
                 }
-                seqPlatformDefaultValue={components[componentName].inputs['seqPlatform'].value}
+                seqPlatformDefaultValue={
+                  props.seqPlatformDefaultValue
+                    ? props.seqPlatformDefaultValue
+                    : components[componentName].inputs['seqPlatform'].value
+                }
                 seqPlatformDisplay={components[componentName].inputs['seqPlatform'].display}
                 pairedText={components[componentName].inputs['paired'].text}
                 disableSwitcher={props.disableSwitcher}
