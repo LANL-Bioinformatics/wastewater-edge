@@ -48,10 +48,16 @@ const generateWorkflowResult = proj => {
   }
 }
 
-const checkFlagFile = proj => {
+const checkFlagFile = (proj, jobQueue) => {
   const projHome = `${config.IO.PROJECT_BASE_DIR}/${proj.code}`
-  // create output directory
   const outDir = `${projHome}/${workflowList[proj.type].outdir}`
+  if (jobQueue === 'local') {
+    const flagFile = `${projHome}/.done`
+    if (!fs.existsSync(flagFile)) {
+      return false
+    }
+  }
+  // check expected output files
   if (proj.type === 'assayDesign') {
     const outJson = `${outDir}/jbrowse/jbrowse_url.json`
     if (!fs.existsSync(outJson)) {

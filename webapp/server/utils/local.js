@@ -55,7 +55,7 @@ const updateJobStatus = (job, proj) => {
   } else {
     let status = 'complete'
     let jobStatus = 'Succeeded'
-    if (checkFlagFile(proj) === false) {
+    if (checkFlagFile(proj, 'local') === false) {
       status = 'failed'
       jobStatus = 'Failed'
     } else {

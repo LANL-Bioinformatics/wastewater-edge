@@ -12,7 +12,7 @@ const projectStatus = [
 ]
 const uploadStatus = ['live', 'delete']
 const jobStatus = ['Submitted', 'Running', 'Failed', 'Aborted', 'Succeeded']
-const queueTypes = ['cromwell', 'nextflow']
+const queueTypes = ['local', 'cromwell', 'nextflow']
 const bulkSubmissionStatus = [
   'in queue',
   'running',

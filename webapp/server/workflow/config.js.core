@@ -12,6 +12,7 @@ const appServerDir = process.env.APP_SERVER_DIR
 const WORKFLOW_DATA_BASE_DIR = path.join(appServerDir, '../../workflows/data')
 
 const workflowConfig = {
+  DATA_DIR: WORKFLOW_DATA_BASE_DIR,
   data: {
     REF_LIST:
       process.env.WORKFLOW_REF_LIST ||

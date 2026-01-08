@@ -45,16 +45,16 @@ const localWorkflowMonitor = async () => {
     // in case local needs permission to write to the output directory
     fs.chmodSync(outDir, '777')
     const runTime = `${projHome}/run_time.txt`
-    let cmd = `date > ${runTime}`
-    const log = `${projHome}/log.txt`
-    cmd += getWorkflowCommand(proj)
-    cmd += `  && date >> ${runTime} &`
+    const workflowCmd = getWorkflowCommand(proj)
+    let cmd = `echo "${workflowCmd}" > ${projHome}/cmd.txt && date > ${runTime}`
+    cmd += ` && ${workflowCmd}`
+    cmd += ` && date >> ${runTime} && touch ${projHome}/.done &`
     logger.info(cmd)
     // run local
+    const log = `${projHome}/log.txt`
     const pid = common.spawnCmd(cmd, log)
-    // run local
     if (pid) {
-      logger.info(`Started local job with PID: ${pid}`)
+      logger.info(`Started local job with PID: ${pid + 1}`)
       const newJob = new Job({
         pid: pid + 1,
         id: `local-${proj.code}`,
