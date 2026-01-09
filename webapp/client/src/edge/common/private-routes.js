@@ -6,7 +6,7 @@ const UserProjects = React.lazy(() => import('src/edge/um/user/Projects'))
 const UserAllProjects = React.lazy(() => import('src/edge/um/user/AllProjects'))
 const UserBulkSubmissions = React.lazy(() => import('src/edge/um/user/BulkSubmissions'))
 const UserBulkSubmissionPage = React.lazy(
-  () => import('src/edge/bulkSubmission/BulkSubmissionPage/User'),
+  () => import('src/edge/bulkSubmission/bulkSubmissionPage/User'),
 )
 const UserUploadFiles = React.lazy(() => import('src/edge/um/user/UploadFiles'))
 const UserUploads = React.lazy(() => import('src/edge/um/user/Uploads'))
@@ -16,7 +16,7 @@ const AdminUploads = React.lazy(() => import('src/edge/um/admin/Uploads'))
 const AdminProjects = React.lazy(() => import('src/edge/um/admin/Projects'))
 const AdminBulkSubmissions = React.lazy(() => import('src/edge/um/admin/BulkSubmissions'))
 const AdminBulkSubmissionPage = React.lazy(
-  () => import('src/edge/bulkSubmission/BulkSubmissionPage/Admin'),
+  () => import('src/edge/bulkSubmission/bulkSubmissionPage/Admin'),
 )
 
 const privateRoutes = [
