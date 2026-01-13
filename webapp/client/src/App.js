@@ -18,7 +18,7 @@ const App = () => {
   const dispatch = useDispatch()
 
   useEffect(() => {
-    setColorMode(storedTheme)
+    // setColorMode(storedTheme)
     // Check for token to keep user logged in
     if (localStorage.jwtToken) {
       // Set auth token header auth
