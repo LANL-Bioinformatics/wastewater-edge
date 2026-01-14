@@ -87,6 +87,7 @@ echo "Setup LANL EDGE webapp ..."
 echo "install client..."
 cd $app_home/webapp/client
 npm install --legacy-peer-deps
+npm run build
 #install server
 echo "install server..."
 cd $app_home/webapp/server
@@ -94,8 +95,5 @@ npm install
 
 echo "LANL EDGE webapp successfully installed!"
 echo "Next steps:"
-echo "1. copy webapp/client/.env.example to webapp/client/.env and update settings in the .env file"
-echo "2. inside webapp/client, run command: npm run build"
-echo "3. copy webapp/server/.env.example to webapp/server/.env and update settings in the .env file"
-echo "4. start MongoDB if it's not started yet"
-echo "5. start the webapp in EDGE's root directory: pm2 start pm2.config.js"
+echo "1. start MongoDB if it's not started yet"
+echo "2. start the webapp in EDGE's root directory: pm2 start pm2.config.js"
