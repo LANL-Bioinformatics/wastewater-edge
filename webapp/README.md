@@ -2,7 +2,7 @@
 
 ## Dependencies
 
-* node.js 20.19+
+* node.js
 * MongoDB
 
 ## Install the webapp
