@@ -1,4 +1,4 @@
-import BulkSubmission from 'src/edge/BulkSubmission/forms/BulkSubmission'
+import BulkSubmission from 'src/edge/bulkSubmission/forms/BulkSubmission'
 import { bulkWorkflowOptions } from './defaults'
 
 function Bulk(props) {
