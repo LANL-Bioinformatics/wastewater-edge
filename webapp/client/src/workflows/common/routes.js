@@ -1,7 +1,7 @@
 import React from 'react'
 
 const PublicProjectPage = React.lazy(() => import('src/workflows/common/projectPage/Public'))
-const Home = React.lazy(() => import('src/workflows/wastewater/home'))
+const Home = React.lazy(() => import('src/workflows/wastewater/Home'))
 
 const workflowRoutes = [
   { path: '/public/project', name: 'PublicProjectPage', element: PublicProjectPage },
