@@ -27,15 +27,15 @@ const workflowList = {
   metaG: {
     outdir: 'output/MetaG',
     nextflow_main:
-      process.env.NEXTFLOW_META_G_MAIN ||
-      `${config.NEXTFLOW.WORKFLOW_DIR}/wastewater/nextflow/mateg_main.nf -profile slurm`,
+      process.env.NEXTFLOW_MAIN ||
+      `${config.NEXTFLOW.WORKFLOW_DIR}/wastewater/nextflow/main.nf -profile slurm`,
     config_tmpl: 'wastewater/workflow_config.tmpl',
   },
   metaT: {
     outdir: 'output/MetaT',
     nextflow_main:
-      process.env.NEXTFLOW_META_T_MAIN ||
-      `${config.NEXTFLOW.WORKFLOW_DIR}/wastewater/nextflow/matet_main.nf -profile slurm`,
+      process.env.NEXTFLOW_MAIN ||
+      `${config.NEXTFLOW.WORKFLOW_DIR}/wastewater/nextflow/main.nf -profile slurm`,
     config_tmpl: 'wastewater/workflow_config.tmpl',
   },
 }
