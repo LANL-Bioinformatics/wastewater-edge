@@ -12,7 +12,9 @@ const nextflowConfigs = {
 const workflowList = {
   sra2fastq: {
     outdir: 'output/sra2fastq',
-    nextflow_main: 'sra2fastq/nextflow/main.nf -profile local',
+    nextflow_main: process.env.NEXTFLOW_MAIN
+      ? `${process.env.NEXTFLOW_MAIN} -profile local`
+      : `${config.NEXTFLOW.WORKFLOW_DIR}/sra2fastq/nextflow/main.nf -profile local`,
     config_tmpl: 'sra2fastq/workflow_config.tmpl',
   },
 }
