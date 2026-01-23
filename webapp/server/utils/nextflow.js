@@ -143,7 +143,7 @@ const submitWorkflow = async (proj, projectConf, inputsize) => {
   }
   // submit workflow
   const runName = `edge-${proj.code}`
-  const cmd = `${config.NEXTFLOW.SLURM_SSH} NXF_CACHE_DIR=${nfWorkDir} NXF_PID_FILE=${nfOutDir}/.nextflow.pid NXF_LOG_FILE=${nfOutDir}/.nextflow.log nextflow -C ${nfOutDir}/../nextflow.config -bg -q run ${config.NEXTFLOW.WORKFLOW_DIR}/${workflowList[projectConf.workflow.name].nextflow_main} -name ${runName}`
+  const cmd = `${config.NEXTFLOW.SLURM_SSH} NXF_CACHE_DIR=${nfWorkDir} NXF_PID_FILE=${nfOutDir}/.nextflow.pid NXF_LOG_FILE=${nfOutDir}/.nextflow.log nextflow -C ${nfOutDir}/../nextflow.config -bg -q run ${workflowList[projectConf.workflow.name].nextflow_main} -name ${runName}`
 
   // Don't need to wait for the command to complete. It may take long time to finish and cause an error.
   // The updateJobStatus will catch the error if this command failed.
