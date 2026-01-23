@@ -16,7 +16,9 @@ const nextflowConfigs = {
 const workflowList = {
   sra2fastq: {
     outdir: 'output/sra2fastq',
-    nextflow_main: 'sra2fastq/nextflow/main.nf -profile local',
+    nextflow_main: process.env.NEXTFLOW_MAIN
+      ? `${process.env.NEXTFLOW_MAIN} -profile local`
+      : `${config.NEXTFLOW.WORKFLOW_DIR}/sra2fastq/nextflow/main.nf -profile local`,
     config_tmpl: 'sra2fastq/workflow_config.tmpl',
   },
   // bukl submission workflows
@@ -26,16 +28,16 @@ const workflowList = {
   // single submission workflows
   metaG: {
     outdir: 'output/MetaG',
-    nextflow_main:
-      process.env.NEXTFLOW_MAIN ||
-      `${config.NEXTFLOW.WORKFLOW_DIR}/wastewater/nextflow/main.nf -profile slurm`,
+    nextflow_main: process.env.NEXTFLOW_MAIN
+      ? `${process.env.NEXTFLOW_MAIN} -profile slurm`
+      : `${config.NEXTFLOW.WORKFLOW_DIR}/wastewater/nextflow/main.nf -profile slurm`,
     config_tmpl: 'wastewater/workflow_config.tmpl',
   },
   metaT: {
     outdir: 'output/MetaT',
-    nextflow_main:
-      process.env.NEXTFLOW_MAIN ||
-      `${config.NEXTFLOW.WORKFLOW_DIR}/wastewater/nextflow/main.nf -profile slurm`,
+    nextflow_main: process.env.NEXTFLOW_MAIN
+      ? `${process.env.NEXTFLOW_MAIN} -profile slurm`
+      : `${config.NEXTFLOW.WORKFLOW_DIR}/wastewater/nextflow/main.nf -profile slurm`,
     config_tmpl: 'wastewater/workflow_config.tmpl',
   },
 }
