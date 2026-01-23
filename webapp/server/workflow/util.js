@@ -26,12 +26,12 @@ const workflowList = {
   // single submission workflows
   metaG: {
     outdir: 'output/MetaG',
-    nextflow_main: 'wastewater/nextflow/main.nf -profile local',
+    nextflow_main: 'main.nf -profile local',
     config_tmpl: 'wastewater/workflow_config.tmpl',
   },
   metaT: {
     outdir: 'output/MetaT',
-    nextflow_main: 'wastewater/nextflow/main.nf -profile local',
+    nextflow_main: 'main.nf -profile local',
     config_tmpl: 'wastewater/workflow_config.tmpl',
   },
 }
