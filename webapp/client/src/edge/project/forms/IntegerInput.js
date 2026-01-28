@@ -71,15 +71,13 @@ export const IntegerInput = (props) => {
               clickable={props.tooltipClickable ? props.tooltipClickable : false}
             />
           ) : (
-            <>
-              {props.text}
-              {errors && errors.integerInput && props.showErrorTooltip && (
-                <ErrorTooltip
-                  id={`integerInputErrTooltip-${props.name}`}
-                  tooltip={errors.integerInput.message}
-                />
-              )}
-            </>
+            <>{props.text}</>
+          )}
+          {errors && errors.integerInput && props.showErrorTooltip && (
+            <ErrorTooltip
+              id={`integerInputErrTooltip-${props.name}`}
+              tooltip={errors.integerInput.message}
+            />
           )}
         </Col>
         <Col xs="12" md="9">
