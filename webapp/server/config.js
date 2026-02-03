@@ -87,8 +87,6 @@ const config = {
   },
   NEXTFLOW: {
     EXECUTOR: process.env.NEXTFLOW_EXECUTOR || 'local',
-    EDGE_ROOT: process.env.NEXTFLOW_EDGE_ROOT || null,
-    SLURM_EDGE_ROOT: process.env.NEXTFLOW_SLURM_EDGE_ROOT || null,
     SLURM_SSH: process.env.NEXTFLOW_SLURM_SSH || '',
     // Max allowed number of jobs in nextflow.
     NUM_JOBS_MAX: makeIntIfDefined(process.env.NEXTFLOW_NUM_JOBS_MAX) || 100000,
@@ -99,8 +97,7 @@ const config = {
       161061273600,
     // Directory of the workflow files.
     WORKFLOW_DIR: process.env.NEXTFLOW_WORKFLOW_DIR || NEXTFLOW_BASE_DIR,
-    WORK_DIR:
-      process.env.NEXTFLOW_WORK_DIR || path.join(IO_BASE_DIR, 'nextflow'),
+    WORK_DIR: process.env.NEXTFLOW_WORK_DIR || null,
   },
   CROMWELL: {
     // Base URL at which HTTP clients can access the Cromwell API.

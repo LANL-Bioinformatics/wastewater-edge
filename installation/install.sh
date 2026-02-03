@@ -17,7 +17,6 @@ if [ ! -d  $io_home ]; then
     "public"
     "sra"
     "db"
-    "nextflow"
     "bulksubmissions"
   )
 

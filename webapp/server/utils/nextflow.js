@@ -41,13 +41,7 @@ const generateInputs = async (projHome, projectConf, proj) => {
     proj,
   )
   // render input template and write to nextflow_params.json
-  let inputs = ejs.render(template, { ...params, ...workflowParams })
-  if (config.NEXTFLOW.SLURM_EDGE_ROOT && config.NEXTFLOW.EDGE_ROOT) {
-    inputs = inputs.replaceAll(
-      config.NEXTFLOW.EDGE_ROOT,
-      config.NEXTFLOW.SLURM_EDGE_ROOT,
-    )
-  }
+  const inputs = ejs.render(template, { ...params, ...workflowParams })
   await fs.promises.writeFile(`${projHome}/nextflow.config`, inputs)
   return true
 }
@@ -108,7 +102,7 @@ const generateRunStats = async project => {
 const submitWorkflow = async (proj, projectConf, inputsize) => {
   const projHome = `${config.IO.PROJECT_BASE_DIR}/${proj.code}`
   // Run nextflow in work directory
-  let nfWorkDir = config.NEXTFLOW.WORK_DIR
+  const nfWorkDir = config.NEXTFLOW.WORK_DIR
     ? `${config.NEXTFLOW.WORK_DIR}/${proj.code}/work`
     : `${projHome}/nextflow/work`
   fs.mkdirSync(nfWorkDir, { recursive: true })
@@ -121,7 +115,7 @@ const submitWorkflow = async (proj, projectConf, inputsize) => {
     return
   }
   // Output nextflow log, reports to <project home>/nextflow
-  let nfOutDir = `${projHome}/nextflow`
+  const nfOutDir = `${projHome}/nextflow`
   fs.mkdirSync(nfOutDir, { recursive: true })
   // in case nextflow needs permission to write to the directory
   fs.chmodSync(nfOutDir, '777')
@@ -130,16 +124,6 @@ const submitWorkflow = async (proj, projectConf, inputsize) => {
     proj.status = 'failed'
     proj.save()
     return
-  }
-  if (config.NEXTFLOW.SLURM_EDGE_ROOT && config.NEXTFLOW.EDGE_ROOT) {
-    nfWorkDir = nfWorkDir.replaceAll(
-      config.NEXTFLOW.EDGE_ROOT,
-      config.NEXTFLOW.SLURM_EDGE_ROOT,
-    )
-    nfOutDir = nfOutDir.replaceAll(
-      config.NEXTFLOW.EDGE_ROOT,
-      config.NEXTFLOW.SLURM_EDGE_ROOT,
-    )
   }
   // submit workflow
   const runName = `edge-${proj.code}`
@@ -167,15 +151,10 @@ const submitWorkflow = async (proj, projectConf, inputsize) => {
 const updateJobStatus = async (job, proj) => {
   // get job status
   const projHome = `${config.IO.PROJECT_BASE_DIR}/${proj.code}`
-  let nfWorkDir = config.NEXTFLOW.WORK_DIR
+  const nfWorkDir = config.NEXTFLOW.WORK_DIR
     ? `${config.NEXTFLOW.WORK_DIR}/${proj.code}/work`
     : `${projHome}/nextflow/work`
-  if (config.NEXTFLOW.SLURM_EDGE_ROOT && config.NEXTFLOW.EDGE_ROOT) {
-    nfWorkDir = nfWorkDir.replaceAll(
-      config.NEXTFLOW.EDGE_ROOT,
-      config.NEXTFLOW.SLURM_EDGE_ROOT,
-    )
-  }
+  
   // Pipeline status. Possible values are: OK, ERR and empty
   // set env NXF_CACHE_DIR
   let cmd = `${config.NEXTFLOW.SLURM_SSH} NXF_CACHE_DIR=${nfWorkDir} nextflow log|awk '/${job.id}/ &&(/OK/||/ERR/)'|awk '{split($0,array,/\t/); print array[4]}'`

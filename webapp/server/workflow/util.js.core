@@ -1,4 +1,5 @@
 const fs = require('fs')
+const xlsx = require('node-xlsx').default
 const config = require('../config')
 const workflowConfig = require('./config')
 
@@ -20,7 +21,7 @@ const workflowList = {
 }
 
 // eslint-disable-next-line no-unused-vars
-const generateNextflowWorkflowParams = (projectConf, projHome) => {
+const generateNextflowWorkflowParams = async (projHome, projectConf, proj) => {
   const params = {}
   if (projectConf.workflow.name === 'sra2fastq') {
     // download sra data to shared directory
@@ -103,13 +104,15 @@ const validateBulkSubmissionInput = async (bulkExcel, type) => {
   // validate inputs
   let validInput = true
   let errMsg = ''
-  let currRow = 1
   const submissions = []
   if (rows.length === 0) {
     validInput = false
     errMsg += 'ERROR: No submission found in the bulk excel file.\n'
   }
 
+  if (type === 'wastewater') {
+    // do some validation for wastewater submission\
+  }
   // eslint-disable-next-line consistent-return
   return { validInput, errMsg, submissions }
 }
