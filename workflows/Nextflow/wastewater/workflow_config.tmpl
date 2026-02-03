@@ -1,42 +1,211 @@
 workDir="<%= nextflowWorkDir %>"
 
-env {
-    APPTAINER_CACHEDIR = '/panfs/biopan04/wastewater/wastewater-sra/data/dtra_ww_analysis/nextflow/apptainer'
-    APPTAINER_TMPDIR   = '/panfs/biopan04/wastewater/wastewater-sra/data/dtra_ww_analysis/nextflow/apptainer'
-}
 
 params {
-    metadata = '<%= metadata %>' //input metadata csv
-    time='100h' //resources need parameter specification for the moment, since it's used in the main script
-    threads=12
-    gunc_db='/refdb/gunc_db/gunc_db_progenomes2.1.dmnd' //container bind (below) should put all databases in /dbs/
-    gtdbtk_data='/refdb/gtdb-tk_226/release226'
-    checkv_db='/refdb/checkv-db-v1.5'
-    genomad_db='/refdb/genomad_db_v1.9'
-    chimeracutter_db='/panfs/biopan04/refdb/refseq_07112025/virus/virus_blast_db/virus_blast_db'
-    rrna_db='/refdb/bbtools_db/ribokmers/riboKmers20fused.fa'
-    human_db='/refdb/bbtools_db/human_genome/abundant_humkmers.fasta'
+    // ===================================================================
+    // USER CONFIGURATION: Set these paths for your system
+    // ===================================================================
+    
+    // Installation directory for container images and reference databases
+    install_dir          = '${projectDir}' //no longer used to derive paths below, just report workflow location
+    
+    // Output directory for pipeline results
+    output_dir           = "<%= projOutdir %>"
+    
+    // Temporary directory for processing (requires at least 30Gb available storage and non-panfs system)
+    tmp_dir              = '$TMPDIR' //several variables set through environment: see webapp/server/config.js and nextflow.js
+    
+    // ===================================================================
+    // Derived paths - do not modify
+    // ===================================================================
+    image_dir            = "$APPTAINER_CACHEDIR" //easier to set this here as a separate location
+    ref_data_dir         = "$REFDATA" //top-level refdata folder
+    
+    // ===================================================================
+    // Pipeline parameters
+    // ===================================================================
+    metadata             =  <% if(typeof metadata !== 'undefined') { %>"<%= metadata %>"<% } else { %>null<%} %> //input metadata csv
+    time                 = '80h'
+    threads              = 7
+    blast_email          = 'user@example.com'
+    min_contig_length    = 1500
+
+    // Reference database paths
+    rrna_db              = "${projectDir}/bin/riboKmers20fused.fa.gz" //fine to use bin here
+    human_db             = "${params.ref_data_dir}/bbtools/human_genome.fa"
+    chimeracutter_db     = "${params.ref_data_dir}/chimeracutter_db/refseq_viral.fna"
+    gunc_db              = "${params.ref_data_dir}/gunc/gunc_db_progenomes2.1.dmnd"
+    checkv_db            = "${params.ref_data_dir}/checkv-db-v1.5"
+    genomad_db           = "${params.ref_data_dir}/genomad_db"
+    checkm2_db           = "${params.ref_data_dir}/checkM2_DB/uniref100.KO.1.dmnd"
+//    gtdb_tk_db           = "${params.ref_data_dir}/gtdbtk_release226" 
+//    gtdb_tk_db           = "${params.install_dir}/ref_dbs/gtdbtk_release226"
+//    gtdb_tk_db           = '/panfs/biopan04/refdb/gtdbtk_226'
+    gtdb_tk_db           = null
+    gottcha2_db          = "${params.ref_data_dir}/GOTTCHA2_DB/gottcha_db.species.fna"
 }
+
+env {
+    APPTAINER_CACHEDIR   = params.image_dir
+    APPTAINER_TMPDIR     = params.tmp_dir
+    SINGULARITY_CACHEDIR = params.image_dir
+    SINGULARITY_TMPDIR   = params.tmp_dir
+    TMPDIR               = params.tmp_dir
+    TEMP                 = params.tmp_dir
+    TMP                  = params.tmp_dir
+
+    APPTAINER_LOCK_TIMEOUT = '60'
+    SINGULARITY_LOCK_TIMEOUT = '60'
+}
+
+process {
+    stageInMode = 'symlink'
+    scratch = false
+    // Retry on container errors
+    errorStrategy = { 
+        def containerErrors = [125, 126, 127, 255]
+        task.exitStatus in containerErrors && task.attempt <= 3 ? 'retry' : 'finish'
+    }
+    maxRetries = 3
+
+    beforeScript = '''
+        set -e  # Exit on error
+        
+        # ============================================================
+        # PORTABLE CONTAINER PULL LOCKING MECHANISM
+        # Works with any executor (SLURM, SGE, PBS, local, etc.)
+        # ============================================================
+        
+        mkdir -p "${APPTAINER_CACHEDIR}" 2>/dev/null || true
+        mkdir -p "${APPTAINER_TMPDIR}" 2>/dev/null || true
+        mkdir -p "${TMPDIR}" 2>/dev/null || true
+        
+        # Random stagger delay (5-30 seconds) - reduces simultaneous lock attempts
+        STAGGER_DELAY=$((RANDOM % 26 + 5))
+        echo "[$(date +'%Y-%m-%d %H:%M:%S')] INFO: Staggering start by ${STAGGER_DELAY}s"
+        sleep ${STAGGER_DELAY}
+        
+        # ============================================================
+        # GLOBAL LOCK for any container pull operation
+        # This prevents 20 jobs from all trying to pull simultaneously
+        # ============================================================
+        
+        GLOBAL_LOCK="${APPTAINER_CACHEDIR}/.container_pull.lock"
+        LOCK_TIMEOUT=60  
+        LOCK_WAIT=0
+        
+        echo "[$(date +'%Y-%m-%d %H:%M:%S')] INFO: Checking for container pull lock..."
+        
+        # Wait for lock to be released
+        while [ -f "${GLOBAL_LOCK}" ]; do
+            if [ ${LOCK_WAIT} -ge ${LOCK_TIMEOUT} ]; then
+                echo "[$(date +'%Y-%m-%d %H:%M:%S')] WARNING: Lock timeout reached (${LOCK_TIMEOUT}s)"
+                echo "[$(date +'%Y-%m-%d %H:%M:%S')] WARNING: Removing stale lock and proceeding"
+                rm -f "${GLOBAL_LOCK}"
+                break
+            fi
+            
+            # Check lock age - if > 30 min old, consider it stale
+            if [ -f "${GLOBAL_LOCK}" ]; then
+                LOCK_AGE=$(($(date +%s) - $(stat -c %Y "${GLOBAL_LOCK}" 2>/dev/null || stat -f %m "${GLOBAL_LOCK}" 2>/dev/null || echo 0)))
+                if [ ${LOCK_AGE} -gt 60 ]; then
+                    echo "[$(date +'%Y-%m-%d %H:%M:%S')] WARNING: Lock is stale (${LOCK_AGE}s old), removing"
+                    rm -f "${GLOBAL_LOCK}"
+                    break
+                fi
+            fi
+            
+            echo "[$(date +'%Y-%m-%d %H:%M:%S')] INFO: Waiting for container pull lock (${LOCK_WAIT}s/${LOCK_TIMEOUT}s)..."
+            sleep 10
+            LOCK_WAIT=$((LOCK_WAIT + 10))
+        done
+        
+        # ============================================================
+        # ACQUIRE LOCK (with atomic operation using directory creation)
+        # mkdir is atomic on most filesystems, making it race-condition safe
+        # ============================================================
+        
+        LOCK_DIR="${APPTAINER_CACHEDIR}/.container_pull_lock.d"
+        MAX_ACQUIRE_ATTEMPTS=50
+        ACQUIRE_ATTEMPT=0
+        ACQUIRED=0
+        
+        while [ ${ACQUIRED} -eq 0 ] && [ ${ACQUIRE_ATTEMPT} -lt ${MAX_ACQUIRE_ATTEMPTS} ]; do
+            if mkdir "${LOCK_DIR}" 2>/dev/null; then
+                # Successfully created directory = we have the lock
+                touch "${GLOBAL_LOCK}"  # Backward compat marker
+                echo $$ > "${LOCK_DIR}/pid"
+                echo $(hostname) > "${LOCK_DIR}/host"
+                date > "${LOCK_DIR}/timestamp"
+                ACQUIRED=1
+                echo "[$(date +'%Y-%m-%d %H:%M:%S')] INFO: Acquired container pull lock (PID: $$)"
+            else
+                # Someone else has the lock, wait a bit
+                sleep $((RANDOM % 5 + 1))
+                ACQUIRE_ATTEMPT=$((ACQUIRE_ATTEMPT + 1))
+            fi
+        done
+        
+        if [ ${ACQUIRED} -eq 0 ]; then
+            echo "[$(date +'%Y-%m-%d %H:%M:%S')] ERROR: Failed to acquire lock after ${MAX_ACQUIRE_ATTEMPTS} attempts"
+            echo "[$(date +'%Y-%m-%d %H:%M:%S')] WARNING: Proceeding without lock (risky!)"
+        fi
+        
+        # ============================================================
+        # Apptainer will now pull containers if needed
+        # Since we hold the lock, only THIS job will pull
+        # Other jobs are waiting above
+        # ============================================================
+        
+        echo "[$(date +'%Y-%m-%d %H:%M:%S')] INFO: Ready to start container operations"
+    '''
+
+    afterScript = '''
+        # ============================================================
+        # RELEASE LOCK
+        # ============================================================
+        
+        GLOBAL_LOCK="${APPTAINER_CACHEDIR}/.container_pull.lock"
+        LOCK_DIR="${APPTAINER_CACHEDIR}/.container_pull_lock.d"
+        
+        if [ -d "${LOCK_DIR}" ]; then
+            # Check if we own this lock
+            LOCK_PID=$(cat "${LOCK_DIR}/pid" 2>/dev/null || echo "")
+            if [ "${LOCK_PID}" = "$$" ]; then
+                echo "[$(date +'%Y-%m-%d %H:%M:%S')] INFO: Releasing container pull lock"
+                rm -rf "${LOCK_DIR}"
+                rm -f "${GLOBAL_LOCK}"
+            else
+                echo "[$(date +'%Y-%m-%d %H:%M:%S')] WARNING: Lock owned by different process (PID: ${LOCK_PID})"
+            fi
+        fi
+        
+        echo "[$(date +'%Y-%m-%d %H:%M:%S')] INFO: Process cleanup complete"
+    '''
+}
+
+conda.enabled = true
+docker.enabled = false
 
 apptainer {
-    enabled     = true
-    autoMounts  = true
-    useCache    = true
-    cacheDir    = '/panfs/biopan04/wastewater/wastewater-sra/data/dtra_ww_analysis/nextflow/apptainer'
-    runOptions  = "--B /panfs/biopan04/refdb:/refdb:ro"
-}
-
-
-//slurm and local profiles
-<%- include (profiles) %>
-
-process { //for all profiles
-    cpus = 12
-    time = '100h'
-    container = null
-    beforeScript = '''
-        module load apptainer
-    '''
+    enabled      = true
+    autoMounts   = true
+    cacheDir     = params.image_dir
+    pullTimeout  = '3h'
+    envWhitelist = 'APPTAINER_CACHEDIR,APPTAINER_TMPDIR,SINGULARITY_CACHEDIR,SINGULARITY_TMPDIR,TMPDIR,TEMP,TMP,HOME'
+    
+    runOptions   = {
+        def binds = "-B ${params.ref_data_dir} -B ${params.tmp_dir} -B ${params.tmp_dir}:/tmp -B ${params.tmp_dir}:/var/tmp"
+        
+        // Only add GTDB bind if user specified custom path outside ref_data_dir
+        if (params.gtdb_tk_db && !params.gtdb_tk_db.startsWith(params.ref_data_dir)) {
+            def gtdbParent = params.gtdb_tk_db.replaceAll('/[^/]+$', '')
+            binds += " -B ${gtdbParent}"
+            // Note: Cannot use log.info here - logging must be done in main.nf workflow
+        }
+        
+        return binds
+    }()
 }
 
 <%- include (nfReports) %>
