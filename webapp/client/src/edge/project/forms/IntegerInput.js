@@ -86,6 +86,11 @@ export const IntegerInput = (props) => {
             name="integerInput"
             key={props.name}
             defaultValue={props.defaultValue}
+            placeholder={
+              props.placeholder
+                ? props.placeholder
+                : `Enter an integer (${props.min} - ${props.max})`
+            }
             style={errors['integerInput'] ? defaults.inputStyleWarning : defaults.inputStyle}
             onChange={(e) => {
               integerInputReg.onChange(e) // method from hook form register
