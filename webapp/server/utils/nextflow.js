@@ -154,7 +154,6 @@ const updateJobStatus = async (job, proj) => {
   const nfWorkDir = config.NEXTFLOW.WORK_DIR
     ? `${config.NEXTFLOW.WORK_DIR}/${proj.code}/work`
     : `${projHome}/nextflow/work`
-  
   // Pipeline status. Possible values are: OK, ERR and empty
   // set env NXF_CACHE_DIR
   let cmd = `${config.NEXTFLOW.SLURM_SSH} NXF_CACHE_DIR=${nfWorkDir} nextflow log|awk '/${job.id}/ &&(/OK/||/ERR/)'|awk '{split($0,array,/\t/); print array[4]}'`
