@@ -13,13 +13,13 @@ params {
     output_dir           = "<%= projOutdir %>"
     
     // Temporary directory for processing (requires at least 30Gb available storage and non-panfs system)
-    tmp_dir              = '$TMPDIR' //several variables set through environment: see webapp/server/config.js and nextflow.js
+    tmp_dir              = "<%= nfTmpDir %>" 
     
     // ===================================================================
     // Derived paths - do not modify
     // ===================================================================
-    image_dir            = "$APPTAINER_CACHEDIR" //easier to set this here as a separate location
-    ref_data_dir         = "$REFDATA" //top-level refdata folder
+    image_dir            = "<%= nfImgDir %>" //easier to set this here as a separate location
+    ref_data_dir         = "<%= nfRefDir %>" //top-level refdata folder
     
     // ===================================================================
     // Pipeline parameters
