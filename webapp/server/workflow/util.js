@@ -25,13 +25,15 @@ const workflowList = {
     // bukl submission workflows
     project_conf_tmpl: `${config.IO.WORKFLOW_DOCS_DIR}/bulkSubmission/project/wastewater-conf.tmpl`,
     // ref db path and apptainer image path for wastewater workflows
-    nfRefDir: process.env.NEXTFLOW_REF_DIR || '/refdb',
-    nfImgDir:
-      process.env.NEXTFLOW_IMG_DIR ||
-      '/panfs/biopan04/wastewater/wastewater-sra/data/dtra_ww_analysis/nextflow/apptainer',
-    nfTmpDir:
-      process.env.NEXTFLOW_TMP_DIR ||
-      '/panfs/biopan04/wastewater/wastewater-sra/data/dtra_ww_analysis/nextflow/apptainer',
+    nfRefDir: process.env.NEXTFLOW_REF_DIR
+      ? process.env.NEXTFLOW_REF_DIR
+      : '/refdb',
+    nfImgDir: process.env.NEXTFLOW_IMG_DIR
+      ? process.env.NEXTFLOW_IMG_DIR
+      : '/panfs/biopan04/wastewater/wastewater-sra/data/dtra_ww_analysis/nextflow/apptainer',
+    nfTmpDir: process.env.NEXTFLOW_TMP_DIR
+      ? process.env.NEXTFLOW_TMP_DIR
+      : '/panfs/biopan04/wastewater/wastewater-sra/data/dtra_ww_analysis/nextflow/apptainer',
   },
   // single submission workflows
   metaG: {
