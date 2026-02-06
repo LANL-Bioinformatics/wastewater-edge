@@ -9,8 +9,8 @@ const workflowConfig = require('./config')
 const cromwellWorkflows = []
 const nextflowWorkflows = ['sra2fastq', 'metaG', 'metaT']
 const nextflowConfigs = {
-  profiles: 'common/profiles.nf',
-  nf_reports: 'common/nf_reports.tmpl',
+  profiles: `${config.NEXTFLOW.WORKFLOW_DIR}/common/profiles.nf`,
+  nf_reports: `${config.NEXTFLOW.WORKFLOW_DIR}/common/nf_reports.tmpl`,
 }
 
 const workflowList = {
@@ -19,11 +19,19 @@ const workflowList = {
     nextflow_main: process.env.NEXTFLOW_MAIN
       ? `${process.env.NEXTFLOW_MAIN} -profile local`
       : `${config.NEXTFLOW.WORKFLOW_DIR}/sra2fastq/nextflow/main.nf -profile local`,
-    config_tmpl: 'sra2fastq/workflow_config.tmpl',
+    config_tmpl: `${config.NEXTFLOW.WORKFLOW_DIR}/sra2fastq/workflow_config.tmpl`,
   },
-  // bukl submission workflows
   wastewater: {
-    project_conf_tmpl: 'wastewater-conf.tmpl',
+    // bukl submission workflows
+    project_conf_tmpl: `${config.IO.WORKFLOW_DOCS_DIR}/bulkSubmission/project/wastewater-conf.tmpl`,
+    // ref db path and apptainer image path for wastewater workflows
+    nfRefDir: process.env.NEXTFLOW_REF_DIR || '/refdb',
+    nfImgDir:
+      process.env.NEXTFLOW_IMG_DIR ||
+      '/panfs/biopan04/wastewater/wastewater-sra/data/dtra_ww_analysis/nextflow/apptainer',
+    nfTmpDir:
+      process.env.NEXTFLOW_TMP_DIR ||
+      '/panfs/biopan04/wastewater/wastewater-sra/data/dtra_ww_analysis/nextflow/apptainer',
   },
   // single submission workflows
   metaG: {
@@ -31,14 +39,14 @@ const workflowList = {
     nextflow_main: process.env.NEXTFLOW_MAIN
       ? `${process.env.NEXTFLOW_MAIN} -profile slurm`
       : `${config.NEXTFLOW.WORKFLOW_DIR}/wastewater/nextflow/main.nf -profile slurm`,
-    config_tmpl: 'wastewater/workflow_config.tmpl',
+    config_tmpl: `${config.NEXTFLOW.WORKFLOW_DIR}/wastewater/workflow_config.tmpl`,
   },
   metaT: {
     outdir: 'output/MetaT',
     nextflow_main: process.env.NEXTFLOW_MAIN
       ? `${process.env.NEXTFLOW_MAIN} -profile slurm`
       : `${config.NEXTFLOW.WORKFLOW_DIR}/wastewater/nextflow/main.nf -profile slurm`,
-    config_tmpl: 'wastewater/workflow_config.tmpl',
+    config_tmpl: `${config.NEXTFLOW.WORKFLOW_DIR}/wastewater/workflow_config.tmpl`,
   },
 }
 
@@ -49,6 +57,9 @@ const generateNextflowWorkflowParams = async (projHome, projectConf, proj) => {
     // download sra data to shared directory
     params.sraOutdir = config.IO.SRA_BASE_DIR
   } else if (projectConf.category === 'wastewater') {
+    params.refDir = workflowList[projectConf.workflow.name].nfRefDir
+    params.imgDir = workflowList[projectConf.workflow.name].nfImgDir
+    params.tmpDir = workflowList[projectConf.workflow.name].nfTmpDir
     // link input files to project input directory
     const inputDir = `${projHome}/input`
     // set output directory
