@@ -59,9 +59,9 @@ const generateNextflowWorkflowParams = async (projHome, projectConf, proj) => {
     // download sra data to shared directory
     params.sraOutdir = config.IO.SRA_BASE_DIR
   } else if (projectConf.category === 'wastewater') {
-    params.nfRefDir = workflowList[projectConf.workflow.name].nfRefDir
-    params.nfImgDir = workflowList[projectConf.workflow.name].nfImgDir
-    params.nfTmpDir = workflowList[projectConf.workflow.name].nfTmpDir
+    params.nfRefDir = workflowList[projectConf.category].nfRefDir
+    params.nfImgDir = workflowList[projectConf.category].nfImgDir
+    params.nfTmpDir = workflowList[projectConf.category].nfTmpDir
     // link input files to project input directory
     const inputDir = `${projHome}/input`
     // set output directory
