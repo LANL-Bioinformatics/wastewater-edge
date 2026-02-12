@@ -31,11 +31,15 @@ const generateInputs = async (projHome, projectConf, proj) => {
     nfReports: nextflowConfigs.nf_reports,
   }
   // get workflow specific params
-  const workflowParams = await generateNextflowWorkflowParams(
+  const { workflowParams, errMsg } = await generateNextflowWorkflowParams(
     projHome,
     projectConf,
     proj,
   )
+  if (errMsg) {
+    write2log(`${projHome}/log.txt`, errMsg)
+    return false // result not as expected
+  }
   // render input template and write to nextflow_params.json
   const inputs = ejs.render(template, { ...params, ...workflowParams })
   await fs.promises.writeFile(`${projHome}/nextflow.config`, inputs)

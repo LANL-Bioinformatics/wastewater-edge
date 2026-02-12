@@ -79,7 +79,12 @@ const nextflowWorkflowMonitor = async () => {
       'Generate nextflow.config',
     )
     logger.info('Generate nextflow.config')
-    await generateInputs(projHome, projectConf, proj)
+    if (!(await generateInputs(projHome, projectConf, proj))) {
+      // fail project if result not as expected
+      proj.status = 'failed'
+      await proj.save()
+      return
+    }
     // submit workflow to nextflow
     const now = new Date()
     common.write2log(
