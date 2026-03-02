@@ -42,6 +42,7 @@ const workflowList = {
       ? `${process.env.NEXTFLOW_MAIN}`
       : `${config.NEXTFLOW.WORKFLOW_DIR}/wastewater/nextflow/main.nf`,
     config_tmpl: `${config.NEXTFLOW.WORKFLOW_DIR}/wastewater/workflow_config.tmpl`,
+    sequencing: 'metagenomic',
   },
   metaT: {
     outdir: 'output/MetaT',
@@ -49,6 +50,7 @@ const workflowList = {
       ? `${process.env.NEXTFLOW_MAIN}`
       : `${config.NEXTFLOW.WORKFLOW_DIR}/wastewater/nextflow/main.nf`,
     config_tmpl: `${config.NEXTFLOW.WORKFLOW_DIR}/wastewater/workflow_config.tmpl`,
+    sequencing: 'metatranscriptomic',
   },
 }
 
@@ -69,7 +71,9 @@ const generateNextflowWorkflowParams = async (projHome, projectConf, proj) => {
     // create csv input file
     const csvFile = `${projHome}/metadata.csv`
     const csvStream = fs.createWriteStream(csvFile)
-    csvStream.write('sample_id,input_dir,output_dir,r1,r2,read_type,workflow\n')
+    csvStream.write(
+      'sample_id,input_dir,output_dir,r1,r2,read_type,sequencing\n',
+    )
     if (projectConf.rawReads.paired) {
       const r1Linked = path.basename(
         await linkCopyFile(
@@ -88,7 +92,7 @@ const generateNextflowWorkflowParams = async (projHome, projectConf, proj) => {
         ),
       )
       csvStream.write(
-        `${proj.name},${inputDir},${outputDir},${r1Linked},${r2Linked},${projectConf.workflow.input.read_type},${projectConf.workflow.name}\n`,
+        `${proj.name},${inputDir},${outputDir},${r1Linked},${r2Linked},${projectConf.workflow.input.read_type},${workflowList[projectConf.workflow.name].sequencing}\n`,
       )
     } else {
       const r1Linked = path.basename(
@@ -100,7 +104,7 @@ const generateNextflowWorkflowParams = async (projHome, projectConf, proj) => {
         ),
       )
       csvStream.write(
-        `${proj.name},${inputDir},${outputDir},${r1Linked},,${projectConf.workflow.input.read_type},${projectConf.workflow.name}\n`,
+        `${proj.name},${inputDir},${outputDir},${r1Linked},,${projectConf.workflow.input.read_type},${workflowList[projectConf.workflow.name].sequencing}\n`,
       )
     }
     csvStream.end()
