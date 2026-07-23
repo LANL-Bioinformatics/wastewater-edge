@@ -17,6 +17,7 @@ const nextflowConfigs = {
 const workflowList = {
   sra2fastq: {
     outdir: 'output/sra2fastq',
+    report: 'nextflow/report.html',
     nextflow_main: process.env.NEXTFLOW_MAIN
       ? `${process.env.NEXTFLOW_MAIN} -profile local`
       : `${config.NEXTFLOW.WORKFLOW_DIR}/sra2fastq/nextflow/main.nf -profile local`,
@@ -39,6 +40,7 @@ const workflowList = {
   // single submission workflows
   metaG: {
     outdir: 'output/MetaG',
+    report: 'nextflow/report.html',
     nextflow_main: process.env.NEXTFLOW_MAIN
       ? `${process.env.NEXTFLOW_MAIN}`
       : `${config.NEXTFLOW.WORKFLOW_DIR}/wastewater/nextflow/main.nf`,
@@ -47,6 +49,7 @@ const workflowList = {
   },
   metaT: {
     outdir: 'output/MetaT',
+    report: 'nextflow/report.html',
     nextflow_main: process.env.NEXTFLOW_MAIN
       ? `${process.env.NEXTFLOW_MAIN}`
       : `${config.NEXTFLOW.WORKFLOW_DIR}/wastewater/nextflow/main.nf`,
