@@ -1,9 +1,10 @@
-import React, { useEffect, useState } from 'react'
+import { useEffect, useState } from 'react'
 import { Button } from 'reactstrap'
 import { LoaderDialog, FileViewerDialog } from '/src/edge/common/Dialogs'
 import { getData, fetchFile, apis } from '/src/edge/common/util'
 import ProjectGeneral from '/src/edge/project/results/ProjectGeneral'
 import ProjectOutputs from '/src/edge/project/results/ProjectOutputs'
+import { MetaGMetaT } from '/src/workflows/wastewater/results/MetaGMetaT'
 
 const ProjectResult = (props) => {
   const [project, setProject] = useState()
@@ -252,6 +253,19 @@ const ProjectResult = (props) => {
             allExpand={allExpand}
             allClosed={allClosed}
           />
+          {result && (
+            <>
+              {(project.type === 'metaG' || project.type === 'metaT') && (
+                <MetaGMetaT
+                  result={result}
+                  project={project}
+                  userType={type}
+                  allExpand={allExpand}
+                  allClosed={allClosed}
+                />
+              )}
+            </>
+          )}
           {outputs && (
             <ProjectOutputs
               type={props.type}

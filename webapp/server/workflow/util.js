@@ -133,6 +133,17 @@ const generateWorkflowResult = proj => {
         // link sra downloads to project output
         fs.symlinkSync(`../../../../sra/${accession}`, `${outdir}/${accession}`)
       })
+    } else {
+      result.summary = null
+      result.plot = null
+      const summary = `${outdir}/${proj.name}/final_outputs/${proj.name}_combined_report.html`
+      const plot = `${outdir}/${proj.name}/final_outputs/${proj.name}_krona.html`
+      if (fs.existsSync(summary)) {
+        result.summary = `${workflowList[projectConf.workflow.name].outdir}/${proj.name}/final_outputs/${proj.name}_combined_report.html`
+      }
+      if (fs.existsSync(plot)) {
+        result.plot = `${workflowList[projectConf.workflow.name].outdir}/${proj.name}/final_outputs/${proj.name}_krona.html`
+      }
     }
     fs.writeFileSync(resultJson, JSON.stringify(result))
   }
