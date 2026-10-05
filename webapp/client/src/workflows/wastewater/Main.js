@@ -186,7 +186,13 @@ const Main = (props) => {
         <div className="clearfix">
           <h4 className="pt-3">WasteWater Workflow</h4>
           <hr />
-          <Project setParams={setProject} />
+          <Project
+            setParams={setProject}
+            projectNamePattern={'^[a-zA-Z0-9\-_.]{3,30}$'}
+            projectNameErrMessage={
+              'Required, at 3 but less than 30 characters. <br/>Only alphabets, numbers, dashs, dots and underscore are allowed in the name.'
+            }
+          />
           <br></br>
           <b>Workflow</b>
           <MySelect
