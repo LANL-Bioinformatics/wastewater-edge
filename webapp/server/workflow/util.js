@@ -136,6 +136,21 @@ const generateWorkflowResult = proj => {
     } else {
       result.summary = null
       result.plot = null
+      const subdirs = fs.existsSync(`${outdir}`)
+        ? fs.readdirSync(`${outdir}`)
+        : []
+      subdirs.forEach(subdir => {
+        if (fs.existsSync(`${outdir}/${subdir}/final_outputs`)) {
+          fs.readdirSync(`${outdir}/${subdir}/final_outputs`).forEach(file => {
+            if (file.endsWith('_combined_report.html')) {
+              result.summary = `${workflowList[projectConf.workflow.name].outdir}/${subdir}/final_outputs/${file}`
+            }
+            if (file.endsWith('_krona.html')) {
+              result.plot = `${workflowList[projectConf.workflow.name].outdir}/${subdir}/final_outputs/${file}`
+            }
+          })
+        }
+      })
       const summary = `${outdir}/${proj.name}/final_outputs/${proj.name}_combined_report.html`
       const plot = `${outdir}/${proj.name}/final_outputs/${proj.name}_krona.html`
       if (fs.existsSync(summary)) {
