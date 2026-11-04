@@ -233,7 +233,7 @@ const config = {
   NEXTFLOW: {
     // How nextflow workflows are executed. See makeNextflowMode above.
     // Defaults to 'direct' so existing deployments are unaffected.
-    MODE: makeNextflowMode(process.env.NEXTFLOW_MODE),
+    MODE: makeNextflowMode(process.env.NEXTFLOW_MODE) || 'direct',
     // Nextflow executor. Valid values: 'local', 'slurm'.
     EXECUTOR: process.env.NEXTFLOW_EXECUTOR || 'local',
     // Optional ssh prefix used to reach a scheduler login node.
